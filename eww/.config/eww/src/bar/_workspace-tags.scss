@@ -1,0 +1,15 @@
+@use "../colors" as colors;
+@use "../mixins" as mixins;
+
+.workspace-tag-mine {
+  color: colors.$yellow;
+}
+.workspace-tag-visible {
+  color: colors.$red;
+}
+.workspace-tag-busy {
+  color: colors.$red;
+}
+.workspace-tag {
+  color: colors.$background-secondary;
+}

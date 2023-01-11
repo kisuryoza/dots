@@ -1,0 +1,38 @@
+@use "defaults";
+
+@use "../colors" as colors;
+@use "../mixins" as mixins;
+
+calendar {
+  background-color: colors.$background-primary;
+  border-radius: defaults.$border-radius;
+  padding: 0.5em;
+
+  &:selected {
+    color: colors.$yellow;
+  }
+
+  &:indeterminate {
+    color: colors.$background-secondary;
+  }
+}
+
+calendar.button {
+  color: colors.$background-secondary;
+}
+
+calendar.highlight {
+  color: colors.$foreground-secondary;
+}
+
+.window-calendar-box {
+  background-color: colors.$background-primary;
+  border-right: 3px solid colors.$black;
+  border-bottom: 3px solid colors.$black;
+  border-radius: defaults.$border-radius;
+  padding: 1em;
+}
+
+.calendar-title {
+  font-size: 2em;
+}

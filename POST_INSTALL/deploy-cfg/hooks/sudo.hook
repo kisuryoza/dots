@@ -1,0 +1,13 @@
+[Trigger]
+Operation=Install
+Operation=Upgrade
+Operation=Remove
+Type=Package
+Target=sudo
+
+[Action]
+Description=Symlimk doas to sudo
+Depends=doas
+When=PostTransaction
+NeedsTargets
+Exec=/usr/bin/bash -c "if [ -x /usr/bin/doas ]; then /usr/bin/ln -sf /usr/bin/doas /usr/bin/sudo; echo 'true'; fi;"

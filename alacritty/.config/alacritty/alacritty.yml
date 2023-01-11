@@ -1,0 +1,83 @@
+import:
+  - ~/.config/alacritty/themes.yml
+
+env:
+  TERM: xterm-256color
+
+window:
+  decorations: none
+  #opacity: 0.8
+  title: Alacritty
+  dynamic_title: true
+  decorations_theme_variant: dark
+
+scrolling:
+  history: 10000
+  multiplier: 8
+
+font:
+  normal:
+    family: Iosevka Term SS14
+    style: Regular
+
+  bold:
+    family: Iosevka Term SS14
+    style: Bold
+
+  italic:
+    family: Iosevka Term SS14
+    style: Italic
+
+  bold_italic:
+    family: Iosevka Term SS14
+    style: Bold Italic
+
+colors:
+  cursor:
+    text: CellBackground
+    cursor: CellForeground
+
+  vi_mode_cursor:
+    text: CellBackground
+    cursor: CellForeground
+
+  selection:
+    text: CellBackground
+    background: CellForeground
+
+  transparent_background_colors: true
+
+selection:
+  semantic_escape_chars: ",│`|:\"' ()[]{}<>\t"
+  save_to_clipboard: true
+
+cursor:
+  style:
+    shape: Underline
+    blinking: Off
+  vi_mode_style: None
+  unfocused_hollow: true
+  thickness: 0.15
+
+live_config_reload: true
+
+shell:
+  program: /usr/bin/zsh
+  #args:
+#    - --login
+
+mouse:
+  hide_when_typing: true
+
+mouse_bindings:
+  - { mouse: Middle, action: PasteSelection }
+  - { mouse: Right, action: Copy }
+
+key_bindings:
+  # (Windows, Linux, and BSD only)
+  - { key: V,              mods: Control|Shift, mode: ~Vi,        action: Paste            }
+  - { key: C,              mods: Control|Shift,                   action: Copy             }
+  - { key: Key0,           mods: Control,                         action: ResetFontSize    }
+  - { key: Plus,           mods: Control,                         action: IncreaseFontSize }
+  - { key: Minus,          mods: Control,                         action: DecreaseFontSize }
+

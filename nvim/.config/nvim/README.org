@@ -1,0 +1,27 @@
+
+* Overview
+- Configs are in [[https://fennel-lang.org/][Fennel]].
+
+  Featured by [[https://github.com/rktjmp/hotpot.nvim][hotpot]] and wouldn't happen without [[https://github.com/eraserhd/parinfer-rust][parinfer]] for Lisps.
+
+  Features:
+- Feline as a status line
+- Lazy loading with [[https://github.com/wbthomason/packer.nvim][packer]]
+- Dashboard greeter with [[https://github.com/goolord/alpha-nvim][alpha-nvim]]
+- LSP integration
+- DAP integration
+
+* Structure
+#+begin_src sh :tangle no
+.
+├── init.lua            # Minimal bootstrap. On a fresh install autoinstalls plugin manager and hotpot, then the rest plugins
+└── fnl
+   ├── init.fnl         # The startup point to load the fennel configs
+   ├── opts.fnl         # Sets vim options
+   ├── keybindings.fnl  # Sets basic keybindings
+   ├── colors.fnl       # Sets color scheme
+   ├── plugins.fnl      # Loads plugins and their specific configurations and does basic setups
+   ├── macros.fnl       # Varios fennel macros
+   └── plugins          # Plugin specific configurations
+       └── ...
+#+end_src

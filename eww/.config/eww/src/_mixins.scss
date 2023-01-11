@@ -1,0 +1,33 @@
+@mixin bar-button($color: colors.$foreground-primary) {
+  //background-color: colors.$background-secondary;
+  border-radius: 0.3em;
+  font-size: 1.2em;
+  font-weight: normal;
+  margin: 0.25em;
+  padding: 0.25em;
+
+  &:hover {
+    background-color: $color;
+    color: colors.$background-primary;
+  }
+
+  &:active {
+    background-color: colors.$background-secondary;
+  }
+}
+
+@mixin dashboard-button($color: colors.$red) {
+  border-radius: 0.5em;
+  color: $color;
+  font-size: 2em;
+  margin: 5px;
+
+  &:hover {
+    background-color: $color;
+    color: colors.$background-primary;
+  }
+
+  &:active {
+    background-color: colors.$background-secondary;
+  }
+}

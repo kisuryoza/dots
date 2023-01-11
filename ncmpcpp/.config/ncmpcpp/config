@@ -1,0 +1,4 @@
+song_status_format = {{%a - }{%t} {(%b)} {(%y)}}|{%f}
+
+now_playing_prefix = $b$u
+now_playing_suffix = $/u$/b
