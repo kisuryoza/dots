@@ -23,7 +23,13 @@
        :ignore_install []
        :highlight {:enable true
                    :additional_vim_regex_highlighting ["org"]}
-       :textobjects {:select {:enable true
+       :incremental_selection {:enable true
+                               :keymaps {:init_selection "<CR>"
+                                         :node_incremental "<CR>"
+                                         :scope_incremental "<S-CR>"
+                                         :node_decremental "<BS>"}}
+       :textobjects {:enable true
+                     :select {:enable true
                               :lookahead true
                               :keymaps {:aa {:query "@parameter.outer"
                                              :desc "Outer part of parameter"}
