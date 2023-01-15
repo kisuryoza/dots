@@ -14,8 +14,6 @@
                                          :tutor
                                          :zipPlugin]}}})
 
-(require :theme)
-
 (fn FileReformatting []
   (if (not vim.o.binary)
     (let [winview vim.fn.winsaveview]

@@ -4,8 +4,17 @@
   (pack :feline-nvim/feline.nvim))
 
 (fn M.config []
+  (fn get-color [group attr]
+    (vim.fn.synIDattr (vim.fn.synIDtrans (vim.fn.hlID group)) attr))
+  (local colors {:bg (get-color "CursorLine" "bg#")
+                 :bg2 (get-color "ColorColumn" "bg#")
+                 :bg_dark (get-color "TabLine" "bg#")
+                 :fg (get-color "Normal" "fg#")
+
+                 :err (get-color "ErrorMsg" "fg#")
+                 :warn (get-color "WarningMsg" "fg#")})
+
   (local feline (require :feline))
-  (local colors (. (require :theme) :colors))
 
   ; https://neovim.io/doc/user/builtin.html#mode()
   (local modes {:n "NORMAL"
@@ -144,10 +153,10 @@
                                    :fg colors.fg}}])
 
   (tset components.inactive 1 [{:provider git
-                                :hl {:bg colors.bg
+                                :hl {:bg colors.bg2
                                      :fg colors.fg}}
                                {:provider file-name-label
-                                :hl {:bg colors.bg
+                                :hl {:bg colors.bg_dark
                                      :fg colors.fg}}
                                {:hl {:bg colors.bg_dark
                                      :fg colors.fg}}])
@@ -155,8 +164,8 @@
   (tset components.inactive 2 [])
 
   (tset components.inactive 3 [{:provider file-type
-                                :hl {:bg colors.fg
-                                     :fg colors.bg_dark}}])
+                                :hl {:bg colors.bg2
+                                     :fg colors.fg}}])
 
   (feline.setup {:components components}))
 
