@@ -19,10 +19,6 @@
                                                ;; CompetiTest.nvim is a Neovim plugin to automate testcases management and checking for Competitive Programming
                                                ;; (pack :xeluxee/competitest.nvim {:dependencies [:MunifTanjim/nui.nvim]
                                                ;;                                  :config #((setup! :competitest))})]
-                                               ;; Neovim plugin that adds support for file operations using built-in LSP
-                                               (pack :antosha417/nvim-lsp-file-operations {:config #((setup! :lsp-file-operations) {})})
-                                               ;; Standalone UI for nvim-lsp progress
-                                               (pack :j-hui/fidget.nvim {:config #((setup! :fidget) {:text {:spinner "dots"}})})
                                                ;; A neovim plugin that helps managing crates.io dependencies
                                                (pack :saecki/crates.nvim {:config #((setup! :crates))
                                                                           :event "BufRead Cargo.toml"})]
@@ -43,9 +39,9 @@
                     (let [wk (require :which-key)]
                       (wk.register
                         {:l {:name "+LSP"
-                             ;; :g {:name "+Jumps"
-                             ;;     :D [vim.lsp.buf.declaration "Jumps to declaration of symbol"]
-                             ;;     :d [vim.lsp.buf.definition "Jumps to definition of symbol"]}
+                             :j {:name "+Jumps"
+                                 :D [vim.lsp.buf.declaration "Jumps to declaration of symbol"]
+                                 :d [vim.lsp.buf.definition "Jumps to definition of symbol"]}
 
                              :l {:name "+Lists"
                                  :i [vim.lsp.buf.implementation "Lists all implementations for symbol in quickfix window"]
