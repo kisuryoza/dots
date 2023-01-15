@@ -1,16 +1,18 @@
 tokyo-night: &tokyo-night
   primary:
     background: '#1a1b26'
-    foreground: '#a9b1d6'
+    foreground: '#c0caf5'
+
   normal:
-    black:   '#0f0f14'
+    black:   '#15161e'
     red:     '#f7768e'
     green:   '#9ece6a'
     yellow:  '#e0af68'
     blue:    '#7aa2f7'
     magenta: '#bb9af7'
     cyan:    '#7dcfff'
-    white:   '#c0caf5'
+    white:   '#a9b1d6'
+
   bright:
     black:   '#414868'
     red:     '#f7768e'
@@ -20,20 +22,26 @@ tokyo-night: &tokyo-night
     magenta: '#bb9af7'
     cyan:    '#7dcfff'
     white:   '#c0caf5'
+
+  indexed_colors:
+    - { index: 16, color: '#ff9e64' }
+    - { index: 17, color: '#db4b4b' }
 
 tokyo-storm: &tokyo-storm
   primary:
     background: '#24283b'
-    foreground: '#a9b1d6'
+    foreground: '#c0caf5'
+
   normal:
-    black:   '#0f0f14'
+    black:   '#1d202f'
     red:     '#f7768e'
     green:   '#9ece6a'
     yellow:  '#e0af68'
     blue:    '#7aa2f7'
     magenta: '#bb9af7'
     cyan:    '#7dcfff'
-    white:   '#c0caf5'
+    white:   '#a9b1d6'
+
   bright:
     black:   '#414868'
     red:     '#f7768e'
@@ -44,28 +52,38 @@ tokyo-storm: &tokyo-storm
     cyan:    '#7dcfff'
     white:   '#c0caf5'
 
+  indexed_colors:
+    - { index: 16, color: '#ff9e64' }
+    - { index: 17, color: '#db4b4b' }
+
 tokyo-light: &tokyo-light
   primary:
-    background: '#d5d6db'
-    foreground: '#343b58'
+    background: '#e1e2e7'
+    foreground: '#3760bf'
+
   normal:
-    black:   '#0f0f14'
-    red:     '#8c4351'
-    green:   '#33635c'
-    yellow:  '#8f5e15'
-    blue:    '#34548a'
-    magenta: '#5a4a78'
-    cyan:    '#0f4b6e'
-    white:   '#343b58'
+    black:   '#e9e9ed'
+    red:     '#f52a65'
+    green:   '#587539'
+    yellow:  '#8c6c3e'
+    blue:    '#2e7de9'
+    magenta: '#9854f1'
+    cyan:    '#007197'
+    white:   '#6172b0'
+
   bright:
-    black:   '#0f0f14'
-    red:     '#8c4351'
-    green:   '#33635c'
-    yellow:  '#8f5e15'
-    blue:    '#34548a'
-    magenta: '#5a4a78'
-    cyan:    '#0f4b6e'
-    white:   '#343b58'
+    black:   '#a1a6c5'
+    red:     '#f52a65'
+    green:   '#587539'
+    yellow:  '#8c6c3e'
+    blue:    '#2e7de9'
+    magenta: '#9854f1'
+    cyan:    '#007197'
+    white:   '#3760bf'
+
+  indexed_colors:
+    - { index: 16, color: '#b15c00' }
+    - { index: 17, color: '#c64343' }
 
 kanagawa: &kanagawa
   primary:
@@ -100,4 +118,4 @@ kanagawa: &kanagawa
     - { index: 16, color: '#ffa066' }
     - { index: 17, color: '#ff5d62' }
 
-colors: *kanagawa
+colors: *tokyo-night
