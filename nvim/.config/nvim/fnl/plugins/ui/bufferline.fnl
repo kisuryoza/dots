@@ -13,13 +13,16 @@
     (bufferline.setup
       {:options {; :numbers "buffer_id"
                  :diagnostics "nvim_lsp"
-                 :diagnostics_indicator (fn [count level diagnostics_dict context]
-                                          (let [icon (if (= level "error")
-                                                         " "
-                                                         (= level "warning")
-                                                         " "
-                                                         "")]
-                                            (.. " " icon count)))
+                 :diagnostics_indicator (fn [_count _level diagnostics_dict _context]
+                                          (var out " ")
+                                          (each [e n (pairs diagnostics_dict)]
+                                            (let [symbol (if (= e "error")
+                                                             " "
+                                                             (= e "warning")
+                                                             " "
+                                                             " ")]
+                                              (set out (.. out n symbol))))
+                                          out)
                  :offsets [{:filetype "NvimTree"
                             :text "File Explorer"
                             :text_align "left"
