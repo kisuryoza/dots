@@ -27,5 +27,9 @@
                                         ((setup! :notify) {:render "simple"
                                                            :stages "static"
                                                            :timeout 7000})
-                                        (set vim.notify (require :notify)))})]
+                                        (set vim.notify (require :notify)))})
+ ;; completely replaces the UI for messages, cmdline and the popupmenu
+ (pack :folke/noice.nvim {:dependencies ["MunifTanjim/nui.nvim"
+                                         "rcarriga/nvim-notify"]
+                          :config #((setup! :noice))})]
 
