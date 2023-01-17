@@ -3,17 +3,16 @@
 
 [{:dir "~/gitclone/parinfer-rust"}
  (pack :rktjmp/hotpot.nvim)
- ;; common dependency
  (pack :nvim-lua/plenary.nvim)
 
- (pack :rebelot/kanagawa.nvim {:lazy false
+ (pack :rebelot/kanagawa.nvim {:lazy true
                                :priority 1000
-                               :init #(vim.cmd "colorscheme kanagawa")
+                               ;; :init #(vim.cmd "colorscheme kanagawa")
                                :config #((setup! :kanagawa) {:dimInactive true
                                                              :globalStatus true})})
- (pack :folke/tokyonight.nvim {:lazy true
+ (pack :folke/tokyonight.nvim {:lazy false
                                :priority 1000
-                               ;; :init #(vim.cmd "colorscheme tokyonight-night")
+                               :init #(vim.cmd "colorscheme tokyonight-night")
                                :config #((setup! :tokyonight) {:dim_inactive true})})
 
  (require :plugins.ui)
@@ -37,7 +36,11 @@
  ;; syntax for yuck
  (pack :elkowar/yuck.vim)
  ;; general-purpose motion plugin
- (pack :ggandor/leap.nvim {:config #(vim.api.nvim_set_hl 0 "LeapBackdrop" {:link "Comment"})})
+ (pack :ggandor/leap.nvim {:dependencies [;; f/F/t/T motions on steroids
+                                          (pack "ggandor/flit.nvim" {:config #((setup! :flit))})
+                                          ;; remote operations on Vim's native text objects
+                                          (pack "ggandor/leap-spooky.nvim" {:config #((setup! :leap-spooky))})]
+                           :config #(vim.api.nvim_set_hl 0 "LeapBackdrop" {:link "Comment"})})
  ;; Smooth scrolling <C-u>, <C-d> ; <C-b>, <C-f> ; <C-y>, <C-e> ; zt, zz, zb
  (pack :karb94/neoscroll.nvim {:config #((setup! :neoscroll))
                                :event "BufRead"})
@@ -74,7 +77,7 @@
  ;; Flow state reading in neovim
  (pack :nullchilly/fsread.nvim {:cmd ["FSRead" "FSClear" "FSToggle"]})
  ;; icons
- (pack :kyazdani42/nvim-web-devicons)
+ (pack :nvim-tree/nvim-web-devicons)
  ;; This plugin adds indentation guides to all lines (including empty lines)
  ;; (pack :lukas-reineke/indent-blankline.nvim {:config #((setup! :indent_blankline) {:filetype_exclude ["alpha"
  ;;                                                                                                      "help"
