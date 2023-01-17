@@ -44,8 +44,8 @@
                                         :ic {:query "@class.inner"
                                              :desc "Inner part of class"}}}
                      :swap {:enable true
-                            :swap_next {:<leader>a "@parameter.inner"}
-                            :swap_previous {:<leader>A "@parameter.inner"}}
+                            :swap_next {:<localleader>csn "@parameter.inner"}
+                            :swap_previous {:<localleader>csp "@parameter.inner"}}
                      :move {:enable true
                             :set_jumps true
                             :goto_next_start {"]m" {:query "@function.outer"
@@ -65,7 +65,7 @@
                                                   "[[" {:query "@class.outer"
                                                         :desc "Prev class start"}
                                                   "[s" {:query "@statement.outer"
-                                                        :desc "Next statement"}}
+                                                        :desc "Prev statement"}}
 
                             :goto_previous_end {"[M" {:query "@function.outer"
                                                       :desc "Prev func end"}
