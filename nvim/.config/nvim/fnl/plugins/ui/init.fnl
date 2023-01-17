@@ -31,5 +31,7 @@
  ;; completely replaces the UI for messages, cmdline and the popupmenu
  (pack :folke/noice.nvim {:dependencies ["MunifTanjim/nui.nvim"
                                          "rcarriga/nvim-notify"]
-                          :config #((setup! :noice))})]
-
+                          :config #((setup! :noice))})
+ ;; manage undos as a tree
+ (pack :jiaoshijie/undotree {:dependencies ["nvim-lua/plenary.nvim"]
+                             :config #((setup! :undotree))})]
