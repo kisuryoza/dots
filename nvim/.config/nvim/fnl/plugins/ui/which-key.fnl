@@ -5,7 +5,8 @@
   (pack :folke/which-key.nvim))
 
 (fn M.config []
-  (let [wk (require :which-key)]
+  (let [wk (require :which-key)
+        undotree (require :undotree)]
     (wk.setup)
 
     (wk.register
@@ -39,13 +40,14 @@
        :f {:name "+Files"
            :f [(cmd "Telescope find_files") "Find Files"]
            :r [(cmd "Telescope oldfiles") "Recent"]
-           :F [(cmd "NvimTreeToggle .") "File Manager"]
+           :F [(cmd "Neotree toggle") "File Manager"]
            :g [(cmd "Telescope live_grep") "Live Grep"]
            :R [(cmd "lua require('spectre').open()") "Regex replace"]}
 
        :c {:name "+Code"
            :z [(cmd "ZenMode") "ZenMode"]
-           :x [(cmd "TroubleToggle") "List of errors"]}
+           :x [(cmd "TroubleToggle") "List of errors"]
+           :u [(. undotree :toggle) "Undotree"]}
 
        :g {:name "+Git"
            :n [(cmd "Neogit") "Open Neogit"]

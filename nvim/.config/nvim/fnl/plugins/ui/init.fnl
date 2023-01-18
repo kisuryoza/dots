@@ -7,8 +7,8 @@
  (require :plugins.ui.feline)
  ;; Git integration for buffers
  (require :plugins.ui.gitsigns)
- ;; File Manager
- (require :plugins.ui.nvim-tree)
+ ;; manage the file system and other tree like structures
+ (require :plugins.ui.neo-tree)
  ;; popup with possible key bindings
  (require :plugins.ui.which-key)
 
@@ -20,7 +20,7 @@
  (pack :akinsho/toggleterm.nvim {:config #((setup! :toggleterm) {:direction "float"})
                                  :cmd "ToggleTerm"})
  ;; Extensible Neovim Scrollbar
- (pack :petertriho/nvim-scrollbar {:config #((setup! :scrollbar))
+ (pack :petertriho/nvim-scrollbar {:config #((setup! :scrollbar) {:excluded_filetypes ["neo-tree"]})
                                    :event "BufRead"})
  ;; A fancy, configurable, notification manager for NeoVim
  (pack :rcarriga/nvim-notify {:config (fn []
