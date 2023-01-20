@@ -11,8 +11,7 @@ function run_root {
     FILES_TO_SYNC+=("/home/$user/.config/zsh/functions.zsh")
     FILES_TO_SYNC+=("/home/$user/.config/starship.toml")
 
-    for i in "${FILES_TO_SYNC[@]}"
-    do
+    for i in "${FILES_TO_SYNC[@]}"; do
         install -vDm 600 "$i" "/root/$(echo "$i" | sed -E "s|/([a-zA-Z]*/){2}||")"
     done
 }

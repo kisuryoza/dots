@@ -4,7 +4,7 @@
 $DEBUG && set -Eeuxo pipefail
 
 IS_OPEN=$(eww get isDashboardOpen)
-if eval "$IS_OPEN" ; then
+if eval "$IS_OPEN"; then
     eww close closer
     eww close dashboard
     eww update isDashboardOpen=false
@@ -16,7 +16,7 @@ else
 
     # Volume module initialization
     IS_MUTED=$(pamixer --get-mute)
-    if eval "$IS_MUTED" ; then
+    if eval "$IS_MUTED"; then
         eww update isMuted=true
     else
         eww update isMuted=false

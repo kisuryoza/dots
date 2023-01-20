@@ -2,8 +2,7 @@
 
 CONNECTION=0
 
-for file in $(fd --exclude=lo --follow --max-depth=2 --glob "carrier" /sys/class/net);
-do
+for file in $(fd --exclude=lo --follow --max-depth=2 --glob "carrier" /sys/class/net); do
     [[ $(cat "$file") = 1 ]] && CONNECTION=1
 done
 

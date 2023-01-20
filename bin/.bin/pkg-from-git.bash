@@ -19,8 +19,8 @@ function update {
         cd ~/gitclone/"$NAME" && git pull
     else
         log "Installing $NAME"
-        git clone --depth 1 "$1.git" ~/gitclone/"$NAME" \
-            && cd ~/gitclone/"$NAME"
+        git clone --depth 1 "$1.git" ~/gitclone/"$NAME" &&
+            cd ~/gitclone/"$NAME"
     fi
 }
 
@@ -29,21 +29,21 @@ function eww {
 
     cargo build --release
     install -vsDm 744 target/release/eww ~/.local/bin/eww-x
-    if pacman -Q gtk-layer-shell &> /dev/null; then
+    if pacman -Q gtk-layer-shell &>/dev/null; then
         cargo build --release --no-default-features --features=wayland
         install -vsDm 744 target/release/eww ~/.local/bin/eww-wayland
     fi
 }
 
 function leftwm {
-    if pacman -Q xorg-server &> /dev/null; then
+    if pacman -Q xorg-server &>/dev/null; then
         update "https://github.com/leftwm/leftwm"
 
         if [[ ! -f ~/.xinitrc ]]; then
             {
                 echo "#\!/usr/bin/env zsh"
                 echo "exec dbus-launch leftwm"
-            } > ~/.xinitrc
+            } >~/.xinitrc
         fi
 
         cargo build --release
@@ -70,24 +70,24 @@ function fennel_language_server {
 }
 
 case $1 in
-    "eww")
-        eww
-        ;;
-    "leftwm")
-        leftwm
-        ;;
-    "parinfer")
-        parinfer
-        ;;
-    "fennel-language-server")
-        fennel_language_server
-        ;;
+"eww")
+    eww
+    ;;
+"leftwm")
+    leftwm
+    ;;
+"parinfer")
+    parinfer
+    ;;
+"fennel-language-server")
+    fennel_language_server
+    ;;
 
-    "all")
-        eww
-        leftwm
-        parinfer
-        fennel_language_server
-        ;;
-    *) exit 1 ;;
+"all")
+    eww
+    leftwm
+    parinfer
+    fennel_language_server
+    ;;
+*) exit 1 ;;
 esac

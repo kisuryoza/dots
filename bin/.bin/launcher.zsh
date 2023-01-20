@@ -48,9 +48,9 @@ function screenshot {
 }
 
 case $1 in
-    "lock")             lock ;;
-    "launcher")         launcher ;;
-    "screenshot-area")  screenshot_area ;;
-    "screenshot")       screenshot ;;
-    *) exit 1 ;;
+"lock") lock ;;
+"launcher") launcher ;;
+"screenshot-area") screenshot_area ;;
+"screenshot") screenshot ;;
+*) exit 1 ;;
 esac

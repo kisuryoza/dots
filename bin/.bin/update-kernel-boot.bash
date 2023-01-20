@@ -15,7 +15,7 @@ function run_root {
     ENABLE_FULL_DRIVE_ENCRYPTION=false
 
     P2="2"
-    if [[ "$DRIVE" == *"nvme"*  ]]; then
+    if [[ "$DRIVE" == *"nvme"* ]]; then
         P2="p2"
     fi
 
@@ -46,7 +46,7 @@ function run_root {
         # echo "fallback_image=\"/boot/initramfs-linux-fallback.img\""
         # echo "fallback_efi_image=\"$ESP/EFI/Linux/linux-fallback.efi\""
         # echo "fallback_options=\"-S autodetect\""
-    } > /etc/mkinitcpio.d/linux.preset
+    } >/etc/mkinitcpio.d/linux.preset
 
     log "Creating linux-zen preset for mkinitcpio"
     cp -f /etc/mkinitcpio.d/linux.preset /etc/mkinitcpio.d/linux-zen.preset
@@ -58,7 +58,7 @@ function run_root {
     [[ "$ENABLE_FULL_DRIVE_ENCRYPTION" ]] && root_params="cryptdevice=UUID=$uuid:root root=/dev/mapper/root"
 
     log "Applying kernel parameters"
-    echo "$root_params rw bgrt_disable nowatchdog ${KERNEL_PARAMS[*]}" > /etc/kernel/cmdline
+    echo "$root_params rw bgrt_disable nowatchdog ${KERNEL_PARAMS[*]}" >/etc/kernel/cmdline
 
     mkdir -p "$ESP"/EFI/Arch
     mkdir -p "$ESP"/EFI/BOOT
@@ -74,7 +74,7 @@ function run_root {
 }
 
 case $1 in
-    "linux") KERNEL="linux" ;;
+"linux") KERNEL="linux" ;;
 esac
 
 if [[ $(id -u) -eq 0 ]]; then

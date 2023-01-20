@@ -40,40 +40,46 @@ function play {
         counting=$(cat "$HIST_FILE")
         if [[ -n "$1" ]]; then
             case "$1" in
-                "prev") counting=$((counting - 1))
-                    ;;
-                "next") counting=$((counting + 1))
-                    ;;
-                *) exit 2 ;;
+            "prev")
+                counting=$((counting - 1))
+                ;;
+            "next")
+                counting=$((counting + 1))
+                ;;
+            *) exit 2 ;;
             esac
-            echo "$counting" > "$HIST_FILE"
+            echo "$counting" >"$HIST_FILE"
         fi
         find_vid "$counting"
     else
         find_vid "1"
-        echo "1" > "$HIST_FILE"
+        echo "1" >"$HIST_FILE"
     fi
 
     launch
 }
 
-shopt -s extglob;
+shopt -s extglob
 case "$1" in
-    +([0-9]) )
-        find_vid "$1"
-        launch
-        ;;
-    "movie")
-        find_vid
-        launch
-        ;;
-    "prev") play prev
-        ;;
-    "play") play
-        ;;
-    "next") play next
-        ;;
-    *) exit 1
-        ;;
++([0-9]))
+    find_vid "$1"
+    launch
+    ;;
+"movie")
+    find_vid
+    launch
+    ;;
+"prev")
+    play prev
+    ;;
+"play")
+    play
+    ;;
+"next")
+    play next
+    ;;
+*)
+    exit 1
+    ;;
 esac
-shopt -u extglob;
+shopt -u extglob

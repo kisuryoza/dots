@@ -5,14 +5,13 @@ $DEBUG && set -Eeuxo pipefail
 
 function rescan {
     nmcli device wifi rescan
-    nmcli -get-values IN-USE,SSID,SIGNAL device wifi list > /tmp/connection
+    nmcli -get-values IN-USE,SSID,SIGNAL device wifi list >/tmp/connection
     eww update wifi-list="$(getList)"
 }
 
 function getList {
     OUTPUT="{\"list\": ["
-    while IFS="" read -r line
-    do
+    while IFS="" read -r line; do
         IN_USE=$(echo "$line" | awk -F ":" '{print $1}')
         if [[ $IN_USE == "*" ]]; then IN_USE="true"; else IN_USE="false"; fi
         SSID=$(echo "$line" | awk -F ":" '{print $2}')
@@ -23,7 +22,7 @@ function getList {
         OUTPUT+="\"ssid\": \"$SSID\", "
         OUTPUT+="\"signal\": $SIGNAL"
         OUTPUT+="},"
-    done < /tmp/connection
+    done </tmp/connection
     OUTPUT=${OUTPUT::(-1)}
     OUTPUT+="]}"
     echo "$OUTPUT"
@@ -31,7 +30,7 @@ function getList {
 
 function toggle {
     IS_CONNECTED=$(nmcli dev | rg "wifi" | rg "connected")
-    if [ -n "$IS_CONNECTED" ]; then
+    if [[ -n "$IS_CONNECTED" ]]; then
         nmcli radio wifi off
     else
         nmcli radio wifi on
@@ -39,9 +38,9 @@ function toggle {
 }
 
 case $1 in
-    "rescan") rescan ;;
-    "getList") getList ;;
-    "toggle") toggle ;;
+"rescan") rescan ;;
+"getList") getList ;;
+"toggle") toggle ;;
 
-    *) exit 1 ;;
+*) exit 1 ;;
 esac

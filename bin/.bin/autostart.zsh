@@ -15,7 +15,7 @@ function start {
     fi
 
     # Notification daemon
-    [[ ! $(pgrep --exact dunst) ]] && dunst &> /dev/null &
+    [[ ! $(pgrep --exact dunst) ]] && dunst &>/dev/null &
 
     # Custom daemons
     [[ ! $(pgrep --full daemons/) ]] && fd -tx . ~/.bin/daemons/ -x {}
@@ -37,13 +37,13 @@ function start_X {
     xset dpms 130 130 130
 
     # Screen locker
-    [[ ! $(pgrep --exact xautolock) ]] && xautolock -time 2 -locker sxlock &> /dev/null &
+    [[ ! $(pgrep --exact xautolock) ]] && xautolock -time 2 -locker sxlock &>/dev/null &
 
     # Compositor
-    [[ ! $(pgrep --exact picom) ]] && picom &> /dev/null &
+    [[ ! $(pgrep --exact picom) ]] && picom &>/dev/null &
 
     # Screenshoter
-    [[ ! $(pgrep --exact flameshot) ]] && flameshot &> /dev/null &
+    [[ ! $(pgrep --exact flameshot) ]] && flameshot &>/dev/null &
 
     # Bar and widgets
     ln -sf ~/.local/bin/eww-x ~/.local/bin/eww
@@ -71,8 +71,8 @@ function start_Wayland {
 
 function launch_eww {
     [[ ! $(pgrep --exact eww) ]] && {
-        eww daemon &> /dev/null
-        eww open bar &> /dev/null
+        eww daemon &>/dev/null
+        eww open bar &>/dev/null
     } &
 }
 
@@ -97,14 +97,14 @@ function stop {
 }
 
 case "$1" in
-    "x")
-        start
-        start_X
-        ;;
-    "wayland")
-        start
-        start_Wayland
-        ;;
-    "stop")  stop   ;;
-    *)       exit 1 ;;
+"x")
+    start
+    start_X
+    ;;
+"wayland")
+    start
+    start_Wayland
+    ;;
+"stop") stop ;;
+*) exit 1 ;;
 esac

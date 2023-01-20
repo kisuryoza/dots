@@ -25,10 +25,9 @@ function night {
 }
 
 case $1 in
-    "day")      day     ;;
-    "evening")  evening ;;
-    "night")    night   ;;
+"day") day ;;
+"evening") evening ;;
+"night") night ;;
 
-    *) exit 1 ;;
+*) exit 1 ;;
 esac
-

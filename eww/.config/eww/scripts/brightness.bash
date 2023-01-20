@@ -22,33 +22,33 @@ function setBrightness {
     VAR=${VAR%.*}
     NUM=${VAR:1}
     case ${VAR:0:1} in
-        "-")
-            CHANGE=$(($(get) - NUM))
-            if [[ $CHANGE -lt 0 ]]; then
-                CHANGE=0
-            fi
-            echo $CHANGE > /sys/class/backlight/*/brightness
-            ;;
-        "+")
-            CHANGE=$(($(get) + NUM))
-            if [[ $CHANGE -gt $(get-max) ]]; then
-                CHANGE=$(get-max)
-            fi
-            echo $CHANGE > /sys/class/backlight/*/brightness
-            ;;
-        *) echo $VAR > /sys/class/backlight/*/brightness ;;
+    "-")
+        CHANGE=$(($(get) - NUM))
+        if [[ $CHANGE -lt 0 ]]; then
+            CHANGE=0
+        fi
+        echo $CHANGE >/sys/class/backlight/*/brightness
+        ;;
+    "+")
+        CHANGE=$(($(get) + NUM))
+        if [[ $CHANGE -gt $(get-max) ]]; then
+            CHANGE=$(get-max)
+        fi
+        echo "$CHANGE" >/sys/class/backlight/*/brightness
+        ;;
+    *) echo "$VAR" >/sys/class/backlight/*/brightness ;;
     esac
 }
 
 function setBrightnessMax {
-    cat /sys/class/backlight/*/max_brightness > /sys/class/backlight/*/brightness
+    cat /sys/class/backlight/*/max_brightness >/sys/class/backlight/*/brightness
 }
 
 case $1 in
-    "get") getBrightness ;;
-    "get-max") getBrightnessMax ;;
-    "set") setBrightness "$@" ;;
-    "set-max") setBrightnessMax ;;
+"get") getBrightness ;;
+"get-max") getBrightnessMax ;;
+"set") setBrightness "$@" ;;
+"set-max") setBrightnessMax ;;
 
-    *) exit 1 ;;
+*) exit 1 ;;
 esac

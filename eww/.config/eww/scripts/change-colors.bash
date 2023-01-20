@@ -23,8 +23,7 @@ function changeColorTags {
     sed -i "s|%{o#......}|%{o$color2}|g" "$1"
 }
 
-if [ -x "/usr/bin/wal" ];
-then
+if [[ -x "/usr/bin/wal" ]]; then
     [ -r "$HOME"/.cache/wal ] && rm -rf "$HOME"/.cache/wal
     wal -nste -i "$HOME"/.config/bg.*
     source "$HOME"/.cache/wal/colors.sh || echo "error" || exit 1
@@ -44,8 +43,7 @@ then
 
     changeColorTags "$MODULES"
 
-    if [[ -x "/usr/bin/leftwm" || -x "/usr/local/bin/leftwm" ]];
-    then
+    if [[ -x "/usr/bin/leftwm" || -x "/usr/local/bin/leftwm" ]]; then
         LEFTWM=~/.config/leftwm/themes/current/theme.toml
         LIQUID=~/.config/leftwm/themes/current/template-polybar.liquid
 

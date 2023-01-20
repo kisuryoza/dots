@@ -18,15 +18,15 @@ $DEBUG && set -ux
 function log {
     $DEBUG && set +ux
     case "$2" in
-        "err")
-            printf "%s[%s]%s\n" "${BOLD}${RED}" "$1" "${ESC}" >&2
-            ;;
-        "warn")
-            printf "%s[%s]%s\n" "${BOLD}${YELLOW}" "$1" "${ESC}"
-            ;;
-        *)
-            printf "%s[%s]%s\n" "${BOLD}${GREEN}" "$1" "${ESC}"
-            ;;
+    "err")
+        printf "%s[%s]%s\n" "${BOLD}${RED}" "$1" "${ESC}" >&2
+        ;;
+    "warn")
+        printf "%s[%s]%s\n" "${BOLD}${YELLOW}" "$1" "${ESC}"
+        ;;
+    *)
+        printf "%s[%s]%s\n" "${BOLD}${GREEN}" "$1" "${ESC}"
+        ;;
     esac
     if [[ -n "$3" ]]; then
         exit "$3"
@@ -68,7 +68,7 @@ function pack_in {
     log "Package size: $((SIZE / 1024 / 1024)) Mib"
 
     sed -Ei "s|^SIZE=.*|SIZE=$SIZE|" ./"$OUTPUT"
-    cat "$1" >> ./"$OUTPUT"
+    cat "$1" >>./"$OUTPUT"
 }
 
 # {{{ SquashFS
@@ -166,7 +166,7 @@ function pack_bin {
 
 function unpack_bin {
     log "Unpacking file as $DIR/$NAME"
-    tail --bytes="$SIZE" "$0" > "$DIR/$NAME"
+    tail --bytes="$SIZE" "$0" >"$DIR/$NAME"
     chmod u+x "$DIR/$NAME"
     "$DIR/$NAME"
 }
@@ -183,57 +183,56 @@ NAME="${NAME%.*}"
 LONG_OPTS=squash:,tar:,pack:,dest:,help
 SHORT_OPTS=s:t:p:d:h
 PARSED=$(getopt --options ${SHORT_OPTS} \
-                --longoptions ${LONG_OPTS} \
-                --name "$0" \
-                -- "$@")
+    --longoptions ${LONG_OPTS} \
+    --name "$0" \
+    -- "$@")
 eval set -- "${PARSED}"
 
 while true; do
     case "$1" in
-        -s|--squash)
-            pack_squash "$2"
-            ;;
-        -t|--tar)
-            pack_tar "$2"
-            ;;
-        -p|--pack)
-            pack_bin "$2"
-            ;;
-        -d|--dest)
-            if [[ ! -d "$2" ]]; then
-                log "$2 is not dir" err 1
-            fi
-            DIR="$2"
-            shift
-            ;;
-        -h|--help)
-            help
-            exit 0
-            ;;
-        --)
-            shift
-            break
-            ;;
-        *)
-            echo "Error while was passing the options"
-            help
-            exit 1
-            ;;
+    -s | --squash)
+        pack_squash "$2"
+        ;;
+    -t | --tar)
+        pack_tar "$2"
+        ;;
+    -p | --pack)
+        pack_bin "$2"
+        ;;
+    -d | --dest)
+        if [[ ! -d "$2" ]]; then
+            log "$2 is not dir" err 1
+        fi
+        DIR="$2"
+        shift
+        ;;
+    -h | --help)
+        help
+        exit 0
+        ;;
+    --)
+        shift
+        break
+        ;;
+    *)
+        echo "Error while was passing the options"
+        help
+        exit 1
+        ;;
     esac
 done
 # }}}
 
 case "$NAME" in
-    *"tar.gz"*)
-        untar
-        ;;
-    *"sqsh"*)
-        unsquash_mount
-        ;;
-    *"bin"*)
-        unpack_bin
-        ;;
+*"tar.gz"*)
+    untar
+    ;;
+*"sqsh"*)
+    unsquash_mount
+    ;;
+*"bin"*)
+    unpack_bin
+    ;;
 esac
 
 exit 0
-
