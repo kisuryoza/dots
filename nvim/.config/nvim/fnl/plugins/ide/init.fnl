@@ -14,6 +14,3 @@
  ;; A better annotation generator. Supports multiple languages and annotation conventions.
  (pack :danymat/neogen {:dependencies [:nvim-treesitter/nvim-treesitter]
                         :config #((setup! :neogen))})]
-
-;; A pretty window for previewing, navigating and editing your LSP locations in one place, inspired by vscode's peek preview.
-;; (pack :DNLHC/glance.nvim {:config #(require :glance)})

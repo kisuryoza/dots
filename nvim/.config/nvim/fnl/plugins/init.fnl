@@ -59,8 +59,6 @@
                                 :event "BufRead"})
  ;; Replace with regex
  (pack :nvim-pack/nvim-spectre {:config #((setup! :spectre))})
- ;; Convert selected text into an ASCII tree.
- (pack :xorid/asciitree.nvim {:cmd "AsciiTree"})
  ;; Draw ASCII diagrams
  (pack :jbyuki/venn.nvim {:cmd "VBox"})
  ;; A color highlighter
@@ -74,18 +72,9 @@
                                             (pack :folke/twilight.nvim {:config #((setup! :twilight))})]
                              :config #((setup! :zen-mode))
                              :cmd "ZenMode"})
- ;; Flow state reading in neovim
- (pack :nullchilly/fsread.nvim {:cmd ["FSRead" "FSClear" "FSToggle"]})
  ;; icons
  (pack :nvim-tree/nvim-web-devicons)
- ;; This plugin adds indentation guides to all lines (including empty lines)
- ;; (pack :lukas-reineke/indent-blankline.nvim {:config #((setup! :indent_blankline) {:filetype_exclude ["alpha"
- ;;                                                                                                      "help"
- ;;                                                                                                      "terminal"
- ;;                                                                                                      "dashboard"
- ;;                                                                                                      "lspinfo"
- ;;                                                                                                      "lsp-installer"
- ;;                                                                                                      "mason"]})
- ;;                                             :event "BufRead"})
  ;; calculator
  (pack :Apeiros-46B/qalc.nvim {:cmd ["Qalc" "QalcAttach"]})]
+ ;; Flow state reading in neovim
+ ;; (pack :nullchilly/fsread.nvim {:cmd ["FSRead" "FSClear" "FSToggle"]})

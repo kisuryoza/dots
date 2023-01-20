@@ -1,5 +1,6 @@
 (import-macros {: pack
-                : setup!} :macros)
+                : setup!
+                : cmd} :macros)
 
 ;; lsp config
 (local M
@@ -11,21 +12,21 @@
                                                (pack :lvimuser/lsp-inlayhints.nvim {:config #((setup! :lsp-inlayhints) {:inlay_hints {:type_hints {:prefix "=> "
                                                                                                                                                    :remove_colon_start true}
                                                                                                                                       :highlight "Comment"}})})
-                                               ;; VSCode bulb for neovim's built-in LSP
-                                               ;; (pack :kosayoda/nvim-lightbulb {:config #((setup! :nvim-lightbulb) {:sign {:enabled true :priority 100
-                                               ;;                                                                            :autocmd {:enabled true}}})})
-                                               ;; Tools for better development in rust using neovim's builtin lsp
-                                               ;; (pack :simrat39/rust-tools.nvim {:config #((setup! :rust-tools))})
+                                               ;; A pretty window for previewing, navigating and editing your LSP locations in one place
+                                               (pack :dnlhc/glance.nvim {:config #((setup! :glance))})
+                                               ;; shows code context
+                                               (pack :SmiteshP/nvim-navic)
+                                               ;; helps managing crates.io dependencies
+                                               (pack :saecki/crates.nvim {:config #((setup! :crates))
+                                                                          :event "BufRead Cargo.toml"})]
                                                ;; CompetiTest.nvim is a Neovim plugin to automate testcases management and checking for Competitive Programming
                                                ;; (pack :xeluxee/competitest.nvim {:dependencies [:MunifTanjim/nui.nvim]
                                                ;;                                  :config #((setup! :competitest))})]
-                                               ;; A neovim plugin that helps managing crates.io dependencies
-                                               (pack :saecki/crates.nvim {:config #((setup! :crates))
-                                                                          :event "BufRead Cargo.toml"})]
                                 :ft ["cpp" "rust" "fennel" "sh" "zsh"]}))
 
 (fn M.config []
   (local lspconfig (require :lspconfig))
+  (local navic (require :nvim-navic))
 
   (tset (require :lspconfig.configs) :fennel_language_server {:default_config {:cmd ["/home/alex/.local/bin/fennel-language-server"]
                                                                                :filetypes [:fennel]
@@ -39,26 +40,24 @@
                     (let [wk (require :which-key)]
                       (wk.register
                         {:l {:name "+LSP"
-                             :j {:name "+Jumps"
-                                 :D [vim.lsp.buf.declaration "Jumps to declaration of symbol"]
-                                 :d [vim.lsp.buf.definition "Jumps to definition of symbol"]}
+                             :R [(cmd "Glance references") "References"]
+                             :d [(cmd "Glance definitions") "Definitions"]
+                             :t [(cmd "Glance type_definitions") "Type definitions"]
+                             :i [(cmd "Glance implementations") "Implementations"]
 
-                             :l {:name "+Lists"
-                                 :i [vim.lsp.buf.implementation "Lists all implementations for symbol in quickfix window"]
-                                 :r [vim.lsp.buf.references "Lists all references to symbol in quickfix window"]}
-
+                             :r [vim.lsp.buf.rename "Renames all references to symbol"]
                              :K [vim.lsp.buf.hover "Shows hover info about symbol in floating window"]
                              :<C-k> [vim.lsp.buf.signature_help "Shows signature info about symbol in floating window"]
 
-                             :d [vim.lsp.buf.type_definition "Jumps to definition of type of symbol"]
-                             :r [vim.lsp.buf.rename "Renames all references to symbol"]
                              :a [vim.lsp.buf.code_action "Code action"]
 
                              :f [#(vim.lsp.buf.format {:async true}) "Formats buffer using attached (and optionally filtered) language server clients"]}}
                         {:prefix "<localleader>"
                          :buffer bufnr
                          :silent true
-                         :noremap true})))
+                         :noremap true}))
+                    (when client.server_capabilities.documentSymbolProvider
+                      (navic.attach client bufnr)))
         lsp_flags {:debounce_text_changes 150}]
 
     ;; (lspconfig.clangd.setup {:on_attach on_attach
@@ -77,7 +76,7 @@
        ;; :cmd ["rustup which --toolchain stable rust-analyzer"]})
 
     (lspconfig.bashls.setup
-      {:filetypes [:sh :zsh]
+      {:filetypes [:sh]
        :on_attach on_attach
        :flags lsp_flags
        :cmd ["node" "/usr/bin/bash-language-server" "start"]})
