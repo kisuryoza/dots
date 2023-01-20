@@ -80,4 +80,4 @@ source /usr/share/zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.
 source /usr/share/fzf/completion.zsh
 
 eval "$(starship init zsh)"
-task
+# task

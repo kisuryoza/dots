@@ -6,7 +6,7 @@
 
   Features:
 - Feline as a status line
-- Lazy loading with [[https://github.com/wbthomason/packer.nvim][packer]]
+- Lazy loading with [[https://github.com/folke/lazy.nvim][lazy.nvim]]
 - Dashboard greeter with [[https://github.com/goolord/alpha-nvim][alpha-nvim]]
 - LSP integration
 - DAP integration
@@ -18,9 +18,6 @@
 └── fnl
    ├── init.fnl         # The startup point to load the fennel configs
    ├── opts.fnl         # Sets vim options
-   ├── keybindings.fnl  # Sets basic keybindings
-   ├── colors.fnl       # Sets color scheme
-   ├── plugins.fnl      # Loads plugins and their specific configurations and does basic setups
    ├── macros.fnl       # Varios fennel macros
    └── plugins          # Plugin specific configurations
        └── ...
