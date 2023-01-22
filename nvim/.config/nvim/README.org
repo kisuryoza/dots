@@ -1,10 +1,9 @@
-
 * Overview
-- Configs are in [[https://fennel-lang.org/][Fennel]].
+Configs are in [[https://fennel-lang.org/][Fennel]].
 
-  Featured by [[https://github.com/rktjmp/hotpot.nvim][hotpot]] and wouldn't happen without [[https://github.com/eraserhd/parinfer-rust][parinfer]] for Lisps.
+Featured by [[https://github.com/udayvir-singh/tangerine.nvim][tangerine]] and wouldn't happen without [[https://github.com/eraserhd/parinfer-rust][parinfer]] for Lisps.
 
-  Features:
+Features:
 - Feline as a status line
 - Lazy loading with [[https://github.com/folke/lazy.nvim][lazy.nvim]]
 - Dashboard greeter with [[https://github.com/goolord/alpha-nvim][alpha-nvim]]
@@ -14,7 +13,7 @@
 * Structure
 #+begin_src sh :tangle no
 .
-├── init.lua            # Minimal bootstrap. On a fresh install autoinstalls plugin manager and hotpot, then the rest plugins
+├── init.lua            # Minimal bootstrap. On a fresh install autoinstalls plugin manager and tangerine, then the rest plugins
 └── fnl
    ├── init.fnl         # The startup point to load the fennel configs
    ├── opts.fnl         # Sets vim options
