@@ -10,13 +10,18 @@ end
 
 vim.cmd("colorscheme habamax")
 bootstrap("folke", "lazy.nvim")
-bootstrap("rktjmp", "hotpot.nvim")
+bootstrap("udayvir-singh", "tangerine.nvim")
 
-if pcall(require, "hotpot") then
-    require("hotpot").setup({
-        provide_require_fennel = false,
-        enable_hotpot_diagnostics = true,
-    })
+-- local config = vim.fn.stdpath [[config]]
+require "tangerine".setup({
+    -- vimrc  = config .. "/init.fnl",
+    -- source  = config .. "/fnl",
+    target  = vim.fn.stdpath [[cache]] .. "/lua",
+    rtpdirs = {"ftplugin"},
+    compiler = {
+        verbose = false,
+        hooks = {"onsave", "oninit"},
+    },
+})
 
-    require("init")
-end
+require("init")

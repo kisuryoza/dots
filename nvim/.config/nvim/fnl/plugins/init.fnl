@@ -2,7 +2,7 @@
                 : setup!} :macros)
 
 [{:dir "~/gitclone/parinfer-rust"}
- (pack :rktjmp/hotpot.nvim)
+ (pack :udayvir-singh/tangerine.nvim)
  (pack :nvim-lua/plenary.nvim)
 
  (pack :rebelot/kanagawa.nvim {:lazy true
