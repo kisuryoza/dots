@@ -26,13 +26,13 @@
  (require :plugins.snippets)
  ;; Create custom submodes and menus
  (require :plugins.hydra)
- ;; Orgmode clone
- (require :plugins.orgmode)
+ ;; organizes life in plain text
+ (require :plugins.neorg)
  ;; syntax highlighting
  (require :plugins.treesitter)
 
  ;; syntax for Fennel
- ;; (pack :bakpakin/fennel.vim)
+ (pack :jaawerth/fennel.vim)
  ;; syntax for yuck
  (pack :elkowar/yuck.vim)
  ;; general-purpose motion plugin

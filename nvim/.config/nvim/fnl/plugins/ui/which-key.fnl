@@ -55,6 +55,11 @@
            :l [(cmd "Gitsigns toggle_linehl") "Highlight lines"]
            :b [(cmd "Gitsigns toggle_current_line_blame") "Toggle line blame"]}
 
+       :n {:name "+Neorg"
+           :n [(cmd "Neorg") "Neorg"]
+           :w [(cmd "Neorg workspace notes") "Workspace 'notes'"]
+           :j [(cmd "Neorg journal") "Journal"]}
+
        :e ["<Plug>(leap-forward)" "Leap forward"]
        :E ["<Plug>(leap-backward)" "Leap backward"]}
       {:prefix "<localleader>"

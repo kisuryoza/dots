@@ -64,7 +64,7 @@
                                    {:name "path"}
                                    {:name "luasnip"}
                                    {:name "crates"}
-                                   {:name "orgmode"}]
+                                   {:name "neorg"}]
                                   [{:name "buffer"}])
 
      :formatting {:format (fn [_ vim_item]
