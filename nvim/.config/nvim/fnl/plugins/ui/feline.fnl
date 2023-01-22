@@ -1,7 +1,6 @@
 (import-macros {: pack} :macros)
 
-(local M
-  (pack :feline-nvim/feline.nvim))
+(local M (pack :feline-nvim/feline.nvim))
 
 (fn M.config []
   (fn get-color [group attr]

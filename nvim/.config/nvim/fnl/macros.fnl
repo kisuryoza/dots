@@ -1,7 +1,7 @@
 (λ pack [package ?options]
   (let [options (or ?options {})
         array (collect [k v (pairs options)]
-                       (values k v))]
+                (values k v))]
     (tset array 1 package)
     `,array))
 
@@ -9,9 +9,7 @@
   `(. (require ,module) :setup))
 
 (λ cmd [command]
-  (.. "<cmd>" command "<CR>"))
+  (.. :<cmd> command :<CR>))
 
+{: pack : setup! : cmd}
 
-{: pack
- : setup!
- : cmd}

@@ -49,7 +49,6 @@
    :undofile true
    :undodir (.. (os.getenv "XDG_CACHE_HOME") "/nvim/undo//")
    :history 100])
-   ;; :laststatus 3])
 
 (vim.opt.fillchars:append {:horiz "━"
                            :horizup "┻"
