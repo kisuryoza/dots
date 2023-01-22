@@ -14,8 +14,10 @@
                                                                                                                                       :highlight "Comment"}})})
                                                ;; A pretty window for previewing, navigating and editing your LSP locations in one place
                                                (pack :dnlhc/glance.nvim {:config #((setup! :glance))})
-                                               ;; shows code context
-                                               (pack :SmiteshP/nvim-navic)
+                                               ;; A VS Code like winbar for Neovim
+                                               (pack :utilyre/barbecue.nvim {:dependencies [;; shows code context
+                                                                                            "SmiteshP/nvim-navic"]
+                                                                             :config #((setup! :barbecue))})
                                                ;; helps managing crates.io dependencies
                                                (pack :saecki/crates.nvim {:config #((setup! :crates))
                                                                           :event "BufRead Cargo.toml"})]
@@ -37,7 +39,7 @@
   (local lspconfig (require :lspconfig))
   (local navic (require :nvim-navic))
 
-  (tset (require :lspconfig.configs) :fennel_language_server {:default_config {:cmd ["/home/alex/.local/bin/fennel-language-server"]
+  (tset (require :lspconfig.configs) :fennel_language_server {:default_config {:cmd [(.. (vim.fn.expand "~") "/.local/bin/fennel-language-server")]
                                                                                :filetypes [:fennel]
                                                                                :single_file_support true
                                                                                :root_dir (lspconfig.util.root_pattern :fnl)

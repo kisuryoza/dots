@@ -15,7 +15,6 @@
                  :warn (get-color "WarningMsg" "fg#")})
 
   (local feline (require :feline))
-  (local navic (require :nvim-navic))
 
   ; https://neovim.io/doc/user/builtin.html#mode()
   (local modes {:n "NORMAL"
@@ -118,10 +117,6 @@
                               :hl {:bg colors.bg2
                                    :fg colors.fg}}
                              {:provider file-name-label
-                              :hl {:bg colors.bg_dark
-                                   :fg colors.fg}}
-                             {:provider #(navic.get_location)
-                              :enabled #(navic.is_available)
                               :hl {:bg colors.bg_dark
                                    :fg colors.fg}}
                              {:hl {:bg colors.bg_dark
