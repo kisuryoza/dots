@@ -13,4 +13,5 @@
 
  ;; A better annotation generator. Supports multiple languages and annotation conventions.
  (pack :danymat/neogen {:dependencies [:nvim-treesitter/nvim-treesitter]
-                        :config #((setup! :neogen))})]
+                        :config #((setup! :neogen))
+                        :cmd "Neogen"})]

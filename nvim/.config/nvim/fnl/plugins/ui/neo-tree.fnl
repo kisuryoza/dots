@@ -6,10 +6,12 @@
                                                      "MunifTanjim/nui.nvim"]}))
 
 (fn M.config []
-  (let [tree (require :neo-tree)]
+  (vim.cmd "let g:neo_tree_remove_legacy_commands = 1")
+  (let [tree (require :neo-tree)
+        manager (require :neo-tree.sources.manager)]
     (tree.setup
       {:event_handlers [{:event "file_opened"
                          :handler (fn [_file_path]
-                                    (tree.close_all))}]})))
+                                    (manager.close_all))}]})))
 
 M

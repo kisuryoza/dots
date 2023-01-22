@@ -58,7 +58,8 @@
  (pack :kylechui/nvim-surround {:config #((setup! :nvim-surround))
                                 :event "BufRead"})
  ;; Replace with regex
- (pack :nvim-pack/nvim-spectre {:config #((setup! :spectre))})
+ (pack :nvim-pack/nvim-spectre {:lazy true
+                                :config #((setup! :spectre))})
  ;; Draw ASCII diagrams
  (pack :jbyuki/venn.nvim {:cmd "VBox"})
  ;; A color highlighter

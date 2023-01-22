@@ -22,9 +22,18 @@
                                                ;; CompetiTest.nvim is a Neovim plugin to automate testcases management and checking for Competitive Programming
                                                ;; (pack :xeluxee/competitest.nvim {:dependencies [:MunifTanjim/nui.nvim]
                                                ;;                                  :config #((setup! :competitest))})]
-                                :ft ["cpp" "rust" "fennel" "sh" "zsh"]}))
+                                :ft ["cpp" "rust" "fennel" "sh"]}))
 
 (fn M.config []
+  (vim.fn.sign_define :DiagnosticSignError
+                      {:text " " :texthl :DiagnosticSignError})
+  (vim.fn.sign_define :DiagnosticSignWarn
+                      {:text " " :texthl :DiagnosticSignWarn})
+  (vim.fn.sign_define :DiagnosticSignInfo
+                      {:text " " :texthl :DiagnosticSignInfo})
+  (vim.fn.sign_define :DiagnosticSignHint
+                      {:text "" :texthl :DiagnosticSignHint})
+
   (local lspconfig (require :lspconfig))
   (local navic (require :nvim-navic))
 

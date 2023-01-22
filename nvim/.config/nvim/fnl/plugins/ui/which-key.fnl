@@ -40,7 +40,7 @@
        :f {:name "+Files"
            :f [(cmd "Telescope find_files") "Find Files"]
            :r [(cmd "Telescope oldfiles") "Recent"]
-           :F [(cmd "Neotree toggle") "File Manager"]
+           :F [(cmd "Neotree toggle .") "File Manager"]
            :g [(cmd "Telescope live_grep") "Live Grep"]
            :R [(cmd "lua require('spectre').open()") "Regex replace"]}
 
