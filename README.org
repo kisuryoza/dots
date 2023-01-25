@@ -1,1 +1,12 @@
 My dot files
+
+#+html: <p align="center"><img src="https://user-images.githubusercontent.com/53265642/214617356-50583b00-770d-4e37-9245-0ba8a55e2f61.png" /></p>
+
+- Terminal: [[https://github.com/alacritty/alacritty][alacritty]]
+- Shell: [[https://www.zsh.org/][Zsh]]
+- Window Manager: [[https://github.com/leftwm/leftwm][LeftWM]]
+- Bar/Widget: [[https://github.com/elkowar/eww][eww]]
+- Compositor: [[https://github.com/yshui/picom][picom]]
+- Editor: [[https://github.com/neovim/neovim][neovim]]
+- Application Launcher: [[https://github.com/Cloudef/bemenu][bemenu]]
+- Notification Daemon: [[https://github.com/dunst-project/dunst][dunst]]

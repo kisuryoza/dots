@@ -1,17 +1,20 @@
 * Overview
+
+#+html: <p align="center"><img src="https://imgs.xkcd.com/comics/lisp_cycles.png" /></p>
+
 Configs are in [[https://fennel-lang.org/][Fennel]].
 
 Featured by [[https://github.com/udayvir-singh/tangerine.nvim][tangerine]] and wouldn't happen without [[https://github.com/eraserhd/parinfer-rust][parinfer]] for Lisps.
 
 Features:
 - Feline as a status line
-- Lazy loading with [[https://github.com/folke/lazy.nvim][lazy.nvim]]
+- Lazy loading of plugins with [[https://github.com/folke/lazy.nvim][lazy.nvim]]
 - Dashboard greeter with [[https://github.com/goolord/alpha-nvim][alpha-nvim]]
-- LSP integration
-- DAP integration
+- LSP integration (rust, c/cpp, bash, fennel)
+- DAP integration (rust, c/cpp)
 
 * Structure
-#+begin_src sh :tangle no
+#+BEGIN_EXAMPLE
 .
 ├── init.lua            # Minimal bootstrap. On a fresh install autoinstalls plugin manager and tangerine, then the rest plugins
 └── fnl
@@ -20,4 +23,8 @@ Features:
    ├── macros.fnl       # Varios fennel macros
    └── plugins          # Plugin specific configurations
        └── ...
-#+end_src
+#+END_EXAMPLE
+
+------
+
+_{endless WIP}
