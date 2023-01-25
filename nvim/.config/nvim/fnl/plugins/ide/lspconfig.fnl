@@ -76,23 +76,27 @@
                                     :noremap true}))
                     (when client.server_capabilities.documentSymbolProvider
                       (navic.attach client bufnr)))
-        lsp_flags {:debounce_text_changes 150}]
+        flags {:debounce_text_changes 150}
+        capabilities ((. (require :cmp_nvim_lsp) :default_capabilities))]
     ;; (lspconfig.clangd.setup {:on_attach on_attach
     ;;                          :flags lsp_flags})
     (lspconfig.ccls.setup {: on_attach
-                           :flags lsp_flags
+                           : flags
+                           : capabilities
                            :init_options {:compilationDatabaseDirectory :build
                                           :index {:threads 0}}
                            :clang {}})
-    (lspconfig.rust_analyzer.setup {: on_attach :flags lsp_flags})
+    (lspconfig.rust_analyzer.setup {: on_attach : flags : capabilities})
     ;; :cmd ["rustup which --toolchain stable rust-analyzer"]})
     (lspconfig.bashls.setup {:filetypes [:sh]
                              : on_attach
-                             :flags lsp_flags
+                             : flags
+                             : capabilities
                              :cmd [:node :/usr/bin/bash-language-server :start]})
     (lspconfig.fennel_language_server.setup {:filetypes [:fennel]
                                              : on_attach
-                                             :flags lsp_flags})))
+                                             : flags
+                                             : capabilities})))
 
 M
 

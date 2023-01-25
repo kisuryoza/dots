@@ -22,6 +22,7 @@
    ;; :colorcolumn "80"
 
    :number true
+   :numberwidth 3
    :foldmethod "marker"
    :hlsearch true
    :showmode false
