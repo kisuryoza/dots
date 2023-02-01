@@ -42,9 +42,10 @@
  ;; Smooth scrolling <C-u>, <C-d> ; <C-b>, <C-f> ; <C-y>, <C-e> ; zt, zz, zb
  (pack :karb94/neoscroll.nvim {:config #((setup! :neoscroll)) :event :BufRead})
  ;; magit for neovim
- (pack :TimUntersberger/neogit {:dependencies [;; Single tabpage interface for easily cycling through diffs for all modified files for any git rev
-                                               "sindrets/diffview.nvim"]
-                                :config #((setup! :neogit) {:integrations {:diffview true}})})
+ (pack :TimUntersberger/neogit
+       {:dependencies [;; Single tabpage interface for easily cycling through diffs for all modified files for any git rev
+                       :sindrets/diffview.nvim]
+        :config #((setup! :neogit) {:integrations {:diffview true}})})
  ;; A simple wrapper around :mksession.
  (pack :Shatur/neovim-session-manager
        {:config #((setup! :session_manager) {:autoload_mode (. (require :session_manager.config)

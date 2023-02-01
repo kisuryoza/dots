@@ -11,6 +11,10 @@ function find_vid {
     fi
 
     VID="$(fd --max-results=1 -e mkv -e mp4 "$pattern")"
+    if [[ "$VID" == "" ]]; then
+        echo "Couldn't find any video"
+        exit 1
+    fi
     SUB="$(fd --absolute-path --max-results=1 -e ass "$pattern")"
 }
 
@@ -48,9 +52,9 @@ function play {
                 ;;
             *) exit 2 ;;
             esac
-            echo "$counting" >"$HIST_FILE"
         fi
         find_vid "$counting"
+        echo "$counting" >"$HIST_FILE"
     else
         find_vid "1"
         echo "1" >"$HIST_FILE"

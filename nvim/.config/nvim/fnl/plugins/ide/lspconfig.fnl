@@ -86,8 +86,10 @@
                            :init_options {:compilationDatabaseDirectory :build
                                           :index {:threads 0}}
                            :clang {}})
-    (lspconfig.rust_analyzer.setup {: on_attach : flags : capabilities})
-    ;; :cmd ["rustup which --toolchain stable rust-analyzer"]})
+    (lspconfig.rust_analyzer.setup {: on_attach
+                                    : flags
+                                    : capabilities
+                                    :cmd [:rustup :run :stable :rust-analyzer]})
     (lspconfig.bashls.setup {:filetypes [:sh]
                              : on_attach
                              : flags

@@ -11,7 +11,7 @@
   (let [treesitter (require :nvim-treesitter.configs)]
     (var t {})
     (set t
-         {:ensure_installed [:c :cpp :bash :lua :fennel :rust :scss :org]
+         {:ensure_installed [:c :cpp :bash :lua :fennel :rust :scss :regex :markdown :markdown_inline]
           :auto_install true
           :ignore_install []
           :highlight {:enable true}
