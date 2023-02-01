@@ -1,14 +1,17 @@
 #!/usr/bin/env bash
 
 SCRIPT_PATH=$(realpath -s "${BASH_SOURCE[0]}")
+USER=$(echo "$SCRIPT_PATH" | awk -F '/' '{print $3}')
+HOME="/home/$USER"
+REPO_NAME=$(echo "$SCRIPT_PATH" | awk -F '/' '{print $4}')
+RESOURCES="$HOME/$REPO_NAME/post-install/deploy-cfg"
 
 [[ -z "$DEBUG" ]] && DEBUG=false
 $DEBUG && set -Eeuxo pipefail
 
-source "$HOME"/dot-files/bin/.bin/include/log
+source "$HOME"/"$REPO_NAME"/home/.bin/include/log
 
 function post_user {
-    RESOURCES="$HOME/dot-files/POST_INSTALL/deploy-cfg"
 
     declare -a AUR_PKG
     AUR_PKG+=(shellcheck-bin)
@@ -46,12 +49,13 @@ function post_user {
         mkdir -p "$DIR"
     done
 
-    log "Stowing dot-files"
-    mkdir ~/.librewolf ~/gitclone
-    fd --type=directory --max-depth=1 . ~/dot-files -x stow --dir=dot-files '{/}' \;
-    stow --dir=dot-files -D POST_INSTALL
+    log "Stowing $REPO_NAME"
+    mkdir ~/.librewolf ~/gitclones
+    cd ~/"$REPO_NAME" || log "Couldn't cd to ~/$REPO_NAME" err 1
+    stow -vt ~/.config config
+    stow -v home
 
-    log "Syncing some dot-files with root"
+    log "Syncing some $REPO_NAME with root"
     ~/.bin/sync-with-root.bash
 
     log "Installing Rust"
@@ -80,7 +84,7 @@ function post_user {
         sudo systemctl enable greetd.service
     fi
 
-    if pacman -Q mpv &>/dev/null; then
+    if [[ -x /usr/bin/mpv ]]; then
         git clone --depth 1 https://github.com/occivink/mpv-scripts.git /tmp/mpv-scripts \
             mv --recursive --target-directory="$HOME/.config/mpv/" /tmp/mpv-scripts/script-opts/ /tmp/mpv-scripts/scripts/
 
@@ -89,7 +93,7 @@ function post_user {
             fd --extension="glsl" . /tmp/Anime4K -x mv {} ~/.config/mpv/shaders
     fi
 
-    if pacman -Q xorg-xinit &>/dev/null; then
+    if [[ -x /usr/bin/startx ]]; then
         log "Installing sxlock"
         git clone --depth 1 https://github.com/lahwaacz/sxlock.git ~/gitclone/sxlock &&
             cd ~/gitclone/sxlock &&
@@ -100,13 +104,13 @@ function post_user {
             systemctl enable sxlock.service
     fi
 
-    if pacman -Q zathura &>/dev/null; then
+    if [[ -x /usr/bin/zathura ]]; then
         log "Installing zathura themes"
         git clone --depth 1 https://github.com/catppuccin/zathura /tmp/zathura \
             install -vDm 644 /tmp/zathura/src/* -t ~/.config/zathura/
     fi
 
-    if pacman -Q kvantum &>/dev/null; then
+    if [[ -x /usr/bin/kvantummanager ]]; then
         log "Installing Kvantum themes"
         git clone --depth 1 https://github.com/catppuccin/Kvantum /tmp/Kvantum &&
             mkdir -P ~/.config/Kvantum &&
@@ -114,26 +118,26 @@ function post_user {
             kvantummanager --set Catppuccin-Macchiato-Maroon
     fi
 
-    if pacman -Q handlr &>/dev/null; then
+    if [[ -x /usr/bin/handlr ]]; then
         handlr set 'inode/directory' thunar.desktop
+        handlr set 'text/*' nvim.desktop
         handlr set 'text/plain' nvim.desktop
         handlr set 'application/x-shellscript' nvim.desktop
+        handlr set 'audio/*' mpv.desktop
+        handlr set 'image/*' vimiv.desktop
         handlr set 'image/jpeg' vimiv.desktop
         handlr set 'image/png' vimiv.desktop
     fi
 
-    git clone https://gitlab.com/justAlex0/arch-deploy ~/.local/bin/arch-deploy
+    git clone https://github.com/justAlex0/arch-deploy ~/.local/bin/arch-deploy
 }
 
 function post_root {
-    local user="$1"
-    RESOURCES="/home/$user/dot-files/POST_INSTALL/deploy-cfg"
-
     log "Configuring pacman"
     sed -Ei 's|^#?MAKEFLAGS=.*|MAKEFLAGS="-j4"|' /etc/makepkg.conf
     install -vDm 644 "$RESOURCES"/hooks/* -t /etc/pacman.d/hooks
 
-    if pacman -Q nvim &>/dev/null; then
+    if [[ -x /usr/bin/nvim ]]; then
         log "Tweaking nvim.desktop"
         file="/usr/share/applications/nvim.desktop"
         sed -Ei 's|^Terminal.*|Terminal=false|' "$file"
@@ -146,10 +150,10 @@ function post_root {
             echo "options nvidia-drm modeset=1"
             echo "options nvidia NVreg_UsePageAttributeTable=1"
         } >/etc/modprobe.d/nvidia.conf
-        FILES=$(grep "FILES=" /etc/mkinitcpio.conf)
-        eval "$FILES"
-        FILES+=(/etc/modprobe.d/nvidia.conf)
-        sed -Ei "s|^#?FILES=.*|FILES=(${FILES[*]})|" /etc/mkinitcpio.conf
+        files=$(grep "FILES=" /etc/mkinitcpio.conf)
+        eval "$files"
+        files+=(/etc/modprobe.d/nvidia.conf)
+        sed -Ei "s|^#?FILES=.*|FILES=(${files[*]})|" /etc/mkinitcpio.conf
         mkinitcpio -p linux-zen || mkinitcpio -p linux
     fi
 
@@ -184,9 +188,8 @@ function post_root {
 }
 
 if [[ $(id -u) -eq 0 ]]; then
-    [[ -z "$1" ]] && exit 1
-    post_root "$1"
+    post_root
 else
-    sudo "$SCRIPT_PATH" "$USER"
+    sudo "$SCRIPT_PATH"
     post_user
 fi
