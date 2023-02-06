@@ -13,6 +13,7 @@ trap 'daemomKill' EXIT
 declare -a FILES REFRESH
 
 mapfile -t FILES < <(fd -e jpg -e png -e gif -L . ~/.local/share/wallpapers | sort -R)
+
 if [[ ${#FILES[@]} -eq 0 ]]; then
     exit 1
 fi
@@ -28,13 +29,13 @@ fi
 
 i=0
 while true; do
-    eval "$COMMAND ${FILES[i]}"
-
     mapfile -t REFRESH < <(fd -e jpg -e png -e gif -L . ~/.local/share/wallpapers)
     if [[ ${#REFRESH[@]} -ne ${#FILES[@]} ]]; then
         mapfile -t FILES < <(shuf -e "${REFRESH[@]}")
         echo "refresh"
     fi
+
+    $COMMAND "${FILES[i]}"
 
     ((i++))
     [[ i -gt ${#FILES[@]} ]] && i=0
