@@ -1,7 +1,7 @@
 (import-macros {: setup!} :macros)
 
-(require :opts)
-;; (require :statuscolumn)
+(require :configs.opts)
+;; (require :configs.statuscolumn)
 
 ((setup! :lazy) (require :plugins)
                 {:lockfile (.. (vim.fn.stdpath :data) :/lazy-lock.json)
@@ -31,6 +31,14 @@
 ;; Reload file for changes
 (vim.api.nvim_create_autocmd [:FocusGained :BufEnter]
                              {:pattern ["*"] :command :checktime})
+
+;; Formats rust files on save
+(local format-sync-grp (vim.api.nvim_create_augroup :Format {}))
+(vim.api.nvim_create_autocmd :BufWritePre
+                             {:pattern :*.rs
+                              :callback (fn []
+                                          (vim.lsp.buf.format {:timeout_ms 200}))
+                              :group format-sync-grp})
 
 ;; Wipes hidden buffers
 ;; (vim.cmd "autocmd BufReadPost * set bufhidden=wipe")

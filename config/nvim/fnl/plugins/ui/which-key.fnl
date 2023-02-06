@@ -41,7 +41,7 @@
                   :c {:name :+Code
                       :z [(cmd :ZenMode) :ZenMode]
                       :x [(cmd :TroubleToggle) "List of errors"]
-                      :u [(. undotree :toggle) :Undotree]}
+                      :u [#((. undotree :toggle)) :Undotree]}
                   :g {:name :+Git
                       :n [(cmd :Neogit) "Open Neogit"]
                       :l [(cmd "Gitsigns toggle_linehl") "Highlight lines"]

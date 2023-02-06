@@ -67,7 +67,7 @@
  ;; A color highlighter
  (pack :norcalli/nvim-colorizer.lua
        {:config #((setup! :colorizer) [:css :scss] {:css true})
-        :event :BufRead})
+        :ft [:css :scss]})
  ;; highlight and search for todo comments
  (pack :folke/todo-comments.nvim
        {:config #((setup! :todo-comments)) :event :BufRead})
