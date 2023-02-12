@@ -64,7 +64,6 @@ function post_user {
 
     RUSTUP="$CARGO_HOME/bin/rustup"
     $RUSTUP component add rust-analyzer
-    ln -sf "$(rustup which --toolchain stable rust-analyzer)" ~/.local/bin
 
     log "Installing paru"
     git clone --depth 1 https://aur.archlinux.org/paru.git ~/gitclone/paru &&

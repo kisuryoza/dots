@@ -89,7 +89,8 @@
     (lspconfig.rust_analyzer.setup {: on_attach
                                     : flags
                                     : capabilities
-                                    :settings {:rust-analyzer {:checkOnSave {:command "clippy"}}}})
+                                    :settings {:rust-analyzer {:checkOnSave {:command "clippy"}}}
+                                    :cmd [:rustup :run :stable :rust-analyzer]})
     (lspconfig.bashls.setup {:filetypes [:sh]
                              : on_attach
                              : flags
