@@ -56,7 +56,8 @@
  (pack :numToStr/Comment.nvim {:config #((setup! :Comment))})
  ;; autopairs
  (pack :m4xshen/autoclose.nvim
-       {:config #((setup! :autoclose) {}) :event :InsertEnter})
+       {:config #((setup! :autoclose) {:keys {"'" {:close false}}})
+        :event :InsertEnter})
  ;; Add/change/delete surrounding delimiter pairs with ease
  (pack :kylechui/nvim-surround {:config #((setup! :nvim-surround))
                                 :event :BufRead})

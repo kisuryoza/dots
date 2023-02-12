@@ -90,21 +90,26 @@
 
   (fn file-format []
     (let [label vim.bo.fileformat]
-      ;; (if (= label "unix")
-        (.. " " label " ")))
+      (.. " " (if (= label :unix) "󰌽"
+                  (= label :dos) "󰖳"
+                  label) " ")))
+
 
   (fn cursor-pos []
     (let [[_line col] (vim.api.nvim_win_get_cursor 0)]
-      (.. " " col " ")))
+      col))
 
   (fn pos-percent []
     (let [[line _col] (vim.api.nvim_win_get_cursor 0)
           lines (vim.api.nvim_buf_line_count 0)]
       (if (= line 1)
-        " Top "
+        "Top"
         (= line lines)
-        " Btm "
-        (.. " " (math.ceil (* 100 (/ line lines))) "%% "))))
+        "Btm"
+        (.. (math.ceil (* 100 (/ line lines))) "%%"))))
+
+  (fn pos []
+    (.. " " (cursor-pos) ":" (pos-percent) " "))
 
   (local components {:active {}
                      :inactive {}})
@@ -141,10 +146,7 @@
                              {:provider file-format
                               :hl {:bg colors.bg_dark
                                    :fg colors.fg}}
-                             {:provider cursor-pos
-                              :hl {:bg colors.bg2
-                                   :fg colors.fg}}
-                             {:provider pos-percent
+                             {:provider pos
                               :hl {:bg colors.bg2
                                    :fg colors.fg}}
                              {:provider file-type
