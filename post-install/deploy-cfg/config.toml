@@ -2,5 +2,5 @@
 vt = 1
 
 [default_session]
-command = "tuigreet -t -c startx"
+command = "tuigreet --time --cmd startx"
 user = "greeter"

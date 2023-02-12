@@ -9,10 +9,9 @@ RESOURCES="$HOME/$REPO_NAME/post-install/deploy-cfg"
 [[ -z "$DEBUG" ]] && DEBUG=false
 $DEBUG && set -Eeuxo pipefail
 
-source "$HOME"/"$REPO_NAME"/home/.bin/include/log
+source "$HOME"/"$REPO_NAME"/home/.bin/helper-func.sh
 
 function post_user {
-
     declare -a AUR_PKG
     AUR_PKG+=(shellcheck-bin)
     AUR_PKG+=(codelldb-bin) # A native debugger extension for VSCode based on LLDB.
@@ -93,7 +92,7 @@ function post_user {
             fd --extension="glsl" . /tmp/Anime4K -x mv {} ~/.config/mpv/shaders
     fi
 
-    if [[ -x /usr/bin/startx ]]; then
+    if is_in_path startx; then
         log "Installing sxlock"
         git clone --depth 1 https://github.com/lahwaacz/sxlock.git ~/gitclone/sxlock &&
             cd ~/gitclone/sxlock &&
@@ -104,13 +103,13 @@ function post_user {
             systemctl enable sxlock.service
     fi
 
-    if [[ -x /usr/bin/zathura ]]; then
+    if is_in_path zathura; then
         log "Installing zathura themes"
         git clone --depth 1 https://github.com/catppuccin/zathura /tmp/zathura \
             install -vDm 644 /tmp/zathura/src/* -t ~/.config/zathura/
     fi
 
-    if [[ -x /usr/bin/kvantummanager ]]; then
+    if is_in_path kvantummanager; then
         log "Installing Kvantum themes"
         git clone --depth 1 https://github.com/catppuccin/Kvantum /tmp/Kvantum &&
             mkdir -P ~/.config/Kvantum &&
@@ -118,7 +117,7 @@ function post_user {
             kvantummanager --set Catppuccin-Macchiato-Maroon
     fi
 
-    if [[ -x /usr/bin/handlr ]]; then
+    if is_in_path zathura; then
         handlr set 'inode/directory' thunar.desktop
         handlr set 'text/*' nvim.desktop
         handlr set 'text/plain' nvim.desktop
@@ -137,7 +136,7 @@ function post_root {
     sed -Ei 's|^#?MAKEFLAGS=.*|MAKEFLAGS="-j4"|' /etc/makepkg.conf
     install -vDm 644 "$RESOURCES"/hooks/* -t /etc/pacman.d/hooks
 
-    if [[ -x /usr/bin/nvim ]]; then
+    if is_in_path nvim; then
         log "Tweaking nvim.desktop"
         file="/usr/share/applications/nvim.desktop"
         sed -Ei 's|^Terminal.*|Terminal=false|' "$file"

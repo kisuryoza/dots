@@ -5,7 +5,7 @@ $DEBUG && set -Eeuxo pipefail
 
 SCRIPT="$(realpath -s "${BASH_SOURCE[0]}")"
 SCRIPT_DIR=$(dirname "$SCRIPT")
-source "$SCRIPT_DIR"/include/log
+source "$SCRIPT_DIR"/helper-func.sh
 
 if [[ ! -d "$HOME/.local/bin/" ]]; then
     mkdir --parents "$HOME/.local/bin/"
@@ -36,7 +36,7 @@ function eww {
 }
 
 function leftwm {
-    if pacman -Q xorg-server &>/dev/null; then
+    if is_in_path startx; then
         update "https://github.com/leftwm/leftwm"
 
         if [[ ! -f ~/.xinitrc ]]; then
