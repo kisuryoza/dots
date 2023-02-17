@@ -16,7 +16,6 @@ function post_user {
     AUR_PKG+=(shellcheck-bin)
     AUR_PKG+=(codelldb-bin) # A native debugger extension for VSCode based on LLDB.
     AUR_PKG+=(librewolf-bin)
-    AUR_PKG+=(webcord-bin)  # A Discord and Fosscord client made with the Electron API.
     AUR_PKG+=(freetube-bin) # An open source desktop YouTube player built with privacy in mind.
     AUR_PKG+=(catppuccin-gtk-theme-mocha ttf-material-design-icons-desktop-git ttf-comic-neue ttf-comic-mono-git)
     AUR_PKG+=(bibata-cursor-theme-bin)

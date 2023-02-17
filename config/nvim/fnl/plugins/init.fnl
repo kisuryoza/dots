@@ -21,6 +21,8 @@
  (require :plugins.cmp)
  ;; snippet engine
  (require :plugins.snippets)
+ ;; Smart and powerful comment plugin for neovim
+ ;; (pack :ziontee113/SnippetGenie {:config #((setup! :SnippetGenie))})
  ;; Create custom submodes and menus
  (require :plugins.hydra)
  ;; organizes life in plain text
