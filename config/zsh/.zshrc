@@ -18,6 +18,11 @@ autoload -Uz compinit
 compinit
 zstyle ':completion:*' menu select
 
+# disable sort when completing options of any command
+zstyle ':completion:complete:*:options' sort false
+
+zstyle ':completion:*:descriptions' format '%d'
+
 # create a zkbd compatible hash;
 # to add other keys to this hash, see: man 5 terminfo
 typeset -g -A key
@@ -74,10 +79,33 @@ colors
 source "$ZDOTDIR/functions.zsh"
 source "$ZDOTDIR/aliases.zsh"
 
-source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
-source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-source /usr/share/zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
-source /usr/share/fzf/completion.zsh
+if [[ $(id -u) -ne 0 ]]; then
+    if [[ -n $(whence -p fzf) ]]; then
+        source /usr/share/fzf/completion.zsh
+        source "$HOME"/.local/share/zsh/plugins/fzf-tab/fzf-tab.plugin.zsh
+        # zstyle ':fzf-tab:*' fzf-command sk
+        zstyle ':fzf-tab:complete:*:' fzf-preview '~/.config/zsh/fzf-preview.sh path'
+        zstyle ':fzf-tab:complete:systemctl-*:*' fzf-preview 'SYSTEMD_COLORS=1 systemctl status $word'
+        zstyle ':fzf-tab:complete:(g|b|d|p|freebsd-|)make:' fzf-preview '~/.config/zsh/fzf-preview.sh make'
+
+        zstyle ':fzf-tab:complete:git-(add|diff|restore):*' fzf-preview 'git diff $word | delta'
+        zstyle ':fzf-tab:complete:git-log:*' fzf-preview 'git log --color=always $word'
+        zstyle ':fzf-tab:complete:git-show:*' fzf-preview '~/.config/zsh/fzf-preview.sh git-show'
+        zstyle ':fzf-tab:complete:git-checkout:*' fzf-preview '~/.config/zsh/fzf-preview.sh git-checkout'
+        zstyle ':fzf-tab:complete:git-help:*' fzf-preview 'git help $word | bat --plain --language=man --color=always'
+
+        zstyle ':fzf-tab:complete:docker-container:argument-1' fzf-preview 'docker container $word --help | bat --plain --language=help --color=always'
+        zstyle ':fzf-tab:complete:docker-image:argument-1' fzf-preview 'docker image $word --help | bat --plain --language=help --color=always'
+        zstyle ':fzf-tab:complete:docker-inspect' fzf-preview 'docker inspect $word | bat --plain --language=json --color=always'
+        zstyle ':fzf-tab:complete:docker-(run|images):argument-1' fzf-preview 'docker images $word'
+        zstyle ':fzf-tab:complete:docker-help:argument-1' fzf-preview 'docker help $word | bat --plain --language=help --color=always'
+
+    # zstyle ':fzf-tab:complete:*:options' fzf-preview
+    # zstyle ':fzf-tab:complete:*:argument-1' fzf-preview
+    fi
+    source "$HOME"/.local/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+    source "$HOME"/.local/share/zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
+fi
 
 eval "$(starship init zsh)"
 # task

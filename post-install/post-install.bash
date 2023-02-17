@@ -75,18 +75,25 @@ function post_user {
     log "Installing packages from git..."
     ~/.bin/pkg-from-git.bash all
 
-    if pacman -Q greetd &>/dev/null; then
+    if is_in_path greetd; then
         log "Enabling greetd"
         sudo install -vDm 644 "$RESOURCES"/config.toml /etc/greetd/config.toml
         sudo systemctl enable greetd.service
     fi
 
-    if [[ -x /usr/bin/mpv ]]; then
-        git clone --depth 1 https://github.com/occivink/mpv-scripts.git /tmp/mpv-scripts \
-            mv --recursive --target-directory="$HOME/.config/mpv/" /tmp/mpv-scripts/script-opts/ /tmp/mpv-scripts/scripts/
+    (ZSH_PUGINS="$HOME/.local/share/zsh/plugins"
+    mkdir -p "$ZSH_PUGINS" && cd "$ZSH_PUGINS"
+    git clone https://github.com/Aloxaf/fzf-tab
+    git clone https://github.com/zsh-users/zsh-autosuggestions
+    git clone https://github.com/zdharma-continuum/fast-syntax-highlighting
+    )
 
-        git clone --depth 1 https://github.com/bloc97/Anime4K.git /tmp/Anime4K \
-            mkdir -p ~/.config/mpv/shaders \
+    if is_in_path mpv; then
+        git clone --depth 1 https://github.com/occivink/mpv-scripts.git /tmp/mpv-scripts &&
+            mv --target-directory="$HOME/.config/mpv/" /tmp/mpv-scripts/script-opts/ /tmp/mpv-scripts/scripts/
+
+        git clone --depth 1 https://github.com/bloc97/Anime4K.git /tmp/Anime4K &&
+            mkdir -p ~/.config/mpv/shaders &&
             fd --extension="glsl" . /tmp/Anime4K -x mv {} ~/.config/mpv/shaders
     fi
 
@@ -103,7 +110,7 @@ function post_user {
 
     if is_in_path zathura; then
         log "Installing zathura themes"
-        git clone --depth 1 https://github.com/catppuccin/zathura /tmp/zathura \
+        git clone --depth 1 https://github.com/catppuccin/zathura /tmp/zathura &&
             install -vDm 644 /tmp/zathura/src/* -t ~/.config/zathura/
     fi
 
@@ -111,7 +118,7 @@ function post_user {
         log "Installing Kvantum themes"
         git clone --depth 1 https://github.com/catppuccin/Kvantum /tmp/Kvantum &&
             mkdir -P ~/.config/Kvantum &&
-            mv --recursive /tmp/Kvantum/src/* ~/.config/Kvantum &&
+            mv /tmp/Kvantum/src/* ~/.config/Kvantum &&
             kvantummanager --set Catppuccin-Macchiato-Maroon
     fi
 
