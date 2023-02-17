@@ -58,6 +58,16 @@ function leftwm {
     fi
 }
 
+function allocscope {
+    update "https://github.com/matt-kimball/allocscope"
+
+    cargo build --release
+    install -vsDm 744 \
+        target/release/allocscope-trace \
+        target/release/allocscope-view \
+        -t ~/.local/bin
+}
+
 function parinfer {
     update "https://github.com/eraserhd/parinfer-rust"
     cargo build --release --features emacs
@@ -76,16 +86,10 @@ case $1 in
 "leftwm")
     leftwm
     ;;
-"parinfer")
-    parinfer
-    ;;
-"fennel-language-server")
-    fennel_language_server
-    ;;
-
 "all")
     eww
     leftwm
+    allocscope
     parinfer
     fennel_language_server
     ;;
