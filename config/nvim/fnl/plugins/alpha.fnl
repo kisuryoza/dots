@@ -40,29 +40,30 @@
                          :align_shortcut :right
                          :hl_shortcut :Keyword
                          :cursor 0
-                         :width 50
+                         :width 60
                          :spacing 1}})
         header {:type :text :opts {:position :center :hl :Type} :val textwal}
         buttons {:type :group
                  :opts {:spacing 1}
-                 :val [(button "" "> new file" :enew)
-                       (button "SPC f F" "> file manager" :NeoTreeFocus)
-                       (button "SPC s l" "> sessions"
-                               "SessionManager load_session")
-                       (button "SPC f r" "> recent files" "Telescope oldfiles")
-                       (button "SPC f f" "> find files" "Telescope find_files")
-                       (button "SPC s c" "> neovim config"
-                               "e $MYVIMRC | :cd %:p:h")]}
+                 :val [(button "" "> new file" :enew)]}
+                       ;; (button "SPC f F" "> file manager" :NeoTreeFocus)
+                       ;; (button "SPC f r" "> recent files" "Telescope oldfiles")
+                       ;; (button "SPC f f" "> find files" "Telescope find_files")
+                       ;; (button "SPC s c" "> neovim config"
+                       ;;         "e $MYVIMRC | :cd %:p:h")]}
         quotee {:type :text
                 :opts {:position :center :hl :Type}
-                :val "Well are those who rise in the early morn, while those late to bed I shall forewarn"}
-        config {:layout [{:type :padding :val 2}
-                         header
-                         {:type :padding :val 5}
-                         buttons
-                         quotee]
-                :opts {:margin 5}}]
-    ((. alpha :setup) config)))
+                :val "Well are those who rise in the early morn, while those late to bed I shall forewarn"}]
+    (each [_ data (pairs ((. (require :possession.query) :as_list)))]
+      (let [name data.name
+            hint data.cwd]
+        (table.insert buttons.val (button hint (.. "> " name) (.. "PossessionLoad " name)))))
+    ((. alpha :setup) {:layout [{:type :padding :val 2}
+                                header
+                                {:type :padding :val 5}
+                                buttons
+                                quotee]
+                       :opts {:margin 5}})))
 
 M
 

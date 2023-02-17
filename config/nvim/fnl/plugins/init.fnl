@@ -46,12 +46,10 @@
        {:dependencies [;; Single tabpage interface for easily cycling through diffs for all modified files for any git rev
                        :sindrets/diffview.nvim]
         :config #((setup! :neogit) {:integrations {:diffview true}})})
- ;; A simple wrapper around :mksession.
- (pack :Shatur/neovim-session-manager
-       {:config #((setup! :session_manager) {:autoload_mode (. (require :session_manager.config)
-                                                               :AutoloadMode
-                                                               :Disabled)
-                                             :autosave_last_session false})})
+ ;; Flexible session management
+ (pack :jedrzejboczar/possession.nvim
+       {:dependencies [:nvim-lua/plenary.nvim]
+        :config #((setup! :possession) {:autosave {:on_quit false}})})
  ;; Smart and powerful comment plugin for neovim
  (pack :numToStr/Comment.nvim {:config #((setup! :Comment))})
  ;; autopairs

@@ -6,7 +6,8 @@
   (set vim.o.timeout true)
   (set vim.o.timeoutlen 300)
   (let [wk (require :which-key)
-        undotree (require :undotree)]
+        undotree (require :undotree)
+        possession (require :possession.commands)]
     (wk.register {:<Esc> [(vim.api.nvim_replace_termcodes "<C-\\><C-n>" true
                                                           true true)
                           "Exit terminal mode"]}
@@ -21,16 +22,15 @@
     (wk.register {:<TAB> [(cmd :ToggleTerm) "Open Terminal"]
                   :s {:name :+Sessions
                       :c [(cmd "e $MYVIMRC | :cd %:p:h") "Edit Neovm config"]
-                      :l [(cmd "SessionManager load_session") "List sessions"]
-                      :s [(cmd "SessionManager save_current_session")
+                      :l [(cmd "Telescope possession list") "List sessions"]
+                      :s [#(possession.save (vim.fn.input "Session name: "))
                           "Save session"]
-                      :d [(cmd "SessionManager delete_session")
-                          "Delete session"]}
+                      :d [#(possession.delete) "Delete session"]}
                   :b {:name :+Buffers
                       :d [(cmd "lcd %:p:h") "Set local working dir"]
                       :D [(cmd "cd %:p:h") "Set global working dir"]
                       :b [(cmd "Telescope buffers") :Buffers]
-                      :q [(cmd :QalcAttach) "[B] to calc"]}
+                      :q [(cmd :QalcAttach) "Attach Qualc"]}
                   :f {:name :+Files
                       :f [(cmd "Telescope find_files") "Find Files"]
                       :r [(cmd "Telescope oldfiles") :Recent]
@@ -41,7 +41,8 @@
                   :c {:name :+Code
                       :z [(cmd :ZenMode) :ZenMode]
                       :x [(cmd :TroubleToggle) "List of errors"]
-                      :u [#((. undotree :toggle)) :Undotree]}
+                      :t [(cmd :TodoTrouble) "List of TODOs"]
+                      :u [#(undotree.toggle) :Undotree]}
                   :g {:name :+Git
                       :n [(cmd :Neogit) "Open Neogit"]
                       :l [(cmd "Gitsigns toggle_linehl") "Highlight lines"]
