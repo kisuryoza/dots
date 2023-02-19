@@ -59,5 +59,5 @@
                            :vertright "┣"
                            :verthoriz "╋"})
 
-(set vim.g.mapleader "\\")
-(set vim.g.maplocalleader " ")
+(set vim.g.mapleader " ")
+(set vim.g.maplocalleader "\\")

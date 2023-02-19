@@ -38,8 +38,8 @@
                              :ic {:query "@class.inner"
                                   :desc "Inner part of class"}}}
           :swap {:enable true
-                 :swap_next {:<localleader>csn "@parameter.inner"}
-                 :swap_previous {:<localleader>csp "@parameter.inner"}}
+                 :swap_next {:<leader>csn "@parameter.inner"}
+                 :swap_previous {:<leader>csp "@parameter.inner"}}
           :move {:enable true
                  :set_jumps true
                  :goto_next_start {"]m" {:query "@function.outer"
@@ -67,7 +67,7 @@
          {:highlight_definitions {:enable true :clear_on_cursor_move true}
           :highlight_current_scope {:enable false}
           :smart_rename {:enable true
-                         :keymaps {:smart_rename :<localleader>cr}}
+                         :keymaps {:smart_rename :<leader>cr}}
           :navigation {:enable false
                        :keymaps {:goto_definition :gnd
                                  :list_definitions :gnD

@@ -70,7 +70,7 @@
                                             "Code action"]
                                         :f [#(vim.lsp.buf.format {:async true})
                                             "Formats buffer using attached (and optionally filtered) language server clients"]}}
-                                   {:prefix :<localleader>
+                                   {:prefix :<leader>
                                     :buffer bufnr
                                     :silent true
                                     :noremap true}))

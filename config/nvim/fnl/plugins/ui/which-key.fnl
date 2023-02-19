@@ -52,7 +52,7 @@
                       :n [(cmd :Neorg) :Neorg]
                       :w [(cmd "Neorg workspace notes") "Workspace 'notes'"]
                       :j [(cmd "Neorg journal") :Journal]}}
-                 {:prefix :<localleader> :noremap false})))
+                 {:prefix :<leader> :noremap false})))
 
 M
 

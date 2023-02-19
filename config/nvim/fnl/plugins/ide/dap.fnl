@@ -70,7 +70,7 @@
                               "Set breakpoint with conditions"]}
                       :d {:r [#((. (. dap :repl) :open)) "Repl open"]
                           :l [#((. dap :run_last)) "Run last"]}}}
-                 {:prefix :<localleader> :silent true})))
+                 {:prefix :<leader> :silent true})))
 
 M
 
