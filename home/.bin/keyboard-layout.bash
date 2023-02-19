@@ -1,22 +1,8 @@
 #!/usr/bin/env bash
 
-if [[ "$1" == "CHILD" ]]; then
-    shift
-    $0 DAEMON "$@" &
-    exit 0
-fi
-
-if [[ "$1" != "DAEMON" ]]; then
-    setsid "$0" CHILD "$@" &
-    exit 0
-fi
-
-shift
-cd /
-umask 0
-exec 0<&-
-exec 1>&-
-exec 2>&-
+SCRIPT="$(realpath -s "${BASH_SOURCE[0]}")"
+SCRIPT_DIR=$(dirname "$SCRIPT")
+source "$SCRIPT_DIR"/daemons/init
 
 function switch_eww {
     case "$1" in

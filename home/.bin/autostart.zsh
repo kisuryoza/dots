@@ -29,8 +29,9 @@ function start {
 
 function start_X {
     # Keyboard layout
-    setxkbmap us,ru -option grp:win_space_toggle
-    setxkbmap us,ru -option caps:escape
+    setxkbmap -option grp:win_space_toggle -option caps:escape
+    setxkbmap -layout us,ru
+    # setxkbmap -layout us,ru -variant colemak,
 
     # Display Power Management Signaling
     xset s off
