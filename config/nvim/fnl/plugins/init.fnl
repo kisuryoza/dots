@@ -21,10 +21,8 @@
  (require :plugins.cmp)
  ;; snippet engine
  (require :plugins.snippets)
- ;; Smart and powerful comment plugin for neovim
+ ;; Snippet creation tool for Neovim
  ;; (pack :ziontee113/SnippetGenie {:config #((setup! :SnippetGenie))})
- ;; Create custom submodes and menus
- (require :plugins.hydra)
  ;; organizes life in plain text
  (require :plugins.neorg)
  ;; syntax highlighting
@@ -63,8 +61,6 @@
                                 :event :BufRead})
  ;; Replace with regex
  (pack :nvim-pack/nvim-spectre {:lazy true :config #((setup! :spectre))})
- ;; Draw ASCII diagrams
- (pack :jbyuki/venn.nvim {:cmd :VBox})
  ;; A color highlighter
  (pack :norcalli/nvim-colorizer.lua
        {:config #((setup! :colorizer) [:css :scss] {:css true})
