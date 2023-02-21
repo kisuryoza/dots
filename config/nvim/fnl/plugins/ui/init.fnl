@@ -1,9 +1,7 @@
 (import-macros {: pack : setup!} :macros)
 
-[;; A snazzy bufferline for Neovim
- (require :plugins.ui.bufferline)
- ;; A minimal, stylish and customizable statusline / winbar
- (require :plugins.ui.feline)
+[;; A minimal, stylish and customizable statusline / winbar / bufferline
+ (require :plugins.ui.heirline)
  ;; Git integration for buffers
  (require :plugins.ui.gitsigns)
  ;; manage the file system and other tree like structures
