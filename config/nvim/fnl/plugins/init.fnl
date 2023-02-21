@@ -51,7 +51,10 @@
        {:dependencies [:nvim-lua/plenary.nvim]
         :config #((setup! :possession) {:autosave {:on_quit false}})})
  ;; Smart and powerful comment plugin for neovim
- (pack :numToStr/Comment.nvim {:config #((setup! :Comment))})
+ (pack :numToStr/Comment.nvim {:config (fn []
+                                         ((setup! :Comment))
+                                         (let [ft (require :Comment.ft)]
+                                           (ft.set "fennel" ";;%s")))})
  ;; autopairs
  (pack :m4xshen/autoclose.nvim
        {:config #((setup! :autoclose) {:keys {"'" {:close false}}})
@@ -76,6 +79,8 @@
                              :cmd :ZenMode})
  ;; icons
  (pack :nvim-tree/nvim-web-devicons)
+ ;; hex editing
+ (pack :RaafatTurki/hex.nvim)
  ;; calculator
  (pack :Apeiros-46B/qalc.nvim {:cmd [:Qalc :QalcAttach]})]
  ;; Flow state reading in neovim
