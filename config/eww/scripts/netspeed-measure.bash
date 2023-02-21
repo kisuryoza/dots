@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-DEVICE=$(nmcli dev status | rg "connected" | awk '{print $1}')
+DEVICE=$(nmcli dev status | awk '/connected/ {if ($1 != "lo") print $1}')
 OLD_RX=-1
 OLD_TX=-1
 while true; do
