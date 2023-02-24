@@ -32,12 +32,12 @@
   (local align {:provider "%="})
   (local space {:provider " "})
   (local vim-mode {:init (fn [self]
-                           (set self.mode (vim.fn.mode 1))
-                           (when (not self.once)
-                             (vim.api.nvim_create_autocmd :ModeChanged
-                                                          {:command :redrawstatus
-                                                           :pattern "*:*o"})
-                             (set self.once true)))
+                           (set self.mode (vim.fn.mode 1)))
+                   ;;         (when (not self.once)
+                   ;;           (vim.api.nvim_create_autocmd :ModeChanged
+                   ;;                                        {:command :redrawstatus
+                   ;;                                         :pattern "*:*o"})
+                   ;;           (set self.once true))
                    ; https://neovim.io/doc/user/builtin.html#mode()
                    :static {:modes {:n [:N colors.green]
                                     :v [:V colors.cyan]
@@ -55,8 +55,8 @@
                                    " "))
                    :hl (fn [self]
                          (let [fg (or (?. self.modes self.mode 2) :gray)]
-                           {:bold true : fg}))
-                   :update [:ModeChanged]})
+                           {:bold true : fg}))})
+                   ;; :update [:ModeChanged]})
   (local git {:condition conditions.is_git_repo
               :hl {:fg colors.orange}
               :init (fn [self]
