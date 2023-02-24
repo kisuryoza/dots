@@ -1,21 +1,18 @@
 #!/usr/bin/env bash
 
 function find_vid {
-    local counting pattern
+    local counting
+    declare -a vids subs
     counting="$1"
-    if [[ -n "$counting" ]]; then
-        if [[ ${#counting} -eq 1 ]]; then
-            counting="0$1"
-        fi
-        pattern="( $counting.?.? )|(Ep?$counting)|(\[$counting\])|($counting\.)"
-    fi
 
-    VID="$(fd --max-results=1 -e mkv -e mp4 "$pattern")"
+    mapfile -t vids < <(fd -e mkv -e mp4)
+    mapfile -t subs < <(fd -e ass)
+    VID=${vids[counting]}
+    SUB=${subs[counting]}
     if [[ "$VID" == "" ]]; then
         echo "Couldn't find any video"
         exit 1
     fi
-    SUB="$(fd --absolute-path --max-results=1 -e ass "$pattern")"
 }
 
 function launch {
@@ -27,7 +24,7 @@ function launch {
     fi
 }
 
-function hist {
+function history {
     local cache dir hist_path
     cache="$HOME/.cache/mpv-history"
     [ ! -d "$cache" ] && mkdir "$cache"
@@ -39,9 +36,12 @@ function hist {
 
 function play {
     local counting
-    hist
+    history
     if [[ -r "$HIST_FILE" ]]; then
         counting=$(cat "$HIST_FILE")
+        if [[ -z "$counting" ]]; then
+            counting=0
+        fi
         if [[ -n "$1" ]]; then
             case "$1" in
             "prev")
@@ -56,8 +56,8 @@ function play {
         find_vid "$counting"
         echo "$counting" >"$HIST_FILE"
     else
-        find_vid "1"
-        echo "1" >"$HIST_FILE"
+        find_vid "0"
+        echo "0" >"$HIST_FILE"
     fi
 
     launch
@@ -81,6 +81,13 @@ case "$1" in
     ;;
 "next")
     play next
+    ;;
+"reset")
+    history
+    if [[ -e "$HIST_FILE" ]]; then
+        rm "$HIST_FILE"
+        echo "Deleted $HIST_FILE"
+    fi
     ;;
 *)
     exit 1
