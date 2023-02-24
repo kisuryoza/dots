@@ -80,7 +80,7 @@
  ;; icons
  (pack :nvim-tree/nvim-web-devicons)
  ;; hex editing
- (pack :RaafatTurki/hex.nvim)
+ (pack :RaafatTurki/hex.nvim {:config #((setup! :hex))})
  ;; calculator
  (pack :Apeiros-46B/qalc.nvim {:cmd [:Qalc :QalcAttach]})]
  ;; Flow state reading in neovim

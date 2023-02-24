@@ -126,11 +126,11 @@
                         :hl {:fg colors.diag_warn}}
                      3 {:provider (fn [self]
                                     (let [bufnr (if self.bufnr self.bufnr 0)]
-                                     (diag-count diag.severity.INFO bufnr "")))
+                                     (diag-count diag.severity.INFO bufnr "")))
                         :hl {:fg colors.diag_info}}
                      4 {:provider (fn [self]
                                     (let [bufnr (if self.bufnr self.bufnr 0)]
-                                     (diag-count diag.severity.HINT bufnr "")))
+                                     (diag-count diag.severity.HINT bufnr "")))
                         :hl {:fg colors.diag_hint}}})
                      ;; :update [:DiagnosticChanged]})
   (local file-encoding

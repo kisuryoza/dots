@@ -11,6 +11,10 @@ $DEBUG && set -Eeuxo pipefail
 
 source "$HOME"/"$REPO_NAME"/home/.bin/helper-func.sh
 
+function gitclone {
+    git clone --depth 1 "$1"
+}
+
 function post_user {
     declare -a AUR_PKG
     AUR_PKG+=(shellcheck-bin)
@@ -19,7 +23,6 @@ function post_user {
     AUR_PKG+=(freetube-bin) # An open source desktop YouTube player built with privacy in mind.
     AUR_PKG+=(catppuccin-gtk-theme-mocha ttf-material-design-icons-desktop-git ttf-comic-neue ttf-comic-mono-git)
     AUR_PKG+=(bibata-cursor-theme-bin)
-    AUR_PKG+=(zsh-fast-syntax-highlighting)
     AUR_PKG+=(downgrade rate-mirrors-bin)
     AUR_PKG+=(vimiv-qt)
     # AUR_PKG+=(xkb-switch-git) # Program that allows to query and change the XKB layout state
@@ -65,7 +68,7 @@ function post_user {
     $RUSTUP component add rust-analyzer
 
     log "Installing paru"
-    git clone --depth 1 https://aur.archlinux.org/paru.git ~/gitclone/paru &&
+    gitclone https://aur.archlinux.org/paru.git ~/gitclone/paru &&
         cd ~/gitclone/paru &&
         makepkg -si
 
@@ -75,33 +78,27 @@ function post_user {
     log "Installing packages from git..."
     ~/.bin/pkg-from-git.bash all
 
-    if is_in_path greetd; then
-        log "Enabling greetd"
-        sudo install -vDm 644 "$RESOURCES"/config.toml /etc/greetd/config.toml
-        sudo systemctl enable greetd.service
-    fi
-
     (ZSH_PUGINS="$HOME/.local/share/zsh/plugins"
     mkdir -p "$ZSH_PUGINS" && cd "$ZSH_PUGINS"
-    git clone https://github.com/Aloxaf/fzf-tab
-    git clone https://github.com/zsh-users/zsh-autosuggestions
-    git clone https://github.com/zdharma-continuum/fast-syntax-highlighting
+    gitclone https://github.com/Aloxaf/fzf-tab
+    gitclone https://github.com/zsh-users/zsh-autosuggestions
+    gitclone https://github.com/zdharma-continuum/fast-syntax-highlighting
+    gitclone https://github.com/nix-community/nix-zsh-completions
     )
 
     if is_in_path mpv; then
-        git clone --depth 1 https://github.com/occivink/mpv-scripts.git /tmp/mpv-scripts &&
+        gitclone https://github.com/occivink/mpv-scripts.git /tmp/mpv-scripts &&
             mv --target-directory="$HOME/.config/mpv/" /tmp/mpv-scripts/script-opts/ /tmp/mpv-scripts/scripts/
 
-        git clone --depth 1 https://github.com/bloc97/Anime4K.git /tmp/Anime4K &&
+        gitclone https://github.com/bloc97/Anime4K.git /tmp/Anime4K &&
             mkdir -p ~/.config/mpv/shaders &&
             fd --extension="glsl" . /tmp/Anime4K -x mv {} ~/.config/mpv/shaders
     fi
 
     if is_in_path startx; then
         log "Installing sxlock"
-        git clone --depth 1 https://github.com/lahwaacz/sxlock.git ~/gitclone/sxlock &&
+        gitclone https://github.com/lahwaacz/sxlock.git ~/gitclone/sxlock &&
             cd ~/gitclone/sxlock &&
-            patch sxlock.c "$RESOURCES"/sxlock.c.diff &&
             make &&
             sudo make install &&
             sudo install -vDm 644 "$RESOURCES"/sxlock.service /etc/systemd/system/sxlock.service &&
@@ -110,13 +107,13 @@ function post_user {
 
     if is_in_path zathura; then
         log "Installing zathura themes"
-        git clone --depth 1 https://github.com/catppuccin/zathura /tmp/zathura &&
+        gitclone https://github.com/catppuccin/zathura /tmp/zathura &&
             install -vDm 644 /tmp/zathura/src/* -t ~/.config/zathura/
     fi
 
     if is_in_path kvantummanager; then
         log "Installing Kvantum themes"
-        git clone --depth 1 https://github.com/catppuccin/Kvantum /tmp/Kvantum &&
+        gitclone https://github.com/catppuccin/Kvantum /tmp/Kvantum &&
             mkdir -P ~/.config/Kvantum &&
             mv /tmp/Kvantum/src/* ~/.config/Kvantum &&
             kvantummanager --set Catppuccin-Macchiato-Maroon
@@ -133,7 +130,7 @@ function post_user {
         handlr set 'image/png' vimiv.desktop
     fi
 
-    git clone https://github.com/justAlex0/arch-deploy ~/.local/bin/arch-deploy
+    gitclone https://github.com/justAlex0/arch-deploy ~/.local/bin/arch-deploy
 }
 
 function post_root {
