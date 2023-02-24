@@ -13,6 +13,9 @@ setopt PROMPT_SUBST
 
 bindkey -v
 
+source "$HOME"/.local/share/zsh/plugins/nix-zsh-completions/nix-zsh-completions.plugin.zsh
+fpath=("$HOME"/.local/share/zsh/plugins/nix-zsh-completions $fpath)
+
 zmodload zsh/complist
 autoload -Uz compinit
 compinit
