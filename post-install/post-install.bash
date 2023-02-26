@@ -44,7 +44,7 @@ function post_user {
 
     declare -a DIRS
     DIRS+=("$XDG_CONFIG_HOME" "$XDG_CACHE_HOME" "$XDG_DATA_HOME" "$XDG_STATE_HOME")
-    DIRS+=("$XDG_CONFIG_HOME/android/" "$XDG_DATA_HOME/gnupg/" "$XDG_CACHE_HOME/less/" "$XDG_DATA_HOME/wallpapers/" "$HOME/.local/bin/")
+    DIRS+=("$XDG_CONFIG_HOME/android/" "$XDG_CACHE_HOME/less/" "$XDG_DATA_HOME/wallpapers/" "$HOME/.local/bin/")
 
     for DIR in "${DIRS[@]}"; do
         mkdir -p "$DIR"

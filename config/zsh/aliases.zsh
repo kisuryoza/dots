@@ -8,12 +8,10 @@ alias emergency-update="sudo pacman -Sy archlinux-keyring && sudo pacman -Syu"
 
 alias ssc="sudo systemctl"
 #alias sscu="sudo systemctl --machine=${USER}@.host --user"
-alias sscu="sudo systemctl --user"
+alias scu="systemctl --user"
 alias jctl="journalctl -p 3 -xb"
 
 alias rg="rg --color=always"
-alias egrep="egrep --color=always"
-alias fgrep="fgrep --color=always"
 alias ip="ip -color=always"
 alias diff="diff -u --color=always"
 

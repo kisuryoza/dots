@@ -12,7 +12,6 @@ export BAT_THEME="gruvbox-dark"
 
 export ANDROID_HOME="$XDG_DATA_HOME"/android
 export CUDA_CACHE_PATH="$XDG_CACHE_HOME"/nv
-export GNUPGHOME="$XDG_DATA_HOME"/gnupg
 export LESSHISTFILE="$XDG_CACHE_HOME"/less/history
 
 # Rust
