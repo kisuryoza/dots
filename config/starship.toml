@@ -1,5 +1,6 @@
 format = """
- $username\
+ $nix_shell\
+$username\
 $hostname\
 $directory\
 $git_branch\
@@ -13,6 +14,9 @@ right_format = """
 $jobs\
 $cmd_duration\
 $status"""
+
+[nix_shell]
+format = '[$symbol$state( \($name\))]($style) '
 
 [username]
 format = '[$user]($style) '

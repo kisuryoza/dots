@@ -90,6 +90,7 @@ if [[ $(id -u) -ne 0 ]]; then
         zstyle ':fzf-tab:complete:*:' fzf-preview '~/.config/zsh/fzf-preview.sh path'
         zstyle ':fzf-tab:complete:systemctl-*:*' fzf-preview 'SYSTEMD_COLORS=1 systemctl status $word'
         zstyle ':fzf-tab:complete:(g|b|d|p|freebsd-|)make:' fzf-preview '~/.config/zsh/fzf-preview.sh make'
+        zstyle ':fzf-tab:complete:nix:' fzf-preview 'nix help $word | bat --plain --language=help --color=always'
 
         zstyle ':fzf-tab:complete:git-(add|diff|restore):*' fzf-preview 'git diff $word | delta'
         zstyle ':fzf-tab:complete:git-log:*' fzf-preview 'git log --color=always $word'
