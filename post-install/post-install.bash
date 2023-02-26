@@ -67,10 +67,12 @@ function post_user {
     RUSTUP="$CARGO_HOME/bin/rustup"
     $RUSTUP component add rust-analyzer
 
-    log "Installing paru"
-    gitclone https://aur.archlinux.org/paru.git ~/gitclone/paru &&
-        cd ~/gitclone/paru &&
-        makepkg -si
+    (
+        log "Installing paru"
+        gitclone https://aur.archlinux.org/paru-git.git /tmp/paru &&
+            cd /tmp/paru &&
+            makepkg -si
+    )
 
     log "Installing packages from AUR"
     paru -S --skipreview "${AUR_PKG[@]}" || log "AUR failed" err
@@ -109,13 +111,22 @@ EOF
     fi
 
     if is_in_path startx; then
-        log "Installing sxlock"
-        gitclone https://github.com/lahwaacz/sxlock.git ~/gitclone/sxlock &&
-            cd ~/gitclone/sxlock &&
-            make &&
-            sudo make install &&
-            sudo install -vDm 644 "$RESOURCES"/sxlock.service /etc/systemd/system/sxlock.service &&
-            systemctl enable sxlock.service
+        (
+            log "Installing sxlock"
+            gitclone https://github.com/lahwaacz/sxlock.git ~/gitclone/sxlock &&
+                cd ~/gitclone/sxlock &&
+                make &&
+                sudo make install &&
+                sudo install -vDm 644 "$RESOURCES"/sxlock.service /etc/systemd/system/sxlock.service &&
+                systemctl enable sxlock.service
+        )
+
+        (
+            log "Installing a cursor"
+            wget -O /tmp/cursor.tar.gz "$(curl -s https://api.github.com/repos/ful1e5/Bibata_Cursor/releases/latest | grep 'browser_' | cut -d\" -f4 | grep -E "Bibata-Original-Classic.tar.gz")" &&
+                cd ~/.icons &&
+                tar -xvf /tmp/cursor.tar.gz
+        )
     fi
 
     if is_in_path zathura; then
@@ -150,13 +161,6 @@ function post_root {
     log "Configuring pacman"
     sed -Ei 's|^#?MAKEFLAGS=.*|MAKEFLAGS="-j4"|' /etc/makepkg.conf
     install -vDm 644 "$RESOURCES"/hooks/* -t /etc/pacman.d/hooks
-
-    if is_in_path nvim; then
-        log "Tweaking nvim.desktop"
-        file="/usr/share/applications/nvim.desktop"
-        sed -Ei 's|^Terminal.*|Terminal=false|' "$file"
-        sed -Ei 's|^Exec.*|Exec=nvim GUI \%F|' "$file"
-    fi
 
     if pacman -Q nvidia-utils &>/dev/null; then
         log "Tweaking NVIDIA"
