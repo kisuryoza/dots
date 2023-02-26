@@ -25,5 +25,5 @@ if [[ "$XDG_SESSION_TYPE" == "wayland" ]]; then
 fi
 
 typeset -U path PATH
-path=(~/.local/bin ~/.bin "$CARGO_HOME"/bin $path)
+path=(~/.local/bin ~/.bin "$CARGO_HOME"/bin ~/.local/share/bob/nvim-bin $path)
 export PATH

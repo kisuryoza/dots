@@ -22,8 +22,8 @@ function post_user {
     AUR_PKG+=(librewolf-bin)
     AUR_PKG+=(freetube-bin) # An open source desktop YouTube player built with privacy in mind.
     AUR_PKG+=(catppuccin-gtk-theme-mocha ttf-material-design-icons-desktop-git ttf-comic-neue ttf-comic-mono-git)
-    AUR_PKG+=(bibata-cursor-theme-bin)
     AUR_PKG+=(downgrade rate-mirrors-bin)
+    AUR_PKG+=(bob-bin)      # A version manager for neovim
     AUR_PKG+=(vimiv-qt)
     # AUR_PKG+=(xkb-switch-git) # Program that allows to query and change the XKB layout state
     # AUR_PKG+=(thokr-git)      # A sleek typing tui written in rust
@@ -78,15 +78,28 @@ function post_user {
     log "Installing packages from git..."
     ~/.bin/pkg-from-git.bash all
 
-    (ZSH_PUGINS="$HOME/.local/share/zsh/plugins"
-    mkdir -p "$ZSH_PUGINS" && cd "$ZSH_PUGINS"
-    gitclone https://github.com/Aloxaf/fzf-tab
-    gitclone https://github.com/zsh-users/zsh-autosuggestions
-    gitclone https://github.com/zdharma-continuum/fast-syntax-highlighting
-    gitclone https://github.com/nix-community/nix-zsh-completions
+    log "Installing neovim"
+    sudo pacman -S --needed base-devel cmake unzip ninja tree-sitter curl
+    bob use nightly
+    cat <<EOF >"$HOME/.local/share/applications/nvim.desktop"
+[Desktop Entry]
+Name=nvim
+Exec=nvim-gui
+Type=Application
+EOF
+
+    (
+        log "Installing zsh plugins"
+        ZSH_PUGINS="$HOME/.local/share/zsh/plugins"
+        mkdir -p "$ZSH_PUGINS" && cd "$ZSH_PUGINS"
+        gitclone https://github.com/Aloxaf/fzf-tab
+        gitclone https://github.com/zsh-users/zsh-autosuggestions
+        gitclone https://github.com/zdharma-continuum/fast-syntax-highlighting
+        gitclone https://github.com/nix-community/nix-zsh-completions
     )
 
     if is_in_path mpv; then
+        log "Installing mpv additional features"
         gitclone https://github.com/occivink/mpv-scripts.git /tmp/mpv-scripts &&
             mv --target-directory="$HOME/.config/mpv/" /tmp/mpv-scripts/script-opts/ /tmp/mpv-scripts/scripts/
 

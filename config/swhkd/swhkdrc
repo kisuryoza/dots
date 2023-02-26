@@ -8,8 +8,7 @@ super + z
     thunar
 
 super + x
-    nvim GUI
-    #emacsclient -c -a 'emacs'
+    nvim-gui
 
 super + shift + z
     ~/.bin/launcher.zsh lock
