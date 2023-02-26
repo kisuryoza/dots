@@ -130,7 +130,7 @@
         (.. icon " " count))))
 
   (local lsp-status
-         [{:hl {:fg :black :bg colors.diag_error}
+         [{:hl {:fg colors.diag_error}
            :provider (fn [self]
                        (let [bufnr (or self.bufnr 0)]
                          (diag-count diag.severity.ERROR bufnr "")))}
@@ -145,7 +145,8 @@
           {:hl {:fg colors.diag_hint}
            :provider (fn [self]
                        (let [bufnr (or self.bufnr 0)]
-                         (diag-count diag.severity.HINT bufnr "")))}])
+                         (diag-count diag.severity.HINT bufnr "")))}
+          space])
   (local file-encoding
          {:hl {:bg colors.cyan}
           :provider (fn []

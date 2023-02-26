@@ -4,14 +4,14 @@
  (pack :udayvir-singh/tangerine.nvim)
  (pack :nvim-lua/plenary.nvim)
  (pack :rebelot/kanagawa.nvim
-       {:lazy true
-        :priority 1000
-        ;; :init #(vim.cmd "colorscheme kanagawa")
-        :config #((setup! :kanagawa) {:dimInactive true :globalStatus true})})
- (pack :folke/tokyonight.nvim
        {:lazy false
         :priority 1000
-        :init #(vim.cmd "colorscheme tokyonight-night")
+        :init #(vim.cmd "colorscheme kanagawa")
+        :config #((setup! :kanagawa) {:dimInactive true :globalStatus true})})
+ (pack :folke/tokyonight.nvim
+       {:lazy true
+        :priority 1000
+        ;; :init #(vim.cmd "colorscheme tokyonight-night")
         :config #((setup! :tokyonight) {:dim_inactive true})})
  (require :plugins.ui)
  (require :plugins.ide)

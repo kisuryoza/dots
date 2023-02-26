@@ -1,7 +1,6 @@
 (import-macros {: setup!} :macros)
 
 (require :configs.opts)
-;; (require :configs.statuscolumn)
 
 ((setup! :lazy) (require :plugins)
                 {:lockfile (.. (vim.fn.stdpath :data) :/lazy-lock.json)
