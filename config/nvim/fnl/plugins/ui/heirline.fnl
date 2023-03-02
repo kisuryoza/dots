@@ -129,6 +129,10 @@
       (when (and count (> count 0))
         (.. icon " " count))))
 
+  (local lsp-CodeAction
+         [{:hl {:fg colors.diag_error}
+           :provider (fn []
+                       (if vim.g.myvarLspCodeAction "💡" ""))}])
   (local lsp-status
          [{:hl {:fg colors.diag_error}
            :provider (fn [self]
@@ -206,6 +210,7 @@
                             git
                             file
                             align
+                            lsp-CodeAction
                             lsp-status
                             file-encoding
                             file-format
