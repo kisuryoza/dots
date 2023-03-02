@@ -11,7 +11,17 @@
   (let [treesitter (require :nvim-treesitter.configs)]
     (var t {})
     (set t
-         {:ensure_installed [:c :cpp :bash :lua :fennel :rust :scss :regex :markdown :markdown_inline]
+         {:ensure_installed [:c
+                             :cpp
+                             :bash
+                             :lua
+                             :fennel
+                             :rust
+                             :nix
+                             :scss
+                             :regex
+                             :markdown
+                             :markdown_inline]
           :auto_install true
           :ignore_install []
           :highlight {:enable true}
@@ -66,8 +76,7 @@
     (set t.refactor
          {:highlight_definitions {:enable true :clear_on_cursor_move true}
           :highlight_current_scope {:enable false}
-          :smart_rename {:enable true
-                         :keymaps {:smart_rename :<leader>cr}}
+          :smart_rename {:enable true :keymaps {:smart_rename :<leader>cr}}
           :navigation {:enable false
                        :keymaps {:goto_definition :gnd
                                  :list_definitions :gnD
@@ -79,4 +88,3 @@
     (treesitter.setup t)))
 
 M
-

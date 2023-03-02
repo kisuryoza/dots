@@ -41,4 +41,3 @@
 
 ;; Wipes hidden buffers
 ;; (vim.cmd "autocmd BufReadPost * set bufhidden=wipe")
-

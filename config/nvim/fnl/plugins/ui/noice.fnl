@@ -14,7 +14,7 @@
                     :inc_rename false
                     :lsp_doc_border false})
     (set t.views
-         {:cmdline_popup {:border {:style :none :padding [2 3]}
+         {:cmdline_popup {:border {:style :none :padding [1 3]}
                           :filter_options {}
                           :win_options {:winhighlight "NormalFloat:NormalFloat,FloatBorder:FloatBorder"}}})
     ;; (set t.routes [{:filter {:event :msg_show :kind "" :find :written}

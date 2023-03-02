@@ -19,7 +19,7 @@
        {:config #((setup! :toggleterm) {:direction :float}) :cmd :ToggleTerm})
  ;; Extensible Neovim Scrollbar
  (pack :petertriho/nvim-scrollbar
-       {:config #((setup! :scrollbar) {:excluded_filetypes [:neo-tree]})
+       {:config #((setup! :scrollbar) {:excluded_filetypes [:neo-tree :noice]})
         :event :BufRead})
  ;; manage undos as a tree
  (pack :jiaoshijie/undotree

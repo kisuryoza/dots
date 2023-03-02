@@ -18,7 +18,7 @@ alias diff="diff -u --color=always"
 #alias ls="ls -Alh --color=always"
 alias exa="exa --all --long --tree --level=1 --group --group-directories-first"
 
-alias cat="bat --paging=never"
+alias cat="bat -pp"
 
 alias xcd='cd "$(xplr --print-pwd-as-result)"'
 
