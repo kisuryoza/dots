@@ -39,7 +39,8 @@
                       :R [(cmd "lua require('spectre').open()")
                           "Regex replace"]}
                   :c {:name :+Code
-                      :z [(cmd :ZenMode) :ZenMode]
+                      :a [vim.lsp.buf.code_action "Code actions"]
+                      :f [#(vim.lsp.buf.format {:async true}) "Format buffer"]
                       :x [(cmd :TroubleToggle) "List of errors"]
                       :t [(cmd :TodoTrouble) "List of TODOs"]
                       :u [#(undotree.toggle) :Undotree]}
@@ -55,4 +56,3 @@
                  {:prefix :<leader> :noremap false})))
 
 M
-

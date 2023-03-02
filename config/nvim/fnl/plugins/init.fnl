@@ -71,12 +71,6 @@
  ;; highlight and search for todo comments
  (pack :folke/todo-comments.nvim
        {:config #((setup! :todo-comments)) :event :BufRead})
- ;; Distraction-free coding
- (pack :folke/zen-mode.nvim {:dependencies [;; dims inactive portions of the code
-                                            (pack :folke/twilight.nvim
-                                                  {:config #((setup! :twilight))})]
-                             :config #((setup! :zen-mode))
-                             :cmd :ZenMode})
  ;; icons
  (pack :nvim-tree/nvim-web-devicons)
  ;; hex editing
