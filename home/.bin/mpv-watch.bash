@@ -5,8 +5,8 @@ function find_vid {
     declare -a vids subs
     counting="$1"
 
-    mapfile -t vids < <(fd -e mkv -e mp4)
-    mapfile -t subs < <(fd -e ass)
+    mapfile -t vids < <(fd -e mkv -e mp4 | sort)
+    mapfile -t subs < <(fd -e ass -e srt | sort)
     VID=${vids[counting]}
     SUB=${subs[counting]}
     if [[ "$VID" == "" ]]; then
@@ -66,7 +66,7 @@ function play {
 shopt -s extglob
 case "$1" in
 +([0-9]))
-    find_vid "$1"
+    find_vid $(($1 - 1))
     launch
     ;;
 "movie")

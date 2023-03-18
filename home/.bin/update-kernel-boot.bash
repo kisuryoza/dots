@@ -30,8 +30,6 @@ function run_root {
     [[ ! -r "/etc/mkinitcpio.d/linux.preset.backup" ]] && mv /etc/mkinitcpio.d/linux.preset /etc/mkinitcpio.d/linux.preset.backup
 
     log "Creating linux preset for mkinitcpio"
-    local splash
-    splash="/usr/share/systemd/bootctl/splash-arch.bmp"
     {
         echo "ALL_config=\"/etc/mkinitcpio.conf\""
         echo "ALL_kver=\"/boot/vmlinuz-linux\""
@@ -40,8 +38,7 @@ function run_root {
         echo "PRESETS=('default')"
 
         echo "default_image=\"/boot/initramfs-linux.img\""
-        echo "default_efi_image=\"$ESP/EFI/BOOT/bootx64.efi\""
-        echo "default_options=\"--splash $splash\""
+        echo "default_uki=\"$ESP/EFI/BOOT/bootx64.efi\""
 
         # echo "fallback_image=\"/boot/initramfs-linux-fallback.img\""
         # echo "fallback_efi_image=\"$ESP/EFI/Linux/linux-fallback.efi\""

@@ -17,8 +17,10 @@
          {:cmdline_popup {:border {:style :none :padding [1 3]}
                           :filter_options {}
                           :win_options {:winhighlight "NormalFloat:NormalFloat,FloatBorder:FloatBorder"}}})
-    ;; (set t.routes [{:filter {:event :msg_show :kind "" :find :written}
-    ;;                 :opts {:skip true}}])
+    (set t.routes [{:view :notify :filter {:event :msg_showmode}}])
+                   ;; Hide written messages
+                   ;; {:filter {:event :msg_show :kind "" :find :written}
+                   ;;  :opts {:skip true}}])
     (noice.setup t)))
 
 M

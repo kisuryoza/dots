@@ -103,6 +103,7 @@ EOF
     if is_in_path mpv; then
         log "Installing mpv additional features"
         gitclone https://github.com/occivink/mpv-scripts.git /tmp/mpv-scripts &&
+            rm /tmp/mpv-scripts/scripts/blur-edges.lua &&
             mv --target-directory="$HOME/.config/mpv/" /tmp/mpv-scripts/script-opts/ /tmp/mpv-scripts/scripts/
 
         gitclone https://github.com/bloc97/Anime4K.git /tmp/Anime4K &&

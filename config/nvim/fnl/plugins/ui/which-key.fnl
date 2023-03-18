@@ -29,8 +29,7 @@
                   :b {:name :+Buffers
                       :d [(cmd "lcd %:p:h") "Set local working dir"]
                       :D [(cmd "cd %:p:h") "Set global working dir"]
-                      :b [(cmd "Telescope buffers") :Buffers]
-                      :q [(cmd :QalcAttach) "Attach Qualc"]}
+                      :b [(cmd "Telescope buffers") :Buffers]}
                   :f {:name :+Files
                       :f [(cmd "Telescope find_files") "Find Files"]
                       :r [(cmd "Telescope oldfiles") :Recent]

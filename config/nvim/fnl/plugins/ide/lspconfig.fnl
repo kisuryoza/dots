@@ -15,9 +15,6 @@
                                ;; A pretty window for previewing, navigating and editing your LSP locations in one place
                                (pack :dnlhc/glance.nvim
                                      {:config #((setup! :glance))})
-                               ;; CompetiTest.nvim is a Neovim plugin to automate testcases management and checking for Competitive Programming
-                               ;; (pack :xeluxee/competitest.nvim {:dependencies [:MunifTanjim/nui.nvim]
-                               ;;                                  :config #((setup! :competitest))})]
                                ;; helps managing crates.io dependencies
                                (pack :saecki/crates.nvim
                                      {:config #((setup! :crates))

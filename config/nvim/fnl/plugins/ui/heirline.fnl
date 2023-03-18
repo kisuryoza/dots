@@ -209,8 +209,8 @@
   (local active-statusline [vim-mode
                             git
                             file
-                            align
                             lsp-CodeAction
+                            align
                             lsp-status
                             file-encoding
                             file-format
