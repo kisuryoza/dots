@@ -84,7 +84,7 @@ function update_cover {
         return
     fi
     # retrieve the album cover directly from the song
-    ffmpeg -i "$file" /tmp/song-cover.jpg -y
+    ffmpeg -i "$file" /tmp/song-cover.jpg -y || rm "/tmp/song-cover.jpg"
     if [[ -e "/tmp/song-cover.jpg" ]]; then
         eww_update music-cover "/tmp/song-cover.jpg"
         return

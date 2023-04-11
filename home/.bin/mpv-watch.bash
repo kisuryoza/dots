@@ -1,27 +1,34 @@
 #!/usr/bin/env bash
 
+declare -a SUBS
+
 function find_vid {
-    local counting
-    declare -a vids subs
+    declare -a subs
+    local counting pattern
     counting="$1"
 
-    mapfile -t vids < <(fd -e mkv -e mp4 | sort)
-    mapfile -t subs < <(fd -e ass -e srt | sort)
-    VID=${vids[counting]}
-    SUB=${subs[counting]}
+    if [[ -n "$counting" ]]; then
+        if [[ ${#counting} -eq 1 ]]; then
+            counting="0$1"
+        fi
+        pattern="( $counting.?.? )|(Ep?$counting )|(\[$counting\])|($counting\.)"
+    fi
+
+    VID="$(fd --max-results=1 -e mkv -e mp4 "$pattern")"
     if [[ "$VID" == "" ]]; then
         echo "Couldn't find any video"
         exit 1
     fi
+
+    mapfile -t subs < <(fd --absolute-path -e ass -e srt "$pattern")
+    for sub in "${subs[@]}"; do
+        SUBS+=(--sub-file="$sub")
+    done
 }
 
 function launch {
     echo "$VID"
-    if [[ -n "$SUB" ]]; then
-        mpv "$VID" --sub-file="$SUB"
-    else
-        mpv "$VID"
-    fi
+    mpv "$VID" "${SUBS[@]}"
 }
 
 function history {
@@ -56,8 +63,8 @@ function play {
         find_vid "$counting"
         echo "$counting" >"$HIST_FILE"
     else
-        find_vid "0"
-        echo "0" >"$HIST_FILE"
+        find_vid "1"
+        echo "1" >"$HIST_FILE"
     fi
 
     launch
@@ -66,7 +73,7 @@ function play {
 shopt -s extglob
 case "$1" in
 +([0-9]))
-    find_vid $(($1 - 1))
+    find_vid "$1"
     launch
     ;;
 "movie")
@@ -90,7 +97,10 @@ case "$1" in
     fi
     ;;
 *)
-    exit 1
+    history
+    if [[ -e "$HIST_FILE" ]]; then
+        cat "$HIST_FILE"
+    fi
     ;;
 esac
 shopt -u extglob

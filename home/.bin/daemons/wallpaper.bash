@@ -35,7 +35,8 @@ while true; do
         echo "refresh"
     fi
 
-    $COMMAND "${FILES[i]}"
+    ln -sf "${FILES[i]}" /tmp/wallpaper
+    $COMMAND /tmp/wallpaper
 
     ((i++))
     [[ i -gt ${#FILES[@]} ]] && i=0

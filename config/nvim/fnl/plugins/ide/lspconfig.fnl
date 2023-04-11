@@ -41,7 +41,7 @@
                                  ;; (print (vim.inspect result))
                                  (var has_actions false)
                                  (each [_client_id request_result (pairs result)]
-                                   (when (and request_result
+                                   (when (and (. request_result :result)
                                               (not (vim.tbl_isempty (. request_result
                                                                        :result))))
                                      (set has_actions true)))
@@ -110,8 +110,6 @@
     (lspconfig.fennel_language_server.setup {: on_attach
                                              : flags
                                              : capabilities})
-    (lspconfig.nil_ls.setup {: on_attach
-                             : flags
-                             : capabilities})))
+    (lspconfig.nil_ls.setup {: on_attach : flags : capabilities})))
 
 M

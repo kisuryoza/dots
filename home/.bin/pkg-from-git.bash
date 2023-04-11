@@ -27,7 +27,7 @@ function update {
 function eww {
     update "https://github.com/elkowar/eww"
 
-    cargo build --release
+    cargo build --release --no-default-features --features x11
     install -vsDm 744 target/release/eww ~/.local/bin/eww-x
     if pacman -Q gtk-layer-shell &>/dev/null; then
         cargo build --release --no-default-features --features=wayland

@@ -112,4 +112,4 @@ if [[ $(id -u) -ne 0 ]]; then
 fi
 
 eval "$(starship init zsh)"
-# task
+task

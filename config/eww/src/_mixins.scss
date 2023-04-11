@@ -1,3 +1,5 @@
+@use "src/colors";
+
 @mixin bar-button($color: colors.$foreground-primary) {
   //background-color: colors.$background-secondary;
   border-radius: 0.3em;

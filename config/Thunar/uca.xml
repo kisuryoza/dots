@@ -60,4 +60,20 @@
 	<text-files/>
 	<video-files/>
 </action>
+<action>
+	<icon>link</icon>
+	<name>Follow link</name>
+	<submenu></submenu>
+	<unique-id>1679673884398275-1</unique-id>
+	<command>thunar $(realpath %f)</command>
+	<description></description>
+	<range>*</range>
+	<patterns>*</patterns>
+	<directories/>
+	<audio-files/>
+	<image-files/>
+	<other-files/>
+	<text-files/>
+	<video-files/>
+</action>
 </actions>

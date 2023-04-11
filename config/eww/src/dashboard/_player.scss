@@ -1,7 +1,7 @@
 @use "defaults";
 
-@use "../colors" as colors;
-@use "../mixins" as mixins;
+@use "src/colors";
+@use "src/mixins";
 
 .dashboard-player-cover {
   background-position: center;
