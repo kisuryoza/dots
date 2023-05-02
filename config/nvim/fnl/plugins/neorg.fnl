@@ -8,11 +8,11 @@
 (fn M.config []
   (let [neorg (require :neorg)]
     (neorg.setup {:load {:core.defaults {}
-                         :core.norg.completion {:config {:engine :nvim-cmp}}
+                         :core.completion {:config {:engine :nvim-cmp}}
                          :core.integrations.nvim-cmp {}
-                         :core.norg.concealer {}
-                         :core.norg.dirman {:config {:workspaces {:notes "~/Sync/neorg"}}}
-                         :core.norg.journal {:config {:strategy :flat}}}})))
+                         :core.concealer {}
+                         :core.dirman {:config {:workspaces {:notes "~/Sync/neorg"}}}
+                         :core.journal {:config {:strategy :flat}}}})))
 
 M
 

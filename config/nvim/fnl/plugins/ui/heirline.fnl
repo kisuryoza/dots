@@ -149,7 +149,7 @@
           {:hl {:fg colors.diag_hint}
            :provider (fn [self]
                        (let [bufnr (or self.bufnr 0)]
-                         (diag-count diag.severity.HINT bufnr "")))}
+                         (diag-count diag.severity.HINT bufnr "")))}
           space])
   (local file-encoding
          {:hl {:bg colors.cyan}
@@ -261,7 +261,7 @@
          {:hl (fn [self] (if self.is_active :TabLineSel :TabLine))
           :provider (fn [self] (.. "%" self.tabnr "T " self.tabpage " %T"))})
   ;; provides an icon to close current tab
-  (local tabpage-close {:hl :TabLine :provider "%999X  %X"})
+  (local tabpage-close {:hl :TabLine :provider "%999X  %X"})
   (local tab-pages
          {1 align
           2 (utils.make_tablist tabpage)

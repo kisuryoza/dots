@@ -41,5 +41,5 @@ while true; do
     ((i++))
     [[ i -gt ${#FILES[@]} ]] && i=0
 
-    sleep $((60 * 1))
+    sleep $((30 * 1))
 done

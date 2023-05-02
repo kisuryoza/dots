@@ -20,15 +20,20 @@ function find_vid {
         exit 1
     fi
 
-    mapfile -t subs < <(fd --absolute-path -e ass -e srt "$pattern")
+    mapfile -t subs < <(fd -e ass -e srt "$pattern")
     for sub in "${subs[@]}"; do
-        SUBS+=(--sub-file="$sub")
+        OPTIONS+=(--sub-file="$sub")
+    done
+
+    mapfile -t dubs < <(fd -e mp3 "$pattern")
+    for dub in "${dubs[@]}"; do
+        OPTIONS+=(--audio-file="$dub")
     done
 }
 
 function launch {
     echo "$VID"
-    mpv "$VID" "${SUBS[@]}"
+    mpv "$VID" "${OPTIONS[@]}"
 }
 
 function history {

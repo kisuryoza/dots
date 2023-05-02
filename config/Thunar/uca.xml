@@ -65,7 +65,7 @@
 	<name>Follow link</name>
 	<submenu></submenu>
 	<unique-id>1679673884398275-1</unique-id>
-	<command>thunar $(realpath %f)</command>
+	<command>thunar &quot;$(realpath %f)&quot;</command>
 	<description></description>
 	<range>*</range>
 	<patterns>*</patterns>
