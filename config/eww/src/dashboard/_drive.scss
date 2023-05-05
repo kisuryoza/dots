@@ -4,16 +4,16 @@
 @use "src/mixins";
 
 .drive scale trough {
-  background-color: colors.$black;
-  border-radius: defaults.$border-radius;
-  min-width: 125px - defaults.$border-radius;
+    background-color: colors.$black;
+    border-radius: defaults.$border-radius;
+    min-width: 125px - defaults.$border-radius;
 }
 
 .drive scale trough highlight {
-  background-color: colors.$background-primary;
-  border-radius: defaults.$border-radius;
+    background-color: colors.$background-primary;
+    border-radius: defaults.$border-radius;
 }
 
 .drive-icon {
-  color: colors.$background-secondary;
+    color: colors.$background-secondary;
 }

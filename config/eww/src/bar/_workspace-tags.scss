@@ -2,14 +2,14 @@
 @use "src/mixins";
 
 .workspace-tag-mine {
-  color: colors.$yellow;
+    color: colors.$yellow;
 }
 .workspace-tag-visible {
-  color: colors.$red;
+    color: colors.$red;
 }
 .workspace-tag-busy {
-  color: colors.$red;
+    color: colors.$red;
 }
 .workspace-tag {
-  color: colors.$background-secondary;
+    color: colors.$background-secondary;
 }

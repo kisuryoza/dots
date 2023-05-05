@@ -3,25 +3,26 @@
 (include "src/bar/variables.yuck")
 
 (defwidget bar []
-  (centerbox :class "bar" :orientation "v"
-    (bar-left)
-    (bar-center)
-    (bar-right)))
+  (centerbox :class "bar"
+             :orientation "v"
+             (bar-left)
+             (bar-center)
+             (bar-right)))
 
 (defwidget bar-left []
   (box :valign "start"
        :halign "center"
-       :spacing 10
+       :spacing 5
        :orientation "v"
        :space-evenly false
-    (launcher)))
+       (launcher)))
 
 (defwidget bar-center []
   (box :valign "center"
        :halign "center"
        :orientation "v"
        :space-evenly false
-    (literal :content {wm-tags})))
+       (literal :content {wm-tags})))
 
 (defwidget bar-right []
   (box :valign "end"
@@ -29,129 +30,121 @@
        :spacing 5
        :orientation "v"
        :space-evenly false
-    (keyboardLayout)
-    (network)
-    (battery)
-    (time)))
+       (keyboardLayout)
+       (network)
+       (battery)
+       (time)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defwidget launcher []
   (eventbox :onhover "${EWW_CMD} update isLauncherUnderHover=true"
             :onhoverlost "${EWW_CMD} update isLauncherUnderHover=false"
-    (box :spacing 10
-         :space-evenly false
-      (button :class "button-launch"
-              :onclick "~/.config/eww/scripts/dashboard.bash &"
-        (box
-          (label :text "󰺔"))))))
-;                 (revealer :transition "slideright"
-;                          :reveal isLauncherUnderHover
-;                          :duration "350ms"
-;                          (box :spacing 10
-;                                  :space-evenly false
-;                                  (button :class "button-launch-1"
-;                                               :onclick "/usr/bin/librewolf &> /dev/null &"
-;                                               (label :text "󰖟"))
-;                                  (button :class "button-launch-2"
-;                                               :onclick "/usr/bin/telegram-desktop &> /dev/null &"
-;                                               (label :text "󰵅"))
-;                                  (button :class "button-launch-3"
-;                                               :onclick "gtk4-launch steam.desktop &> /dev/null &"
-;                                               (label :text "󰓓"))
-;                                  (button :class "button-launch-4"
-;                                               :onclick "/usr/bin/pragha &> /dev/null &"
-;                                               (label :text "󰝚"))
-;                                  (button :class "button-launch-5"
-;                                               :onclick "/usr/bin/qbittorrent &> /dev/null &"
-;                                               (label :text "󱦳"))
-;                                  (button :class "button-launch-1"
-;                                               :onclick "/usr/bin/keepassxc &> /dev/null &"
-;                                               (label :text "󰌆"))))))))
+            (box :spacing 0
+                 :orientation "v"
+                 :space-evenly false
+                 (button :class "button-launch"
+                         :onclick "~/.config/eww/scripts/dashboard.bash &"
+                         (label :text "󰺔"))
+                 (revealer :transition "slidedown"
+                           :reveal isLauncherUnderHover
+                           :duration "350ms"
+                           (box :spacing 1
+                                :orientation "v"
+                                ;; :space-evenly false
+                                (button :class "button-launch-1"
+                                        :onclick "fork.bash /usr/bin/librewolf"
+                                        (label :text "󰖟"))
+                                (button :class "button-launch-2"
+                                        :onclick "fork.bash /usr/bin/keepassxc"
+                                        (label :text "󰌆"))
+                                (button :class "button-launch-3"
+                                        :onclick "fork.bash /usr/bin/freetube"
+                                        (label :text "󰕧"))
+                                (button :class "button-launch-4"
+                                        :onclick "fork.bash /usr/bin/steam"
+                                        (label :text "󰊴"))
+                                (button :class "button-launch-5"
+                                        :onclick "fork.bash /usr/bin/qbittorrent"
+                                        (label :text "󰳛")))))))
 
 (defwidget workspaces []
   (for entry in {workspaces-list["list"]}
-    (box :valign "center"
-         :halign "center"
-         :spacing 10
-         :orientation "v"
-         :space-evenly true
-      (label :class {entry["busy"] ? "workspace-tag-mine" : "workspace-tag-visible"}
-             :text {entry["active"] ? "󰜋" : "󰜌"}))))
+       (box :valign "center"
+            :halign "center"
+            :spacing 10
+            :orientation "v"
+            :space-evenly true
+            (label :class {entry["busy"] ? "workspace-tag-mine" : "workspace-tag-visible"}
+                   :text {entry["active"] ? "󰜋" : "󰜌"}))))
 
 (defwidget keyboardLayout []
- (button :class "button-keyboard"
-         ; :onclick "~/.bin/keyboard-layout.bash"
-         (label :text keyboardLayout)))
+  (button :class "button-keyboard"
+          ;; :onclick "~/.bin/keyboard-layout.bash"
+          (label :text keyboardLayout)))
 
 (defwidget network []
   (eventbox :onhover "${EWW_CMD} update isNetworkUnderHover=true"
             :onhoverlost "${EWW_CMD} update isNetworkUnderHover=false"
-    (box :orientation "v"
-         :space-evenly false
-      (revealer :transition "slidedown"
-                :reveal isNetworkUnderHover
-                :duration "350ms"
-        (box :orientation "v"
-            :space-evenly false
-          (label :text {eth-speed[0]})
-          (label :text "󰯎 ")
-          (label :text {eth-speed[1]})))
-      (button :class "button-net"
-              :onclick "bash -c 'if [ $(${EWW_CMD} get isWIFIOpen) == true ]; then ${EWW_CMD} close wifi; ${EWW_CMD} update isWIFIOpen=false; else ${EWW_CMD} open wifi; ${EWW_CMD} update isWIFIOpen=true; eww update wifi-list=\"$(~/.config/eww/scripts/wifi.bash getList)\"; fi;'"
-        (label :text {connection == -1 ? "󰤨" :
-                      connection == 0 ? "󰤮" :
-                      connection < 25 ? "󰤟" :
-                      connection < 50 ? "󰤢" :
-                      connection < 75 ? "󰤥" : "󰤨"})))))
+            (box :orientation "v"
+                 :space-evenly false
+                 (revealer :transition "slidedown"
+                           :reveal isNetworkUnderHover
+                           :duration "350ms"
+                           (box :orientation "v"
+                                :space-evenly false
+                                (label :text {eth-speed[0]})
+                                (label :text "󰯎 ")
+                                (label :text {eth-speed[1]})))
+                 (button :class "button-net"
+                         :onclick "bash -c 'if [ $(${EWW_CMD} get isWIFIOpen) == true ]; then ${EWW_CMD} close wifi; ${EWW_CMD} update isWIFIOpen=false; else ${EWW_CMD} open wifi; ${EWW_CMD} update isWIFIOpen=true; eww update wifi-list=\"$(~/.config/eww/scripts/wifi.bash getList)\"; fi;'"
+                         (label :text {connection == -1 ? "󰤨" : connection == 0 ? "󰤮" : connection < 25 ? "󰤟" : connection < 50 ? "󰤢" : connection < 75 ? "󰤥" : "󰤨"})))))
 
 (defwidget wifi []
   (box :valign "top"
        :halign "center"
        :orientation "v"
        :space-evenly false
-    (button :class "button-net"
-            :onclick '~/.config/eww/scripts/wifi.bash rescan'
-      (label :text "󰓦"))
-    (box :valign "center"
-         :halign "center"
-         :orientation "v"
-         :space-evenly false
-      (for entry in {wifi-list["list"]}
-        (box
-          (label :text {entry["ssid"]})
-          (label :text {entry["signal"] == 0 ? "󰢿" :
-                        entry["signal"] < 40 ? "󰢼" :
-                        entry["signal"] < 70 ? "󰢽" : "󰢾"})
-          (button :class "button-net"
-                  :onclick '~/.config/eww/scripts/wifi.bash connect "${entry["ssid"]}"'
-            (label :text "󰁓")))))))
+       (button :class "button-net"
+               :onclick '~/.config/eww/scripts/wifi.bash rescan'
+               (label :text "󰓦"))
+       (box :valign "center"
+            :halign "center"
+            :orientation "v"
+            :space-evenly false
+            (for entry in {wifi-list["list"]}
+                 (box
+                   (label :text {entry["ssid"]})
+                   (label :text {entry["signal"] == 0 ? "󰢿" : entry["signal"] < 40 ? "󰢼" : entry["signal"] < 70 ? "󰢽" : "󰢾"})
+                   (button :class "button-net"
+                           :onclick '~/.config/eww/scripts/wifi.bash connect "${entry["ssid"]}"'
+                           (label :text "󰁓")))))))
 
 (defwidget battery []
   (eventbox :onhover "${EWW_CMD} update isBatteryUnderHover=true"
             :onhoverlost "${EWW_CMD} update isBatteryUnderHover=false"
-    (box :orientation "v"
-         :space-evenly false
-      (revealer :transition "slidedown"
-                :reveal isBatteryUnderHover
-                :duration "350ms"
-        (label :text "${battery} %"))
-      (button :class "button-net"
-        (box :valign "center"
-             :halign "center"
-             :orientation "v"
-             :space-evenly false
-          (label :text battery-icon))))))
+            (box :orientation "v"
+                 :space-evenly false
+                 (revealer :transition "slidedown"
+                           :reveal isBatteryUnderHover
+                           :duration "350ms"
+                           (label :text "${battery} %"))
+                 (button :class "button-net"
+                         (box :valign "center"
+                              :halign "center"
+                              :orientation "v"
+                              :space-evenly false
+                              (label :text battery-icon))))))
 
 (defwidget time []
   (button :class "button-time"
           :onclick "bash -c 'if [ $(${EWW_CMD} get isCalendarOpen) == true ]; then ${EWW_CMD} close calendar; ${EWW_CMD} update isCalendarOpen=false; else ${EWW_CMD} open calendar; ${EWW_CMD} update isCalendarOpen=true; fi;'"
-    (box :valign "center"
-         :halign "center"
-         :orientation "v"
-         :space-evenly false
-      (label :text hours)
-      (label :text minutes))))
+          (box :valign "center"
+               :halign "center"
+               :orientation "v"
+               :space-evenly false
+               (label :text hours)
+               (label :text minutes))))
 
 (defwidget calendar-custom []
   (box :class "window-calendar-box"
@@ -159,13 +152,13 @@
        :halign "center"
        :orientation "v"
        :space-evenly false
-    (label :class "calendar-title"
-           :valign "end"
-           :text time-long)
-    (label :class "calendar-title"
-           :valign "center"
-           :text date)
-    (calendar)))
+       (label :class "calendar-title"
+              :valign "end"
+              :text time-long)
+       (label :class "calendar-title"
+              :valign "center"
+              :text date)
+       (calendar)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

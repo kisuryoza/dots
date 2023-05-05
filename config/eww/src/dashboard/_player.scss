@@ -4,30 +4,30 @@
 @use "src/mixins";
 
 .dashboard-player-cover {
-  background-position: center;
-  background-size: cover;
-  border-radius: defaults.$border-radius;
-  margin: 1em;
-  padding: 7em;
+    background-position: center;
+    background-size: cover;
+    border-radius: defaults.$border-radius;
+    margin: 1em;
+    padding: 7em;
 }
 
 .dashboard-player-title {
-  font-size: 1.2em;
+    font-size: 1.2em;
 }
 
 .dashboard-player-button {
-  @include mixins.dashboard-button($color: colors.$magenta);
+    @include mixins.dashboard-button($color: colors.$magenta);
 }
 
 .dashboard-player-progress scale trough {
-  background-color: colors.$background-secondary;
-  border-radius: defaults.$border-radius;
-  margin: 1em;
-  min-height: 10px;
-  min-width: 15em;
+    background-color: colors.$background-secondary;
+    border-radius: defaults.$border-radius;
+    margin: 1em;
+    min-height: 10px;
+    min-width: 15em;
 }
 
 .dashboard-player-progress scale trough highlight {
-  background-color: colors.$magenta;
-  border-radius: defaults.$border-radius;
+    background-color: colors.$magenta;
+    border-radius: defaults.$border-radius;
 }

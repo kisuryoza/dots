@@ -10,18 +10,23 @@
 (defvar workspaces-list "[]")
 (defvar wifi-list "[]")
 
-(deflisten wm-tags :initial ""
+(deflisten wm-tags
+  :initial ""
   "~/.config/eww/scripts/workspaces-tags.bash")
 
-(deflisten eth-speed :initial "[0, 0]"
+(deflisten eth-speed
+  :initial "[0, 0]"
   "~/.config/eww/scripts/netspeed-measure.bash")
 
-(defpoll hours :interval "1s"
+(defpoll hours
+  :interval "1s"
   "date +%H")
 
-(defpoll minutes :interval "1s"
+(defpoll minutes
+  :interval "1s"
   "date +%M")
 
-(defpoll date :interval "1s"
+(defpoll date
+  :interval "1s"
   "date '+%A, %d/%m'")
 

@@ -1,12 +1,10 @@
-@use "defaults";
-
 @use "src/colors";
 @use "src/mixins";
 
 .wifi {
-  background-color: colors.$background-primary;
-  border-right: 3px solid colors.$black;
-  border-bottom: 3px solid colors.$black;
-  border-radius: defaults.$border-radius;
-  margin: 5px;
+    background-color: colors.$background-primary;
+    border-right: 3px solid colors.$black;
+    border-bottom: 3px solid colors.$black;
+    border-radius: 15px;
+    margin: 5px;
 }

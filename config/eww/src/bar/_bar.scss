@@ -6,23 +6,43 @@
 @use "workspace-tags";
 
 .bar {
-  background-color: colors.$background-primary;
+    background-color: colors.$background-primary;
 }
 
 .button-launch {
-  @include mixins.bar-button();
+    @include mixins.bar-button();
+}
+
+.button-launch-1 {
+    @include mixins.bar-button($color: colors.$red);
+}
+
+.button-launch-2 {
+    @include mixins.bar-button($color: colors.$green);
+}
+
+.button-launch-3 {
+    @include mixins.bar-button($color: colors.$yellow);
+}
+
+.button-launch-4 {
+    @include mixins.bar-button($color: colors.$blue);
+}
+
+.button-launch-5 {
+    @include mixins.bar-button($color: colors.$magenta);
 }
 
 .button-keyboard {
-  @include mixins.bar-button();
-  font-weight: bold;
+    @include mixins.bar-button();
+    font-weight: bold;
 }
 
 .button-net {
-  @include mixins.bar-button();
+    @include mixins.bar-button();
 }
 
 .button-time {
-  @include mixins.bar-button($color: colors.$blue);
-  font-weight: bold;
+    @include mixins.bar-button($color: colors.$blue);
+    font-weight: bold;
 }

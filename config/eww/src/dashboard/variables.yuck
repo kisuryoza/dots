@@ -12,30 +12,37 @@
 (defvar music-cover "")
 
 (defvar brightness_max 0)
-(defpoll brightness :interval "1s"
-                    :initial 0
+(defpoll brightness
+  :interval "1s"
+  :initial 0
   "~/.config/eww/scripts/brightness.bash get")
 
 
-(defpoll drive-usage :interval "1h"
-                     :initial 0
+(defpoll drive-usage
+  :interval "1h"
+  :initial 0
   'df --output="pcent" /dev/nvme0n1p2 | tail -n1 | cut -c -3 | bc')
 
-(deflisten repository-updates :initial "0"
+(deflisten repository-updates
+  :initial "0"
   "tail -F ~/.cache/avaliable-updates.txt")
 
-(defpoll time-long :interval "1s"
-                   :initial 0
+(defpoll time-long
+  :interval "1s"
+  :initial 0
   "date +%H:%M:%S")
 
-(defpoll uptime :interval "1m"
-                :initial ""
+(defpoll uptime
+  :interval "1m"
+  :initial ""
   "UP=$(uptime -p); echo $\{UP:3\}")
 
-(defpoll kernel :interval "1h"
-                :initial ""
+(defpoll kernel
+  :interval "1h"
+  :initial ""
   "uname --kernel-release")
 
-(defpoll gpu :interval "2s"
-             :initial 0
+(defpoll gpu
+  :interval "2s"
+  :initial 0
   "~/.config/eww/scripts/gpu-load.bash")

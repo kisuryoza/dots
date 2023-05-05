@@ -1,38 +1,36 @@
-@use "defaults";
-
 @use "src/colors";
 @use "src/mixins";
 
 calendar {
-  background-color: colors.$background-primary;
-  border-radius: defaults.$border-radius;
-  padding: 0.5em;
+    background-color: colors.$background-primary;
+    border-radius: 15px;
+    padding: 0.5em;
 
-  &:selected {
-    color: colors.$yellow;
-  }
+    &:selected {
+        color: colors.$yellow;
+    }
 
-  &:indeterminate {
-    color: colors.$background-secondary;
-  }
+    &:indeterminate {
+        color: colors.$background-secondary;
+    }
 }
 
 calendar.button {
-  color: colors.$background-secondary;
+    color: colors.$background-secondary;
 }
 
 calendar.highlight {
-  color: colors.$foreground-secondary;
+    color: colors.$foreground-secondary;
 }
 
 .window-calendar-box {
-  background-color: colors.$background-primary;
-  border-right: 3px solid colors.$black;
-  border-bottom: 3px solid colors.$black;
-  border-radius: defaults.$border-radius;
-  padding: 1em;
+    background-color: colors.$background-primary;
+    border-right: 3px solid colors.$black;
+    border-bottom: 3px solid colors.$black;
+    border-radius: 15px;
+    padding: 1em;
 }
 
 .calendar-title {
-  font-size: 2em;
+    font-size: 2em;
 }

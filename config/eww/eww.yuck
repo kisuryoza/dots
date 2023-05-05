@@ -1,13 +1,16 @@
-(defpoll connection :interval "1s"
-                    :initial 0
+(defpoll connection
+  :interval "1s"
+  :initial 0
   "~/.config/eww/scripts/network.bash")
 
-(defpoll battery :interval "1m"
-                 :initial 0
+(defpoll battery
+  :interval "1m"
+  :initial 0
   "~/.config/eww/scripts/battery.bash get")
 
-(defpoll battery-icon :interval "5s"
-                      :initial 0
+(defpoll battery-icon
+  :interval "5s"
+  :initial 0
   "~/.config/eww/scripts/battery.bash icon")
 
 (include "src/bar/default.yuck")
