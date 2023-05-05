@@ -24,7 +24,6 @@ function post_user {
     AUR_PKG+=(catppuccin-gtk-theme-mocha ttf-material-design-icons-desktop-git ttf-comic-neue ttf-comic-mono-git)
     AUR_PKG+=(downgrade rate-mirrors-bin)
     AUR_PKG+=(bob-bin)      # A version manager for neovim
-    AUR_PKG+=(vimiv-qt)
     # AUR_PKG+=(xkb-switch-git) # Program that allows to query and change the XKB layout state
     # AUR_PKG+=(thokr-git)      # A sleek typing tui written in rust
     # AUR_PKG+=(greetd greetd-tuigreet-bin)
@@ -150,9 +149,9 @@ EOF
         handlr set 'text/plain' nvim.desktop
         handlr set 'application/x-shellscript' nvim.desktop
         handlr set 'audio/*' mpv.desktop
-        handlr set 'image/*' vimiv.desktop
-        handlr set 'image/jpeg' vimiv.desktop
-        handlr set 'image/png' vimiv.desktop
+        handlr set 'image/*' imv.desktop
+        handlr set 'image/jpeg' imv.desktop
+        handlr set 'image/png' imv.desktop
     fi
 
     gitclone https://github.com/justAlex0/arch-deploy ~/.local/bin/arch-deploy
