@@ -11,10 +11,6 @@ $DEBUG && set -Eeuxo pipefail
 
 source "$HOME"/"$REPO_NAME"/home/.bin/helper-func.sh
 
-function gitclone {
-    git clone --depth 1 "$1"
-}
-
 function post_user {
     declare -a AUR_PKG
     AUR_PKG+=(shellcheck-bin)
@@ -30,8 +26,10 @@ function post_user {
     # AUR_PKG+=(pince-git bottles)
 
     if pacman -Q wlroots &>/dev/null; then
-        AUR_PKG+=(hyprland-bin) # tiling Wayland compositor
+        AUR_PKG+=(swww) # Efficient animated wallpaper daemon for wayland, controlled at runtime.
     fi
+
+    sudo pacman -S --needed base-devel cmake unzip ninja tree-sitter curl clang
 
     export XDG_CONFIG_HOME="$HOME/.config"
     export XDG_CACHE_HOME="$HOME/.cache"
@@ -68,7 +66,7 @@ function post_user {
 
     (
         log "Installing paru"
-        gitclone https://aur.archlinux.org/paru-git.git /tmp/paru &&
+        git clone --depth 1 https://aur.archlinux.org/paru-git.git /tmp/paru &&
             cd /tmp/paru &&
             makepkg -si
     )
@@ -80,8 +78,8 @@ function post_user {
     ~/.bin/pkg-from-git.bash all
 
     log "Installing neovim"
-    sudo pacman -S --needed base-devel cmake unzip ninja tree-sitter curl
     bob use nightly
+    mkdir -p "$HOME/.local/share/applications/"
     cat <<EOF >"$HOME/.local/share/applications/nvim.desktop"
 [Desktop Entry]
 Name=nvim
@@ -93,19 +91,19 @@ EOF
         log "Installing zsh plugins"
         ZSH_PUGINS="$HOME/.local/share/zsh/plugins"
         mkdir -p "$ZSH_PUGINS" && cd "$ZSH_PUGINS"
-        gitclone https://github.com/Aloxaf/fzf-tab
-        gitclone https://github.com/zsh-users/zsh-autosuggestions
-        gitclone https://github.com/zdharma-continuum/fast-syntax-highlighting
-        gitclone https://github.com/nix-community/nix-zsh-completions
+        git clone --depth 1 https://github.com/Aloxaf/fzf-tab
+        git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions
+        git clone --depth 1 https://github.com/zdharma-continuum/fast-syntax-highlighting
+        git clone --depth 1 https://github.com/nix-community/nix-zsh-completions
     )
 
     if is_in_path mpv; then
         log "Installing mpv additional features"
-        gitclone https://github.com/occivink/mpv-scripts.git /tmp/mpv-scripts &&
+        git clone --depth 1 https://github.com/occivink/mpv-scripts.git /tmp/mpv-scripts &&
             rm /tmp/mpv-scripts/scripts/blur-edges.lua &&
             mv --target-directory="$HOME/.config/mpv/" /tmp/mpv-scripts/script-opts/ /tmp/mpv-scripts/scripts/
 
-        gitclone https://github.com/bloc97/Anime4K.git /tmp/Anime4K &&
+        git clone --depth 1 https://github.com/bloc97/Anime4K.git /tmp/Anime4K &&
             mkdir -p ~/.config/mpv/shaders &&
             fd --extension="glsl" . /tmp/Anime4K -x mv {} ~/.config/mpv/shaders
     fi
@@ -113,7 +111,7 @@ EOF
     if is_in_path startx; then
         (
             log "Installing sxlock"
-            gitclone https://github.com/lahwaacz/sxlock.git ~/gitclone/sxlock &&
+            git clone --depth 1 https://github.com/lahwaacz/sxlock.git ~/gitclone/sxlock &&
                 cd ~/gitclone/sxlock &&
                 make &&
                 sudo make install &&
@@ -131,19 +129,19 @@ EOF
 
     if is_in_path zathura; then
         log "Installing zathura themes"
-        gitclone https://github.com/catppuccin/zathura /tmp/zathura &&
+        git clone --depth 1 https://github.com/catppuccin/zathura /tmp/zathura &&
             install -vDm 644 /tmp/zathura/src/* -t ~/.config/zathura/
     fi
 
     if is_in_path kvantummanager; then
         log "Installing Kvantum themes"
-        gitclone https://github.com/catppuccin/Kvantum /tmp/Kvantum &&
+        git clone --depth 1 https://github.com/catppuccin/Kvantum /tmp/Kvantum &&
             mkdir -P ~/.config/Kvantum &&
             mv /tmp/Kvantum/src/* ~/.config/Kvantum &&
             kvantummanager --set Catppuccin-Macchiato-Maroon
     fi
 
-    if is_in_path zathura; then
+    if is_in_path handlr; then
         handlr set 'inode/directory' thunar.desktop
         handlr set 'text/*' nvim.desktop
         handlr set 'text/plain' nvim.desktop
@@ -154,12 +152,12 @@ EOF
         handlr set 'image/png' imv.desktop
     fi
 
-    gitclone https://github.com/justAlex0/arch-deploy ~/.local/bin/arch-deploy
+    git clone --depth 1 https://github.com/justAlex0/arch-deploy ~/.local/bin/arch-deploy
 }
 
 function post_root {
     log "Configuring pacman"
-    sed -Ei 's|^#?MAKEFLAGS=.*|MAKEFLAGS="-j4"|' /etc/makepkg.conf
+    # sed -Ei 's|^#?MAKEFLAGS=.*|MAKEFLAGS="-j4"|' /etc/makepkg.conf
     install -vDm 644 "$RESOURCES"/hooks/* -t /etc/pacman.d/hooks
 
     if pacman -Q nvidia-utils &>/dev/null; then
@@ -197,8 +195,8 @@ function post_root {
         echo "[main]"
         echo "rc-manager=resolvconf"
     } >/etc/NetworkManager/conf.d/rc-manager.conf
-    printf "\nnohook resolv.conf" >>/etc/dhcpcd.conf
-    mkdir -p /etc/iwd
+    printf "\nnohook resolv.conf" >/etc/dhcpcd.conf
+    mkdir /etc/iwd
     {
         echo "[General]"
         echo "EnableNetworkConfiguration=True"
