@@ -23,16 +23,16 @@ function setBrightness {
     NUM=${VAR:1}
     case ${VAR:0:1} in
     "-")
-        CHANGE=$(($(get) - NUM))
+        CHANGE=$(($(getBrightness) - NUM))
         if [[ $CHANGE -lt 0 ]]; then
             CHANGE=0
         fi
         echo $CHANGE >/sys/class/backlight/*/brightness
         ;;
     "+")
-        CHANGE=$(($(get) + NUM))
-        if [[ $CHANGE -gt $(get-max) ]]; then
-            CHANGE=$(get-max)
+        CHANGE=$(($(getBrightness) + NUM))
+        if [[ $CHANGE -gt $(getBrightnessMax) ]]; then
+            CHANGE=$(getBrightnessMax)
         fi
         echo "$CHANGE" >/sys/class/backlight/*/brightness
         ;;
