@@ -136,7 +136,7 @@ EOF
     if is_in_path kvantummanager; then
         log "Installing Kvantum themes"
         git clone --depth 1 https://github.com/catppuccin/Kvantum /tmp/Kvantum &&
-            mkdir -P ~/.config/Kvantum &&
+            mkdir -p ~/.config/Kvantum &&
             mv /tmp/Kvantum/src/* ~/.config/Kvantum &&
             kvantummanager --set Catppuccin-Macchiato-Maroon
     fi

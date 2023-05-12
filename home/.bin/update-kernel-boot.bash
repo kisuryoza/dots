@@ -36,6 +36,7 @@ function run_root {
         echo "ALL_microcode=(/boot/*-ucode.img)"
 
         echo "PRESETS=('default')"
+        # echo "PRESETS=('default' 'fallback')"
 
         echo "default_image=\"/boot/initramfs-linux.img\""
         echo "default_uki=\"$ESP/EFI/BOOT/bootx64.efi\""
@@ -52,16 +53,18 @@ function run_root {
     local uuid root_params
     uuid=$(blkid -s UUID -o value "$DRIVE$P2")
     root_params="root=UUID=$uuid"
-    [[ "$ENABLE_FULL_DRIVE_ENCRYPTION" ]] && root_params="cryptdevice=UUID=$uuid:root root=/dev/mapper/root"
+    if $ENABLE_FULL_DRIVE_ENCRYPTION; then
+        root_params="cryptdevice=UUID=$uuid:root root=/dev/mapper/root"
+    fi
 
     log "Applying kernel parameters"
     echo "$root_params rw bgrt_disable nowatchdog ${KERNEL_PARAMS[*]}" >/etc/kernel/cmdline
 
+    rm -rf "${ESP:?}"/*
     mkdir -p "$ESP"/EFI/Arch
     mkdir -p "$ESP"/EFI/BOOT
 
     log "Starting mkinitcpio"
-    rm -rf "${ESP:?}"/*
     mkinitcpio -p $KERNEL
 
     log "Creating UEFI boot entry"

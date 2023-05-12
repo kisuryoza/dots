@@ -58,8 +58,7 @@
         (command: Execute, value: "~/.bin/media-player.bash play", modifier: [], key: "XF86XK_AudioPlay"),
         (command: Execute, value: "~/.bin/media-player.bash next", modifier: [], key: "XF86XK_AudioNext"),
 
-        (command: Execute, value: "~/.bin/volume-control.bash toggle-mute", modifier: [], key: "XF86XK_AudioMute"),
-
+        (command: Execute, value: "~/.bin/volume-control.bash toggleMute", modifier: [], key: "XF86XK_AudioMute"),
         (command: Execute, value: "~/.bin/volume-control.bash set -10", modifier: [], key: "XF86XK_AudioLowerVolume"),
         (command: Execute, value: "~/.bin/volume-control.bash set +10", modifier: [], key: "XF86XK_AudioRaiseVolume"),
 
