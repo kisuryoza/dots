@@ -152,7 +152,7 @@ EOF
         handlr set 'image/png' imv.desktop
     fi
 
-    git clone --depth 1 https://github.com/justAlex0/arch-deploy ~/.local/bin/arch-deploy
+    git clone --depth 1 https://github.com/kisuryoza/arch-deploy ~/.local/bin/arch-deploy
 }
 
 function post_root {
