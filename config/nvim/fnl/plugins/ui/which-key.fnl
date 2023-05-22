@@ -5,6 +5,16 @@
 (fn M.config []
   (set vim.o.timeout true)
   (set vim.o.timeoutlen 300)
+
+  (fn toggle-opt [option on off]
+    (var curr_value (: (. vim.opt option) :get))
+    (if (= (type curr_value) :table)
+        (set curr_value (. curr_value (next curr_value))))
+    (vim.print curr_value)
+    (if (= curr_value on)
+        (tset vim.opt option off)
+        (tset vim.opt option on)))
+
   (let [wk (require :which-key)
         undotree (require :undotree)
         possession (require :possession.commands)]
@@ -29,7 +39,10 @@
                   :b {:name :+Buffers
                       :d [(cmd "lcd %:p:h") "Set local working dir"]
                       :D [(cmd "cd %:p:h") "Set global working dir"]
-                      :b [(cmd "Telescope buffers") :Buffers]}
+                      :b [(cmd "Telescope buffers") :Buffers]
+                      :w [#(toggle-opt :wrap true false) "Toggle Wrap"]
+                      :c [#(toggle-opt :colorcolumn :80 :0)
+                          "Toggle Colorcolumn"]}
                   :f {:name :+Files
                       :f [(cmd "Telescope find_files") "Find Files"]
                       :r [(cmd "Telescope oldfiles") :Recent]
