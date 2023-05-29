@@ -111,5 +111,13 @@ if [[ $(id -u) -ne 0 ]]; then
     source "$HOME"/.local/share/zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
 fi
 
+# Auto starting ssh-agent
+if ! pgrep -u "$USER" ssh-agent >/dev/null; then
+    ssh-agent > "$HOME/.ssh/ssh-agent.env"
+fi
+if [[ ! -f "$SSH_AUTH_SOCK" ]]; then
+    source "$HOME/.ssh/ssh-agent.env" >/dev/null
+fi
+
 eval "$(starship init zsh)"
 task

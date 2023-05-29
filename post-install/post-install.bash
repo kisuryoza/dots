@@ -180,7 +180,7 @@ function post_root {
     } >/etc/NetworkManager/NetworkManager.conf
 
     log "NetworkManager-dispatcher"
-    install -vDm 644 "$RESOURCES"/10-update-NextDNS-IP.sh /etc/NetworkManager/dispatcher.d/10-update-NextDNS-IP.sh
+    install -vDm 744 "$RESOURCES"/10-update-NextDNS-IP.sh /etc/NetworkManager/dispatcher.d/10-update-NextDNS-IP.sh
     systemctl enable NetworkManager-dispatcher.service
 
     log "Configuring openresolv"

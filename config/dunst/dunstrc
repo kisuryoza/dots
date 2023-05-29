@@ -62,7 +62,7 @@
     history_length = 20
 
     ### Misc/Advanced ###
-    dmenu = /usr/bin/dmenu -p dunst:
+    dmenu = /usr/bin/bemenu -p dunst:
     browser = /usr/bin/xdg-open
     always_run_script = true
     title = Dunst
@@ -83,9 +83,9 @@
     force_xinerama = false
 
     ### mouse
-    mouse_left_click = close_current
-    mouse_middle_click = do_action, close_current
-    mouse_right_click = context
+    mouse_left_click = do_action
+    mouse_middle_click = context
+    mouse_right_click = close_current
 
 # Experimental features that may or may not work correctly. Do not expect them
 # to have a consistent behaviour across releases.
