@@ -12,4 +12,4 @@ ln -s $SCRIPTPATH/down /tmp/leftwm-theme-down
 #set the theme.toml config
 leftwm-command "LoadTheme $SCRIPTPATH/theme.ron"
 
-~/.bin/autostart.zsh x
+~/bin/autostart.zsh x

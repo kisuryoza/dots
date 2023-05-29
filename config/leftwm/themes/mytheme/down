@@ -2,4 +2,4 @@
 
 leftwm command "UnloadTheme"
 
-~/.bin/autostart.zsh stop
+~/bin/autostart.zsh stop

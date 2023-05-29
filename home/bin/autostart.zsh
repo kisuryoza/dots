@@ -2,6 +2,9 @@
 
 # For the general use
 function start {
+    # Polkit (graphical)
+    [[ ! $(pgrep --exact polkit-mate-aut) ]] && /usr/lib/mate-polkit/polkit-mate-authentication-agent-1 &> /dev/null &
+
     # Hotkey daemon
     # [[ ! $(pgrep --exact swhks) ]] && swhks &> /dev/null &
     # [[ ! $(pgrep --exact swhkd) ]] && pkexec swhkd -c "$HOME"/.config/swhkd/swhkdrc &> /dev/null &
@@ -18,13 +21,23 @@ function start {
     [[ ! $(pgrep --exact dunst) ]] && dunst &>/dev/null &
 
     # Custom daemons
-    [[ ! $(pgrep --full daemons/) ]] && fd -tx . ~/.bin/daemons/ -x {}
+    [[ ! $(pgrep --full daemons/) ]] && fd -tx . ~/bin/daemons/ -x {}
 
     gsettings set org.gnome.desktop.interface color-scheme prefer-dark
     gsettings set org.gnome.desktop.interface gtk-theme "Catppuccin-Mocha-Standard-Red-Dark"
     gsettings set org.gnome.desktop.interface icon-theme "breeze-dark"
     gsettings set org.gnome.desktop.interface cursor-theme "Bibata-Original-Classic"
     gsettings set org.gnome.desktop.interface font-name "DejaVu Sans 11"
+
+    if ! rg -q "AddKeysToAgent" "$HOME"/.ssh/config; then
+        mkdir -p "$HOME"/.ssh
+        echo "AddKeysToAgent yes" >> "$HOME"/.ssh/config
+    fi
+    if ! rg -q "default-cache-ttl" "$HOME"/.gnupg/gpg-agent.conf; then
+        mkdir -p "$HOME"/.gnupg
+        echo "default-cache-ttl 3600" >> "$HOME"/.gnupg/gpg-agent.conf
+        gpg-connect-agent reloadagent /bye
+    fi
 }
 
 function start_X {
@@ -51,7 +64,7 @@ function start_X {
     launch_eww
 
     # Keyboard layout
-    [[ ! $(pgrep --full keyboard-layout.bash) ]] && ~/.bin/keyboard-layout.bash x
+    [[ ! $(pgrep --full keyboard-layout.bash) ]] && ~/bin/keyboard-layout.bash x
 }
 
 function start_Wayland {
@@ -67,7 +80,7 @@ function start_Wayland {
     launch_eww
 
     # Keyboard layout
-    [[ ! $(pgrep --full keyboard-layout.bash) ]] && ~/.bin/keyboard-layout.bash wayland
+    [[ ! $(pgrep --full keyboard-layout.bash) ]] && ~/bin/keyboard-layout.bash wayland
 }
 
 function launch_eww {

@@ -81,10 +81,10 @@
                                  :value volume
                                  :min 0
                                  :max 150
-                                 :onchange "~/.bin/volume-control.bash set {}"
+                                 :onchange "~/bin/volume-control.bash set {}"
                                  :orientation "v")
                           (button :class "volume-mute-button"
-                                  :onclick "~/.bin/volume-control.bash toggleMute"
+                                  :onclick "~/bin/volume-control.bash toggleMute"
                                   (label :text {isMuted ? "󰖁" : "󰕾"})))))
 
 (defwidget player []
@@ -108,13 +108,13 @@
                                  :xalign 0.5))
                      (box
                        (button :class "dashboard-player-button"
-                               :onclick "~/.bin/media-player.bash prev"
+                               :onclick "~/bin/media-player.bash prev"
                                (label :text "󰒮"))
                        (button :class "dashboard-player-button"
-                               :onclick "~/.bin/media-player.bash play"
+                               :onclick "~/bin/media-player.bash play"
                                (label :text {isMusicPlaying ? "󰏤" : "󰐊"}))
                        (button :class "dashboard-player-button"
-                               :onclick "~/.bin/media-player.bash next"
+                               :onclick "~/bin/media-player.bash next"
                                (label :text "󰒭")))
                      (box :orientation "h"
                           :space-evenly true

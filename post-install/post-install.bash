@@ -9,7 +9,7 @@ RESOURCES="$HOME/$REPO_NAME/post-install/deploy-cfg"
 [[ -z "$DEBUG" ]] && DEBUG=false
 $DEBUG && set -Eeuxo pipefail
 
-source "$HOME"/"$REPO_NAME"/home/.bin/helper-func.sh
+source "$HOME"/"$REPO_NAME"/home/bin/helper-func.sh
 
 function post_user {
     declare -a AUR_PKG
@@ -54,7 +54,7 @@ function post_user {
     stow -v home
 
     log "Syncing some $REPO_NAME with root"
-    ~/.bin/sync-with-root.bash
+    ~/bin/sync-with-root.bash
 
     log "Installing Rust"
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -o /tmp/rustup.sh &&
@@ -75,7 +75,7 @@ function post_user {
     paru -S --skipreview "${AUR_PKG[@]}" || log "AUR failed" err
 
     log "Installing packages from git..."
-    ~/.bin/pkg-from-git.bash all
+    ~/bin/pkg-from-git.bash all
 
     log "Installing neovim"
     bob use nightly

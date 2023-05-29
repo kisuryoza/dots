@@ -2,6 +2,7 @@
 
 # Thanks to
 # https://github.com/valoq/bwscripts
+# https://github.com/flatpak/flatpak/blob/4c6136ab2146234bff37925b218026de846d584e/common/flatpak-run.c#L1791
 
 # if [[ $(loginctl show-session self -p Type | awk -F "=" '/Type/ {print $NF}') != "wayland" ]]; then
 if [[ -n "$WAYLAND_DISPLAY" ]]; then
@@ -50,16 +51,16 @@ if [[ -n "$WAYLAND_DISPLAY" ]]; then
         --ro-bind /run/user/"$(id -u)"/"$WAYLAND_DISPLAY" /run/user/"$(id -u)"/"$WAYLAND_DISPLAY" \
         --ro-bind-try /run/user/"$(id -u)"/pipewire-0 /run/user/"$(id -u)"/pipewire-0 \
         --bind ~/.librewolf ~/.librewolf \
+        --bind-try ~/.cache/librewolf ~/.cache/librewolf \
         --bind ~/Downloads ~/Downloads \
         --unsetenv DBUS_SESSION_BUS_ADDRESS \
         --setenv MOZ_ENABLE_WAYLAND 1 \
-        --setenv GTK_THEME Catppuccin-Mocha-Red \
         --unshare-all \
         --share-net \
         --hostname hehe \
         --new-session \
         --seccomp 10 \
-        10< /usr/local/bin/seccomp_default_filter.bpf \
+        10< /usr/local/bin/seccomp_filter.bpf \
         /usr/lib/librewolf/librewolf)
 
 else
