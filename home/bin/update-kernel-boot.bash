@@ -5,7 +5,7 @@ $DEBUG && set -Eeuxo pipefail
 
 SCRIPT="$(realpath -s "${BASH_SOURCE[0]}")"
 SCRIPT_DIR=$(dirname "$SCRIPT")
-source "$SCRIPT_DIR"/include/log
+source "$SCRIPT_DIR"/helper-func.sh
 
 function run_root {
     DRIVE="/dev/nvme0n1"
@@ -80,5 +80,5 @@ esac
 if [[ $(id -u) -eq 0 ]]; then
     run_root "$@"
 else
-    sudo "$SCRIPT_PATH" "$@"
+    sudo "$SCRIPT" "$@"
 fi

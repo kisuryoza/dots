@@ -9,6 +9,7 @@ export BROWSER="librewolf"
 export EDITOR="nvim"
 export VISUAL="nvim"
 export BAT_THEME="gruvbox-dark"
+export GPG_TTY=$(tty)
 
 export ANDROID_HOME="$XDG_DATA_HOME"/android
 export CUDA_CACHE_PATH="$XDG_CACHE_HOME"/nv

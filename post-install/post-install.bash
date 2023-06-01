@@ -63,6 +63,9 @@ function post_user {
 
     RUSTUP="$CARGO_HOME/bin/rustup"
     $RUSTUP component add rust-analyzer
+    mkdir ~/.config/zsh/zfunc
+    $RUSTUP completions zsh cargo > ~/.config/zsh/zfunc/_cargo
+    $RUSTUP completions zsh rustup > ~/.config/zsh/zfunc/_rustup
 
     (
         log "Installing paru"

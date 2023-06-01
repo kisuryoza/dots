@@ -3,12 +3,11 @@ Operation=Install
 Operation=Upgrade
 Operation=Remove
 Type=Package
-Target=nvidia-dkms
+Target=linux*
 
 [Action]
-Description=Update Nvidia module in initcpio
+Description=Build initrd image after deleting a kernel
 Depends=mkinitcpio
-Depends=nvidia-dkms
 When=PostTransaction
 NeedsTargets
 Exec=/usr/bin/bash -c 'if pacman -Q linux-zen >/dev/null; then /usr/bin/mkinitcpio -p linux-zen; else /usr/bin/mkinitcpio -p linux; fi'

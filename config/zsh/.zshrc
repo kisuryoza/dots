@@ -16,6 +16,8 @@ bindkey -v
 source "$HOME"/.local/share/zsh/plugins/nix-zsh-completions/nix-zsh-completions.plugin.zsh
 fpath=("$HOME"/.local/share/zsh/plugins/nix-zsh-completions $fpath)
 
+fpath+="$ZDOTDIR"/zfunc
+
 zmodload zsh/complist
 autoload -Uz compinit
 compinit

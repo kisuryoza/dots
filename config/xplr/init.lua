@@ -7,12 +7,12 @@ version = "0.21.0"
 -- .. "/.config/xplr/plugins/?.lua;"
 -- .. package.path
 
-xplr.config.modes.builtin.default.key_bindings.on_key.y = {
-  help = "copy path",
+xplr.config.modes.builtin.default.key_bindings.on_key["y"] = {
+  help = "Copy path",
   messages = {
     {
       BashExecSilently0 = [===[
-        if [[ $(loginctl show-session self -p Type | awk -F "=" '/Type/ {print $NF}') == "wayland" ]]; then
+        if [[ -n "$WAYLAND_DISPLAY" ]]; then
             readlink -fn "$XPLR_FOCUS_PATH" | wl-copy
         else
             readlink -fn "$XPLR_FOCUS_PATH" | xclip -selection clipboard
@@ -22,8 +22,8 @@ xplr.config.modes.builtin.default.key_bindings.on_key.y = {
   },
 }
 
-xplr.config.modes.builtin.default.key_bindings.on_key.P = {
-  help = "preview img",
+xplr.config.modes.builtin.default.key_bindings.on_key["P"] = {
+  help = "Preview img",
   messages = {
     {
       BashExecSilently0 = [===[
@@ -42,14 +42,77 @@ xplr.config.modes.builtin.default.key_bindings.on_key.P = {
   },
 }
 
-xplr.config.modes.builtin.default.key_bindings.on_key.o = {
-  help = "open through mimetype",
+xplr.config.modes.builtin.default.key_bindings.on_key["o"] = {
+  help = "Open through mimetype",
   messages = {
     {
       LuaEvalSilently = [[function (app)
         path = app.focused_node.absolute_path
-        os.execute(string.format('handlr open "%s"', path))
+        os.execute(string.format('fork.bash handlr open "%s"', path))
       end]]
     },
   },
 }
+
+xplr.config.modes.builtin.default.key_bindings.on_key["b"] = {
+  help = "bookmark mode",
+  messages = {
+    { SwitchModeCustom = "bookmark" },
+  },
+}
+xplr.config.modes.custom.bookmark = {
+  name = "bookmark",
+  key_bindings = {
+    on_key = {
+      a = {
+        help = "Add bookmark",
+        messages = {
+          {
+            BashExecSilently0 = [[
+              BOOKMARKS="$HOME/.config/xplr/bookmarks.txt"
+              PTH="${XPLR_FOCUS_PATH:?}"
+              echo "$PTH" >> "$BOOKMARKS"
+              sort -uo "$BOOKMARKS" "$BOOKMARKS"
+            ]],
+          },
+          "PopMode",
+        },
+      },
+      s = {
+        help = "Select bookmark",
+        messages = {
+          {
+            BashExec0 = [===[
+              BOOKMARKS="$HOME/.config/xplr/bookmarks.txt"
+              PTH=$(cat "$BOOKMARKS" | fzf --no-sort)
+              if [ "$PTH" ]; then
+                "$XPLR" -m 'FocusPath: %q' "$PTH"
+              fi
+            ]===],
+          },
+          "PopMode",
+        },
+      },
+      d = {
+        help = "Delete bookmark",
+        messages = {
+          {
+            BashExec0 = [[
+              BOOKMARKS="$HOME/.config/xplr/bookmarks.txt"
+              PTH=$(cat "$BOOKMARKS" | fzf --no-sort)
+              sd "$PTH\n" "" "$BOOKMARKS"
+            ]],
+          },
+          "PopMode",
+        },
+      },
+      esc = {
+        help = "cancel",
+        messages = {
+          "PopMode",
+        },
+      },
+    },
+  },
+}
+
