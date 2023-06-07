@@ -10,4 +10,4 @@ Description=Build initrd image after deleting a kernel
 Depends=mkinitcpio
 When=PostTransaction
 NeedsTargets
-Exec=/usr/bin/bash -c 'if pacman -Q linux-zen >/dev/null; then /usr/bin/mkinitcpio -p linux-zen; else /usr/bin/mkinitcpio -p linux; fi'
+Exec=/usr/bin/bash -c 'if pacman -Q linux-zen >/dev/null; then while read -r trg; do case $trg in linux) exit 0; esac; done; /usr/bin/mkinitcpio -p linux-zen; else /usr/bin/mkinitcpio -p linux; fi'

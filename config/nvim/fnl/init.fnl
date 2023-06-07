@@ -10,8 +10,8 @@
                                                         :netrwPlugin
                                                         :tarPlugin
                                                         :tohtml
-                                                        :tutor
-                                                        :zipPlugin]}}})
+                                                        :tutor]}}})
+                                                        ;; :zipPlugin]}}})
 
 (fn FileReformatting []
   (if (not vim.o.binary)

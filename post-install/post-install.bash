@@ -150,9 +150,9 @@ EOF
         handlr set 'text/plain' nvim.desktop
         handlr set 'application/x-shellscript' nvim.desktop
         handlr set 'audio/*' mpv.desktop
-        handlr set 'image/*' imv.desktop
-        handlr set 'image/jpeg' imv.desktop
-        handlr set 'image/png' imv.desktop
+        handlr set 'image/*' imv-dir.desktop
+        handlr set 'image/jpeg' imv-dir.desktop
+        handlr set 'image/png' imv-dir.desktop
     fi
 
     git clone --depth 1 https://github.com/kisuryoza/arch-deploy ~/.local/bin/arch-deploy

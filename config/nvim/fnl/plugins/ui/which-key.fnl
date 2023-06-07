@@ -29,6 +29,8 @@
                   :<Tab> ["<Plug>(leap-forward)" "Leap forward"]
                   :<S-Tab> ["<Plug>(leap-backward)" "Leap backward"]}
                  {:mode :n :noremap false})
+    (wk.register {:y ["ygv<esc>" "Yank sel text w/out moving cursor back"]}
+                 {:mode :v :noremap false})
     (wk.register {:<TAB> [(cmd :ToggleTerm) "Open Terminal"]
                   :s {:name :+Sessions
                       :c [(cmd "e $MYVIMRC | :cd %:p:h") "Edit Neovm config"]

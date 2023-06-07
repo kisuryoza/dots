@@ -11,7 +11,7 @@ function find_vid {
         if [[ ${#counting} -eq 1 ]]; then
             counting="0$1"
         fi
-        pattern="( $counting.?.? )|(Ep?$counting )|(\[$counting\])|($counting\.)"
+        pattern="( $counting.?.? )|((_)$counting(_))|(Ep?$counting )|(\[$counting\])|($counting\.)"
     fi
 
     VID="$(fd --max-results=1 -e mkv -e mp4 "$pattern")"
@@ -93,6 +93,10 @@ case "$1" in
     ;;
 "next")
     play next
+    ;;
+"set")
+    history
+    echo "$2" >"$HIST_FILE"
     ;;
 "reset")
     history
