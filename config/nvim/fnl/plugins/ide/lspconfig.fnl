@@ -62,54 +62,50 @@
                           :root_dir (lspconfig.util.root_pattern :fnl)
                           :settings {:fennel {:workspace {:library (vim.api.nvim_list_runtime_paths)}
                                               :diagnostics {:globals [:vim]}}}}})
-  (let [on_attach (fn [client bufnr]
-                    ((. (require :lsp-inlayhints) :on_attach) client bufnr)
-                    (let [wk (require :which-key)]
-                      (wk.register {:l {:name :+LSP
-                                        :R [(cmd "Glance references")
-                                            :References]
-                                        :d [(cmd "Glance definitions")
-                                            :Definitions]
-                                        :t [(cmd "Glance type_definitions")
-                                            "Type definitions"]
-                                        :i [(cmd "Glance implementations")
-                                            :Implementations]
-                                        :r [vim.lsp.buf.rename
-                                            "Rename all references"]
-                                        :K [vim.lsp.buf.hover
-                                            "Hover info about symbol"]
-                                        :<C-k> [vim.lsp.buf.signature_help
-                                                "Show signature info about symbol"]
-                                        :a [vim.lsp.buf.code_action
-                                            "Code actions"]
-                                        :f [#(vim.lsp.buf.format {:async true})
-                                            "Format buffer"]}}
-                                   {:prefix :<leader>
-                                    :buffer bufnr
-                                    :silent true
-                                    :noremap true})))
-        flags {:debounce_text_changes 150}
-        capabilities ((. (require :cmp_nvim_lsp) :default_capabilities))]
-    ;; (lspconfig.clangd.setup {:on_attach on_attach
-    ;;                          :flags lsp_flags})
-    (lspconfig.ccls.setup {: on_attach
-                           : flags
-                           : capabilities
+
+  (vim.api.nvim_create_autocmd :LspAttach
+                               {:callback (fn [args]
+                                            (fn inlayhints [args]
+                                              (when (not (and args.data args.data.client_id)) (lua "return "))
+                                              (local bufnr args.buf)
+                                              (local client (vim.lsp.get_client_by_id args.data.client_id))
+                                              ((. (require :lsp-inlayhints) :on_attach) client bufnr))
+                                            (inlayhints args)
+                                            (let [wk (require :which-key)]
+                                              (wk.register {:l {:name :+LSP
+                                                                :R [(cmd "Glance references")
+                                                                    :References]
+                                                                :d [(cmd "Glance definitions")
+                                                                    :Definitions]
+                                                                :t [(cmd "Glance type_definitions")
+                                                                    "Type definitions"]
+                                                                :i [(cmd "Glance implementations")
+                                                                    :Implementations]
+                                                                :r [vim.lsp.buf.rename
+                                                                    "Rename all references"]
+                                                                :K [vim.lsp.buf.hover
+                                                                    "Hover info about symbol"]
+                                                                :<C-k> [vim.lsp.buf.signature_help
+                                                                        "Show signature info about symbol"]
+                                                                :a [vim.lsp.buf.code_action
+                                                                    "Code actions"]
+                                                                :f [#(vim.lsp.buf.format {:async true})
+                                                                    "Format buffer"]}}
+                                                           {:prefix :<leader>
+                                                            :buffer args.buf
+                                                            :silent true
+                                                            :noremap true})))
+                                :group (vim.api.nvim_create_augroup :UserLspConfig
+                                                                    {})})
+  (let [capabilities ((. (require :cmp_nvim_lsp) :default_capabilities))]
+    ;; (lspconfig.clangd.setup {: capabilities})
+    (lspconfig.ccls.setup {: capabilities
                            :init_options {:compilationDatabaseDirectory :build
                                           :index {:threads 0}}
                            :clang {}})
-    (lspconfig.rust_analyzer.setup {: on_attach
-                                    : flags
-                                    : capabilities
+    (lspconfig.rust_analyzer.setup {: capabilities
                                     :settings {:rust-analyzer {:checkOnSave {:command :clippy}}}
                                     :cmd [:rustup :run :stable :rust-analyzer]})
-    (lspconfig.bashls.setup {: on_attach
-                             : flags
-                             : capabilities
-                             :cmd [:node :/usr/bin/bash-language-server :start]})
-    (lspconfig.fennel_language_server.setup {: on_attach
-                                             : flags
-                                             : capabilities})
-    (lspconfig.nil_ls.setup {: on_attach : flags : capabilities})))
+    (lspconfig.fennel_language_server.setup {: capabilities})))
 
 M
