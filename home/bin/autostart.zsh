@@ -64,7 +64,7 @@ function start_X {
     launch_eww
 
     # Keyboard layout
-    [[ ! $(pgrep --full keyboard-layout.bash) ]] && ~/bin/keyboard-layout.bash x
+    [[ ! $(pgrep --full keyboard-layout.bash) ]] && ~/bin/misc/keyboard-layout.bash x
 }
 
 function start_Wayland {
@@ -80,7 +80,7 @@ function start_Wayland {
     launch_eww
 
     # Keyboard layout
-    [[ ! $(pgrep --full keyboard-layout.bash) ]] && ~/bin/keyboard-layout.bash wayland
+    [[ ! $(pgrep --full keyboard-layout.bash) ]] && ~/bin/misc/keyboard-layout.bash wayland
 }
 
 function launch_eww {

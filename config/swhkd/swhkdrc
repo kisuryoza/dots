@@ -1,5 +1,5 @@
 # super + space
-#     ~/bin/keyboard-layout.bash
+#     ~/bin/misc/keyboard-layout.bash
 
 super + tab
     alacritty
@@ -11,25 +11,25 @@ super + x
     nvim-gui
 
 super + shift + z
-    ~/bin/launcher.zsh lock
+    ~/bin/misc/launcher.zsh lock
 
 super + grave
-    ~/bin/launcher.zsh launcher
+    ~/bin/misc/launcher.zsh launcher
 
 super + print
-    ~/bin/launcher.zsh screenshot-area
+    ~/bin/misc/launcher.zsh screenshot-area
 
 print
-    ~/bin/launcher.zsh screenshot
+    ~/bin/misc/launcher.zsh screenshot
 
 XF86Audio{Prev,Play,Next}
-    ~/bin/media-player.bash {prev,play,next}
+    ~/bin/misc/media-player.bash {prev,play,next}
 
 XF86AudioMute
-    ~/bin/volume-control.bash toggle-mute
+    ~/bin/misc/volume-control.bash toggle-mute
 
 XF86Audio{Lower,Raise}Volume
-    ~/bin/volume-control.bash set {-10,+10}
+    ~/bin/misc/volume-control.bash set {-10,+10}
 
 XF86MonBrightness{Down,Up}
     ~/.config/eww/scripts/brightness.bash set {-10,+10}

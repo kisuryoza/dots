@@ -21,10 +21,10 @@ else
     else
         eww update isMuted=false
     fi
-    eww update volume="$(~/bin/volume-control.bash get)"
+    eww update volume="$(~/bin/misc/volume-control.bash get)"
 
     # Player module initialization
-    eww update isMusicPlaying="$(~/bin/media-player.bash isMusicPlaying)"
+    eww update isMusicPlaying="$(~/bin/misc/media-player.bash isMusicPlaying)"
 
-    ~/bin/media-player.bash
+    ~/bin/misc/media-player.bash
 fi

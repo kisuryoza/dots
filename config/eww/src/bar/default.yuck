@@ -80,7 +80,7 @@
 
 (defwidget keyboardLayout []
   (button :class "button-keyboard"
-          ;; :onclick "~/bin/keyboard-layout.bash"
+          ;; :onclick "~/bin/misc/keyboard-layout.bash"
           (label :text keyboardLayout)))
 
 (defwidget network []
