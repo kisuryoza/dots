@@ -17,7 +17,8 @@
 
   (let [wk (require :which-key)
         undotree (require :undotree)
-        possession (require :possession.commands)]
+        possession (require :possession.commands)
+        ufo (require :ufo)]
     (wk.register {:<Esc> [(vim.api.nvim_replace_termcodes "<C-\\><C-n>" true
                                                           true true)
                           "Exit terminal mode"]}
@@ -27,7 +28,12 @@
                   :<C-Left> [(cmd :tabprevious) "Previouse tab"]
                   :<C-Right> [(cmd :tabnext) "Next tab"]
                   :<Tab> ["<Plug>(leap-forward)" "Leap forward"]
-                  :<S-Tab> ["<Plug>(leap-backward)" "Leap backward"]}
+                  :<S-Tab> ["<Plug>(leap-backward)" "Leap backward"]
+                  :z {:name :+ufo
+                      :R [#(ufo.openAllFolds) :openAllFolds]
+                      :M [#(ufo.closeAllFolds) :closeAllFolds]
+                      :r [#(ufo.openFoldsExceptKinds) :openFoldsExceptKinds]
+                      :m [#(ufo.closeFoldsWith 3) :closeFoldsWith]}}
                  {:mode :n :noremap false})
     (wk.register {:y ["ygv<esc>" "Yank sel text w/out moving cursor back"]}
                  {:mode :v :noremap false})

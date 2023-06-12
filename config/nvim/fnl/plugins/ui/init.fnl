@@ -23,5 +23,29 @@
         :event :BufRead})
  ;; manage undos as a tree
  (pack :jiaoshijie/undotree
-       {:dependencies [:nvim-lua/plenary.nvim] :config #((setup! :undotree))})]
+       {:dependencies [:nvim-lua/plenary.nvim] :config #((setup! :undotree))})
+ (pack :kevinhwang91/nvim-ufo
+       {:dependencies [:kevinhwang91/promise-async]
+        :config (fn []
+                  (fn customize-selector [bufnr]
+                    (fn handle-fallback-exception [err provider-name]
+                      (if (and (= (type err) :string)
+                               (err:match :UfoFallbackException))
+                          ((. (require :ufo) :getFolds) bufnr provider-name)
+                          ((. (require :promise) :reject) err)))
 
+                    (: (: ((. (require :ufo) :getFolds) bufnr :lsp) :catch
+                          (fn [err] (handle-fallback-exception err :treesitter)))
+                       :catch (fn [err] (handle-fallback-exception err :indent))))
+
+                  ((setup! :ufo) {:provider_selector (fn [bufnr
+                                                          filetype
+                                                          buftype]
+                                                       customize-selector)})
+                  (set vim.o.foldmethod :expr)
+                  (set vim.o.fillchars
+                       "eob: ,fold: ,foldopen:,foldsep: ,foldclose:")
+                  (set vim.o.foldcolumn :1)
+                  (set vim.o.foldlevel 99)
+                  (set vim.o.foldlevelstart 99)
+                  (set vim.o.foldenable true))})]
