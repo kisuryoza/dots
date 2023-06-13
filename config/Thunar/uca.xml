@@ -30,28 +30,13 @@
 </action>
 <action>
 	<icon>edit-copy</icon>
-	<name>Copy path X11</name>
+	<name>Copy path</name>
 	<submenu></submenu>
-	<unique-id>1647695047322082-2</unique-id>
-	<command>readlink -fn %f | xclip -selection clipboard</command>
+	<unique-id>1686229957969498-1</unique-id>
+	<command>readlink -fn %f | if [[ -n &quot;$WAYLAND_DISPLAY&quot; ]]; then wl-copy; else xclip -selection clipboard; fi
+</command>
 	<description></description>
-	<range></range>
-	<patterns>*</patterns>
-	<directories/>
-	<audio-files/>
-	<image-files/>
-	<other-files/>
-	<text-files/>
-	<video-files/>
-</action>
-<action>
-	<icon>edit-copy</icon>
-	<name>Copy path Wayland</name>
-	<submenu></submenu>
-	<unique-id>1664726341511258-1</unique-id>
-	<command>readlink -fn %f | wl-copy</command>
-	<description></description>
-	<range></range>
+	<range>*</range>
 	<patterns>*</patterns>
 	<directories/>
 	<audio-files/>

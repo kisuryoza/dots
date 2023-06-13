@@ -17,11 +17,7 @@
                              :lua
                              :fennel
                              :rust
-                             :nix
-                             :scss
-                             :regex
-                             :markdown
-                             :markdown_inline]
+                             :nix]
           :auto_install true
           :ignore_install []
           :highlight {:enable true}
