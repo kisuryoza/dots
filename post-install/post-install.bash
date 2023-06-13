@@ -92,9 +92,9 @@ EOF
 
     (
         log "Installing zsh plugins"
-        ZSH_PUGINS="$HOME/.local/share/zsh/plugins"
+        ZSH_PUGINS="$HOME/.local/share/zsh"
         mkdir -p "$ZSH_PUGINS" && cd "$ZSH_PUGINS"
-        git clone --depth 1 https://github.com/Aloxaf/fzf-tab
+        git clone --depth 1 https://github.com/lincheney/fzf-tab-completion
         git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions
         git clone --depth 1 https://github.com/zdharma-continuum/fast-syntax-highlighting
         git clone --depth 1 https://github.com/nix-community/nix-zsh-completions

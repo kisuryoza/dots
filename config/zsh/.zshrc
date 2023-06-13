@@ -13,14 +13,7 @@ setopt PROMPT_SUBST
 
 bindkey -v
 
-source "$HOME"/.local/share/zsh/plugins/nix-zsh-completions/nix-zsh-completions.plugin.zsh
-fpath=("$HOME"/.local/share/zsh/plugins/nix-zsh-completions $fpath)
-
-fpath+="$ZDOTDIR"/zfunc
-
 zmodload zsh/complist
-autoload -Uz compinit
-compinit
 zstyle ':completion:*' menu select
 
 # disable sort when completing options of any command
@@ -81,45 +74,54 @@ fi
 autoload -U colors zsh/terminfo
 colors
 
+fpath+="$ZDOTDIR"/zfunc
 source "$ZDOTDIR/functions.zsh"
 source "$ZDOTDIR/aliases.zsh"
 
+if [[ -r "$HOME"/.local/share/zsh/fzf-tab-completion/zsh/fzf-zsh-completion.sh && -n $(whence -p fzf) ]]; then
+    source "$HOME"/.local/share/zsh/fzf-tab-completion/zsh/fzf-zsh-completion.sh
+    bindkey '^I' fzf_completion
+    zstyle ':completion:*' fzf-search-display true
+
+    zstyle ':completion::*:*::*' fzf-completion-opts --preview='~/.config/zsh/fzf-preview.sh path $(eval echo {1})'
+    zstyle ':completion::*:systemctl::systemctl,status,*' fzf-completion-opts --preview='SYSTEMD_COLORS=1 systemctl status -- $(eval echo {1})'
+    zstyle ':completion::*:make::*' fzf-completion-opts --preview='~/.config/zsh/fzf-preview.sh make $(eval echo {1})'
+    zstyle ':completion::*:btrfs::*' fzf-completion-opts --preview='btrfs $(eval echo {1}) --help | bat --plain --language=help --color=always'
+
+    zstyle ':completion::*:git::git,diff,*' fzf-completion-opts --preview='git diff --color=always $(eval echo {1}) | delta'
+    zstyle ':completion::*:git::git,show,*' fzf-completion-opts --preview='git show --color=always $(eval echo {1}) | delta'
+    zstyle ':completion::*:git::git,checkout,*' fzf-completion-opts --preview='git show --color=always $(eval echo {1}) | delta'
+    zstyle ':completion::*:git::git,log,*' fzf-completion-opts --preview='git log --color=always $(eval echo {1})'
+    zstyle ':completion::*:git::git,help,*' fzf-completion-opts --preview='git help $(eval echo {1}) | bat --plain --language=man --color=always'
+
+    zstyle ':completion::*:nix::*' fzf-completion-opts --preview='nix $(eval echo {1}) --help | bat --plain --language=help --color=always'
+    zstyle ':completion::*:nix::nix,flake,*' fzf-completion-opts --preview='nix flake $(eval echo {1}) --help | bat --plain --language=help --color=always'
+    zstyle ':completion::*:nix::nix,profile,*' fzf-completion-opts --preview='nix profile $(eval echo {1}) --help | bat --plain --language=help --color=always'
+fi
+
+if [[ -r "$HOME"/.local/share/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
+    source "$HOME"/.local/share/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+fi
+if [[ -r "$HOME"/.local/share/zsh/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh ]]; then
+    source "$HOME"/.local/share/zsh/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
+fi
+if [[ -r "$HOME"/.local/share/zsh/nix-zsh-completions/nix-zsh-completions.plugin.zsh ]]; then
+    source "$HOME"/.local/share/zsh/nix-zsh-completions/nix-zsh-completions.plugin.zsh
+    fpath+="$HOME"/.local/share/zsh/nix-zsh-completions
+fi
+
 if [[ $(id -u) -ne 0 ]]; then
-    if [[ -n $(whence -p fzf) ]]; then
-        source /usr/share/fzf/completion.zsh
-        source "$HOME"/.local/share/zsh/plugins/fzf-tab/fzf-tab.plugin.zsh
-        # zstyle ':fzf-tab:*' fzf-command sk
-        zstyle ':fzf-tab:complete:*:' fzf-preview '~/.config/zsh/fzf-preview.sh path'
-        zstyle ':fzf-tab:complete:systemctl-*:*' fzf-preview 'SYSTEMD_COLORS=1 systemctl status $word'
-        zstyle ':fzf-tab:complete:(g|b|d|p|freebsd-|)make:' fzf-preview '~/.config/zsh/fzf-preview.sh make'
-        zstyle ':fzf-tab:complete:nix:' fzf-preview 'nix help $word | bat --plain --language=help --color=always'
-
-        zstyle ':fzf-tab:complete:git-(add|diff|restore):*' fzf-preview 'git diff $word | delta'
-        zstyle ':fzf-tab:complete:git-log:*' fzf-preview 'git log --color=always $word'
-        zstyle ':fzf-tab:complete:git-show:*' fzf-preview '~/.config/zsh/fzf-preview.sh git-show'
-        zstyle ':fzf-tab:complete:git-checkout:*' fzf-preview '~/.config/zsh/fzf-preview.sh git-checkout'
-        zstyle ':fzf-tab:complete:git-help:*' fzf-preview 'git help $word | bat --plain --language=man --color=always'
-
-        zstyle ':fzf-tab:complete:docker-container:argument-1' fzf-preview 'docker container $word --help | bat --plain --language=help --color=always'
-        zstyle ':fzf-tab:complete:docker-image:argument-1' fzf-preview 'docker image $word --help | bat --plain --language=help --color=always'
-        zstyle ':fzf-tab:complete:docker-inspect' fzf-preview 'docker inspect $word | bat --plain --language=json --color=always'
-        zstyle ':fzf-tab:complete:docker-(run|images):argument-1' fzf-preview 'docker images $word'
-        zstyle ':fzf-tab:complete:docker-help:argument-1' fzf-preview 'docker help $word | bat --plain --language=help --color=always'
-
-    # zstyle ':fzf-tab:complete:*:options' fzf-preview
-    # zstyle ':fzf-tab:complete:*:argument-1' fzf-preview
+    # Auto starting ssh-agent
+    if ! pgrep -u "$USER" ssh-agent >/dev/null; then
+        ssh-agent > "$HOME/.ssh/ssh-agent.env"
     fi
-    source "$HOME"/.local/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-    source "$HOME"/.local/share/zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
+    if [[ ! -f "$SSH_AUTH_SOCK" ]]; then
+        source "$HOME/.ssh/ssh-agent.env" >/dev/null
+    fi
 fi
 
-# Auto starting ssh-agent
-if ! pgrep -u "$USER" ssh-agent >/dev/null; then
-    ssh-agent > "$HOME/.ssh/ssh-agent.env"
-fi
-if [[ ! -f "$SSH_AUTH_SOCK" ]]; then
-    source "$HOME/.ssh/ssh-agent.env" >/dev/null
-fi
+fpath+="/nix/var/nix/profiles/default/share/zsh/site-functions"
+autoload -Uz compinit && compinit
 
 eval "$(starship init zsh)"
 task
