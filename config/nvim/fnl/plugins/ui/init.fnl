@@ -24,6 +24,16 @@
  ;; manage undos as a tree
  (pack :jiaoshijie/undotree
        {:dependencies [:nvim-lua/plenary.nvim] :config #((setup! :undotree))})
+ ;; Status column
+ (pack :luukvbaal/statuscol.nvim {:config (fn []
+                                            (local builtin (require :statuscol.builtin))
+                                            ((setup! :statuscol) {:relculright true
+                                                                  :segments [{:click "v:lua.ScFa" :text [builtin.foldfunc " "]}
+                                                                             {:click "v:lua.ScSa" :text ["%s"]}
+                                                                             {:click "v:lua.ScLa"
+                                                                              :condition [true builtin.not_empty]
+                                                                              :text [builtin.lnumfunc " "]}]}))})
+ ;; Fold features
  (pack :kevinhwang91/nvim-ufo
        {:dependencies [:kevinhwang91/promise-async]
         :config (fn []
