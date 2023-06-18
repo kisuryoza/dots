@@ -51,7 +51,7 @@ function start_X {
     xset dpms 130 130 130
 
     # Screen locker
-    pgrep --exact xautolock || xautolock -time 2 -locker sxlock &>/dev/null &
+    pgrep --exact xss-lock || xss-lock --transfer-sleep-lock -- i3lock -c 1a1b26 --nofork &>/dev/null &
 
     # Compositor
     pgrep --exact picom || picom &>/dev/null &

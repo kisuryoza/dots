@@ -11,7 +11,7 @@ function lock {
     if isWayland; then
         swaylock -f -c 1a1b26 --ring-color 24283b --key-hl-color bb9af7 --inside-color 1a1b26
     else
-        sxlock
+        i3lock -c 1a1b26
     fi
 }
 

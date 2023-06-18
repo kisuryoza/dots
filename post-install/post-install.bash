@@ -113,16 +113,6 @@ EOF
 
     if is_in_path startx; then
         (
-            log "Installing sxlock"
-            git clone --depth 1 https://github.com/lahwaacz/sxlock.git ~/gitclone/sxlock &&
-                cd ~/gitclone/sxlock &&
-                make &&
-                sudo make install &&
-                sudo install -vDm 644 "$RESOURCES"/sxlock.service /etc/systemd/system/sxlock.service &&
-                systemctl enable sxlock.service
-        )
-
-        (
             log "Installing a cursor"
             wget -O /tmp/cursor.tar.gz "$(curl -s https://api.github.com/repos/ful1e5/Bibata_Cursor/releases/latest | grep 'browser_' | cut -d\" -f4 | grep -E "Bibata-Original-Classic.tar.gz")" &&
                 cd ~/.icons &&
