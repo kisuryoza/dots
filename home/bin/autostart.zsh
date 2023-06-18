@@ -9,9 +9,6 @@ function start {
     pgrep --exact swhks || swhks &> /dev/null &
     pgrep --exact swhkd || pkexec swhkd -c "$HOME"/.config/swhkd/swhkdrc &> /dev/null &
 
-    # Music Player Daemon
-    pgrep --exact mpd || mpd
-
     # Audio Effects for Pipewire applications
     if [[ -x /usr/bin/easyeffects && ! $(pgrep -x easyeffects) ]]; then
         easyeffects --gapplication-service &

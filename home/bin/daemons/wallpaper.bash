@@ -5,12 +5,14 @@ SCRIPT_DIR=$(dirname "$SCRIPT")
 source "$SCRIPT_DIR"/init
 
 function daemomKill {
-    [[ $(pgrep --exact swww) ]] && swww kill
-    [[ $(pgrep --exact swaybg) ]] && pkill --exact swaybg
+    if [[ -n "$WAYLAND_DISPLAY" ]]; then
+        [[ $(pgrep --exact swww) ]] && swww kill
+        [[ $(pgrep --exact swaybg) ]] && pkill --exact swaybg
+    fi
 }
 trap 'daemomKill' EXIT
 
-declare -a FILES REFRESH
+declare -a FILES
 
 mapfile -t FILES < <(fd -e jpg -e png -e gif -L . ~/.local/share/wallpapers | sort -R)
 
@@ -29,17 +31,11 @@ fi
 
 i=0
 while true; do
-    mapfile -t REFRESH < <(fd -e jpg -e png -e gif -L . ~/.local/share/wallpapers)
-    if [[ ${#REFRESH[@]} -ne ${#FILES[@]} ]]; then
-        mapfile -t FILES < <(shuf -e "${REFRESH[@]}")
-        echo "refresh"
-    fi
-
     ln -sf "${FILES[i]}" /tmp/wallpaper
     $COMMAND /tmp/wallpaper
 
     ((i++))
     [[ i -gt ${#FILES[@]} ]] && i=0
 
-    sleep $((30 * 1))
+    sleep 30
 done

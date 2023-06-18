@@ -24,7 +24,7 @@
     max_window_width: None,
     workspaces: [],
     window_rules: [
-        (window_class: "Steam", spawn_on_tag: 7, spawn_floating: true),
+        (window_class: "steam", spawn_on_tag: 7, spawn_floating: true),
         (window_class: "explorer.exe", window_title: None, spawn_on_tag: None, spawn_floating: true),
         (window_class: "origin.exe", window_title: None, spawn_on_tag: None, spawn_floating: true),
     ],
