@@ -19,7 +19,7 @@ function post_user {
     AUR_PKG+=(freetube-bin) # An open source desktop YouTube player built with privacy in mind.
     AUR_PKG+=(catppuccin-gtk-theme-mocha ttf-material-design-icons-desktop-git ttf-comic-neue ttf-comic-mono-git)
     AUR_PKG+=(downgrade rate-mirrors-bin)
-    AUR_PKG+=(bob-bin)      # A version manager for neovim
+    AUR_PKG+=(bob-bin) # A version manager for neovim
     # AUR_PKG+=(xkb-switch-git) # Program that allows to query and change the XKB layout state
     # AUR_PKG+=(thokr-git)      # A sleek typing tui written in rust
     # AUR_PKG+=(greetd greetd-tuigreet-bin)
@@ -64,8 +64,8 @@ function post_user {
     RUSTUP="$CARGO_HOME/bin/rustup"
     $RUSTUP component add rust-analyzer
     mkdir ~/.config/zsh/zfunc
-    $RUSTUP completions zsh cargo > ~/.config/zsh/zfunc/_cargo
-    $RUSTUP completions zsh rustup > ~/.config/zsh/zfunc/_rustup
+    $RUSTUP completions zsh cargo >~/.config/zsh/zfunc/_cargo
+    $RUSTUP completions zsh rustup >~/.config/zsh/zfunc/_rustup
 
     (
         log "Installing paru"
@@ -111,14 +111,25 @@ EOF
             fd --extension="glsl" . /tmp/Anime4K -x mv {} ~/.config/mpv/shaders
     fi
 
-    if is_in_path startx; then
-        (
-            log "Installing a cursor"
-            wget -O /tmp/cursor.tar.gz "$(curl -s https://api.github.com/repos/ful1e5/Bibata_Cursor/releases/latest | grep 'browser_' | cut -d\" -f4 | grep -E "Bibata-Original-Classic.tar.gz")" &&
-                cd ~/.icons &&
-                tar -xvf /tmp/cursor.tar.gz
-        )
-    fi
+    (
+        log "Installing a cursor"
+        wget -O /tmp/cursor.tar.gz "$(curl -s https://api.github.com/repos/ful1e5/Bibata_Cursor/releases/latest | grep 'browser_' | cut -d\" -f4 | grep -E "Bibata-Original-Classic.tar.gz")" &&
+            cd ~/.icons &&
+            tar -xvf /tmp/cursor.tar.gz
+
+        log "Applying themes"
+        {
+            echo "[Icon Theme]"
+            echo "Inherits=Bibata-Original-Classic"
+        } >~/.icons/default/index.theme
+
+        {
+            echo "gtk-theme-name=Catppuccin-Mocha-Standard-Red-Dark"
+            echo "gtk-icon-theme-name=breeze-dark"
+            echo "gtk-font-name=DejaVu Sans 11"
+            echo "gtk-cursor-theme-name=Bibata-Original-Classic"
+        } >~/.config/gtk-3.0/settings.ini
+    )
 
     if is_in_path zathura; then
         log "Installing zathura themes"

@@ -7,7 +7,7 @@ function start {
 
     # Hotkey daemon
     pgrep --exact swhks || swhks &> /dev/null &
-    pgrep --exact swhkd || pkexec swhkd -c "$HOME"/.config/swhkd/swhkdrc &> /dev/null &
+    pgrep --exact swhkd || pkexec swhkd -c ~/.config/swhkd/swhkdrc &> /dev/null &
 
     # Audio Effects for Pipewire applications
     if [[ -x /usr/bin/easyeffects && ! $(pgrep -x easyeffects) ]]; then
@@ -20,19 +20,13 @@ function start {
     # Custom daemons
     pgrep --full daemons/ || fd -tx . ~/bin/daemons/ -x {}
 
-    gsettings set org.gnome.desktop.interface color-scheme prefer-dark
-    gsettings set org.gnome.desktop.interface gtk-theme "Catppuccin-Mocha-Standard-Red-Dark"
-    gsettings set org.gnome.desktop.interface icon-theme "breeze-dark"
-    gsettings set org.gnome.desktop.interface cursor-theme "Bibata-Original-Classic"
-    gsettings set org.gnome.desktop.interface font-name "DejaVu Sans 11"
-
-    if ! rg -q "AddKeysToAgent" "$HOME"/.ssh/config; then
-        mkdir -p "$HOME"/.ssh
-        echo "AddKeysToAgent yes" >> "$HOME"/.ssh/config
+    if ! rg -q "AddKeysToAgent" ~/.ssh/config; then
+        mkdir -p ~/.ssh
+        echo "AddKeysToAgent yes" >> ~/.ssh/config
     fi
-    if ! rg -q "default-cache-ttl" "$HOME"/.gnupg/gpg-agent.conf; then
-        mkdir -p "$HOME"/.gnupg
-        echo "default-cache-ttl 3600" >> "$HOME"/.gnupg/gpg-agent.conf
+    if ! rg -q "default-cache-ttl" ~/.gnupg/gpg-agent.conf; then
+        mkdir -p ~/.gnupg
+        echo "default-cache-ttl 3600" >> ~/.gnupg/gpg-agent.conf
         gpg-connect-agent reloadagent /bye
     fi
 }
