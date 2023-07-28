@@ -124,7 +124,7 @@ EOF
         } >~/.icons/default/index.theme
 
         {
-            echo "gtk-theme-name=Catppuccin-Mocha-Standard-Red-Dark"
+            echo "gtk-theme-name=Catppuccin-Mocha-Standard-Red-dark"
             echo "gtk-icon-theme-name=breeze-dark"
             echo "gtk-font-name=DejaVu Sans 11"
             echo "gtk-cursor-theme-name=Bibata-Original-Classic"
@@ -187,24 +187,24 @@ function post_root {
     install -vDm 744 "$RESOURCES"/10-update-NextDNS-IP.sh /etc/NetworkManager/dispatcher.d/10-update-NextDNS-IP.sh
     systemctl enable NetworkManager-dispatcher.service
 
-    log "Configuring openresolv"
-    {
-        echo "name_servers=\"127.0.0.1\""
-        echo "name_servers_append=\"::1\""
-        echo "resolv_conf_options=\"edns0\""
-    } >>/etc/resolvconf.conf
-    systemctl enable dnscrypt-proxy.service
-    resolvconf -u
-    {
-        echo "[main]"
-        echo "rc-manager=resolvconf"
-    } >/etc/NetworkManager/conf.d/rc-manager.conf
-    printf "\nnohook resolv.conf" >/etc/dhcpcd.conf
-    mkdir /etc/iwd
-    {
-        echo "[General]"
-        echo "EnableNetworkConfiguration=True"
-    } >/etc/iwd/main.conf
+    # log "Configuring openresolv"
+    # {
+    #     echo "name_servers=\"127.0.0.1\""
+    #     echo "name_servers_append=\"::1\""
+    #     echo "resolv_conf_options=\"edns0\""
+    # } >>/etc/resolvconf.conf
+    # systemctl enable dnscrypt-proxy.service
+    # resolvconf -u
+    # {
+    #     echo "[main]"
+    #     echo "rc-manager=resolvconf"
+    # } >/etc/NetworkManager/conf.d/rc-manager.conf
+    # printf "\nnohook resolv.conf" >/etc/dhcpcd.conf
+    # mkdir /etc/iwd
+    # {
+    #     echo "[General]"
+    #     echo "EnableNetworkConfiguration=True"
+    # } >/etc/iwd/main.conf
 }
 
 if [[ $(id -u) -eq 0 ]]; then

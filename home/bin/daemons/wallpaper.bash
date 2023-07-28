@@ -12,7 +12,7 @@ function daemomKill {
 }
 trap 'daemomKill' EXIT
 
-declare -a FILES
+declare -a FILES REFRESH
 
 mapfile -t FILES < <(fd -e jpg -e png -e gif -L . ~/.local/share/wallpapers | sort -R)
 
@@ -31,6 +31,12 @@ fi
 
 i=0
 while true; do
+    mapfile -t REFRESH < <(fd -e jpg -e png -e gif -L . ~/.local/share/wallpapers)
+    if [[ ${#REFRESH[@]} -ne ${#FILES[@]} ]]; then
+        mapfile -t FILES < <(shuf -e "${REFRESH[@]}")
+        echo "refresh"
+    fi
+
     ln -sf "${FILES[i]}" /tmp/wallpaper
     $COMMAND /tmp/wallpaper
 

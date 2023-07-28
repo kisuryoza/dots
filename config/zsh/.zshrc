@@ -83,7 +83,7 @@ if [[ -r "$HOME"/.local/share/zsh/fzf-tab-completion/zsh/fzf-zsh-completion.sh &
     bindkey '^I' fzf_completion
     zstyle ':completion:*' fzf-search-display true
 
-    zstyle ':completion::*:*::*' fzf-completion-opts --preview='~/.config/zsh/fzf-preview.sh path $(eval echo {1})'
+    # zstyle ':completion::*:*::*' fzf-completion-opts --preview='~/.config/zsh/fzf-preview.sh path $(eval echo {1})'
     zstyle ':completion::*:systemctl::systemctl,status,*' fzf-completion-opts --preview='SYSTEMD_COLORS=1 systemctl status -- $(eval echo {1})'
     zstyle ':completion::*:make::*' fzf-completion-opts --preview='~/.config/zsh/fzf-preview.sh make $(eval echo {1})'
     zstyle ':completion::*:btrfs::*' fzf-completion-opts --preview='btrfs $(eval echo {1}) --help | bat --plain --language=help --color=always'
