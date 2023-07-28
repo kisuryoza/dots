@@ -11,21 +11,19 @@
                                                         :tarPlugin
                                                         :tohtml
                                                         :tutor]}}})
-                                                        ;; :zipPlugin]}}})
-
-(fn FileReformatting []
-  (if (not vim.o.binary)
-      (let [winview vim.fn.winsaveview]
-        (vim.cmd "keeppatterns %s/\\s\\+$//e")
-        (vim.cmd :retab)
-        (vim.fn.winrestview (winview)))))
 
 ;; Deletes trailing spaces and replaces tabs w/ spaces
 (vim.api.nvim_create_autocmd [:BufWritePre
                               :FileWritePre
                               :FileAppendPre
                               :FilterWritePre]
-                             {:pattern ["*"] :callback #(FileReformatting)})
+                             {:pattern ["*"]
+                              :callback (fn []
+                                          (if (not vim.o.binary)
+                                              (let [winview vim.fn.winsaveview]
+                                                (vim.cmd "keeppatterns %s/\\s\\+$//e")
+                                                (vim.cmd :retab)
+                                                (vim.fn.winrestview (winview)))))})
 
 ;; Reload file for changes
 (vim.api.nvim_create_autocmd [:FocusGained :BufEnter]

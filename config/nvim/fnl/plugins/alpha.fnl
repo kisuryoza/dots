@@ -54,10 +54,6 @@
         quotee {:type :text
                 :opts {:position :center :hl :Type}
                 :val "Well are those who rise in the early morn, while those late to bed I shall forewarn"}]
-    (each [_ data (pairs ((. (require :possession.query) :as_list)))]
-      (let [name data.name
-            hint data.cwd]
-        (table.insert buttons.val (button hint (.. "> " name) (.. "PossessionLoad " name)))))
     ((. alpha :setup) {:layout [{:type :padding :val 2}
                                 header
                                 {:type :padding :val 5}

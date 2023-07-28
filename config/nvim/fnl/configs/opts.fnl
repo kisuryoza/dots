@@ -34,7 +34,7 @@
    :scrolloff 2
    :whichwrap "[,]"
    :virtualedit "block"
-   :conceallevel 2
+   :conceallevel 0
    :concealcursor "nc"
    :wrap false
 

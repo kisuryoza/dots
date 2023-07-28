@@ -8,7 +8,7 @@
         actions (require :telescope.actions)]
     (var t {})
     (set t.defaults {:mappings {:i {:<esc> actions.close}}})
-    (telescope.load_extension :possession)
+    (telescope.load_extension :persisted)
     (telescope.setup t)))
 
 M

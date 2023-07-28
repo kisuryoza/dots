@@ -10,6 +10,8 @@
                                                    (local null-ls (require :null-ls))
                                                    (local sources [;; fennel
                                                                    null-ls.builtins.formatting.fnlfmt
+                                                                   ;; json
+                                                                   null-ls.builtins.formatting.jq
                                                                    ;; shell
                                                                    null-ls.builtins.diagnostics.shellcheck
                                                                    null-ls.builtins.code_actions.shellcheck
@@ -19,10 +21,18 @@
                                                                    null-ls.builtins.code_actions.statix
                                                                    null-ls.builtins.formatting.alejandra])
                                                    (null-ls.setup {: sources}))
-                                          :ft [:fennel :sh :nix]})
+                                          :ft [:fennel :sh :nix :json]})
+ ;; (pack :mfussenegger/nvim-lint
+ ;;       {:config (fn []
+ ;;                  (local lint (require :lint))
+ ;;                  (set lint.linters_by_ft {:sh [:shellcheck] :nix [:statix]})
+ ;;                  (vim.api.nvim_create_autocmd [:InsertLeave]
+ ;;                                               {:pattern [:sh :nix]
+ ;;                                                :callback (fn []
+ ;;                                                            ((. (require :lint)
+ ;;                                                                :try_lint)))}))})
  (pack :folke/trouble.nvim {:config #((setup! :trouble))})
  ;; A better annotation generator. Supports multiple languages and annotation conventions.
  (pack :danymat/neogen {:dependencies [:nvim-treesitter/nvim-treesitter]
-                        :config #((setup! :neogen))
+                        :config #((setup! :neogen) {:snippet_engine :luasnip})
                         :cmd :Neogen})]
-

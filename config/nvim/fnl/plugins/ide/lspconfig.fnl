@@ -18,8 +18,8 @@
                                ;; helps managing crates.io dependencies
                                (pack :saecki/crates.nvim
                                      {:config #((setup! :crates))
-                                      :event "BufRead Cargo.toml"})]
-                :ft [:cpp :rust :fennel :sh :nix]}))
+                                      :event "BufRead Cargo.toml"})]}))
+                ;; :ft [:cpp :rust :fennel :sh :nix]}))
 
 (fn M.config []
   (vim.fn.sign_define :DiagnosticSignError
@@ -98,11 +98,11 @@
                                 :group (vim.api.nvim_create_augroup :UserLspConfig
                                                                     {})})
   (let [capabilities ((. (require :cmp_nvim_lsp) :default_capabilities))]
-    ;; (lspconfig.clangd.setup {: capabilities})
-    (lspconfig.ccls.setup {: capabilities
-                           :init_options {:compilationDatabaseDirectory :build
-                                          :index {:threads 0}}
-                           :clang {}})
+    (lspconfig.clangd.setup {: capabilities})
+    ;; (lspconfig.ccls.setup {: capabilities
+    ;;                        :init_options {:compilationDatabaseDirectory :target
+    ;;                                       :index {:threads 0}}
+    ;;                        :clang {}})
     (lspconfig.rust_analyzer.setup {: capabilities
                                     :settings {:rust-analyzer {:checkOnSave {:command :clippy}}}
                                     :cmd [:rustup :run :stable :rust-analyzer]})

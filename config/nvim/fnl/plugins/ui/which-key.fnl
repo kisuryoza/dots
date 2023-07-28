@@ -17,7 +17,6 @@
 
   (let [wk (require :which-key)
         undotree (require :undotree)
-        possession (require :possession.commands)
         ufo (require :ufo)]
     (wk.register {:<Esc> [(vim.api.nvim_replace_termcodes "<C-\\><C-n>" true
                                                           true true)
@@ -40,10 +39,9 @@
     (wk.register {:<TAB> [(cmd :ToggleTerm) "Open Terminal"]
                   :s {:name :+Sessions
                       :c [(cmd "e $MYVIMRC | :cd %:p:h") "Edit Neovm config"]
-                      :l [(cmd "Telescope possession list") "List sessions"]
-                      :s [#(possession.save (vim.fn.input "Session name: "))
-                          "Save session"]
-                      :d [#(possession.delete) "Delete session"]}
+                      :l [(cmd "Telescope persisted") "List sessions"]
+                      :s [(cmd "SessionSave") "Save session"]
+                      :d [(cmd "SessionDelete") "Delete session"]}
                   :b {:name :+Buffers
                       :d [(cmd "lcd %:p:h") "Set local working dir"]
                       :D [(cmd "cd %:p:h") "Set global working dir"]

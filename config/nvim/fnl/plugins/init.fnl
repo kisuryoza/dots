@@ -5,12 +5,20 @@
  (pack :nvim-lua/plenary.nvim)
  (pack :rebelot/kanagawa.nvim
        {:priority 1000
-        :init #(vim.cmd "colorscheme kanagawa")
+        ;; :init #(vim.cmd "colorscheme kanagawa")
         :config #((setup! :kanagawa) {:dimInactive true :globalStatus true})})
  (pack :folke/tokyonight.nvim
        {:priority 1000
         ;; :init #(vim.cmd "colorscheme tokyonight-night")
         :config #((setup! :tokyonight) {:dim_inactive true})})
+ (pack :EdenEast/nightfox.nvim
+       {:priority 1000
+        :init #(vim.cmd "colorscheme carbonfox")
+        :config #((setup! :nightfox) {:options {:dim_inactive true}})})
+ (pack :catppuccin/nvim
+       {:priority 1000
+        ;; :init #(vim.cmd "colorscheme catppuccin-mocha")
+        :config #((setup! :catppuccin) {:dim_inactive {:enabled true}})})
  (require :plugins.ui)
  (require :plugins.ide)
  ;; greeter
@@ -40,14 +48,13 @@
  ;; Smooth scrolling <C-u>, <C-d> ; <C-b>, <C-f> ; <C-y>, <C-e> ; zt, zz, zb
  (pack :karb94/neoscroll.nvim {:config #((setup! :neoscroll)) :event :BufRead})
  ;; magit for neovim
- (pack :TimUntersberger/neogit
+ (pack :NeogitOrg/neogit
        {:dependencies [;; Single tabpage interface for easily cycling through diffs for all modified files for any git rev
                        :sindrets/diffview.nvim]
-        :config #((setup! :neogit) {:integrations {:diffview true}})})
- ;; Flexible session management
- (pack :jedrzejboczar/possession.nvim
-       {:dependencies [:nvim-lua/plenary.nvim]
-        :config #((setup! :possession) {:autosave {:on_quit false}})})
+        :config #((setup! :neogit) {:integrations {:diffview true}})
+        :cmd :Neogit})
+ (pack :olimorris/persisted.nvim
+       {:config #((setup! :persisted) {:autosave false})})
  ;; Smart and powerful comment plugin for neovim
  (pack :numToStr/Comment.nvim {:config (fn []
                                          ((setup! :Comment))
@@ -72,7 +79,9 @@
  ;; icons
  (pack :nvim-tree/nvim-web-devicons)
  ;; calculator
- (pack :Apeiros-46B/qalc.nvim {:cmd [:Qalc :QalcAttach]})]
+ (pack :Apeiros-46B/qalc.nvim {:cmd [:Qalc :QalcAttach]})
  ;; Flow state reading in neovim
- ;; (pack :nullchilly/fsread.nvim {:cmd [:FSRead :FSClear :FSToggle]})]
-
+ (pack :nullchilly/fsread.nvim {:cmd [:FSRead :FSClear :FSToggle]})
+ ;; hex editing
+ (pack :RaafatTurki/hex.nvim
+       {:config #((setup! :hex))})]
