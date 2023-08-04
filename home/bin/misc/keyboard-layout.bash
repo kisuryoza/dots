@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 
-SCRIPT="$(realpath -s "${BASH_SOURCE[0]}")"
-SCRIPT_DIR=$(dirname "$SCRIPT")
-source "$SCRIPT_DIR"/daemons/init
+source ~/bin/daemons/init
 
 function switch_eww {
     case "$1" in

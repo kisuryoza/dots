@@ -15,8 +15,8 @@ alias rg="rg --color=always"
 alias ip="ip -color=always"
 alias diff="diff -u --color=always"
 
-#alias ls="ls -Alh --color=always"
-alias exa="exa --all --long --tree --level=1 --group --group-directories-first"
+# alias ls="ls -Alh --color=always"
+# alias exa="exa --all --long --tree --level=1 --group --group-directories-first"
 
 alias cat="bat -pp"
 
