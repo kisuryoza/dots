@@ -54,12 +54,12 @@
         quotee {:type :text
                 :opts {:position :center :hl :Type}
                 :val "Well are those who rise in the early morn, while those late to bed I shall forewarn"}]
-    ((. alpha :setup) {:layout [{:type :padding :val 2}
-                                header
-                                {:type :padding :val 5}
-                                buttons
-                                quotee]
-                       :opts {:margin 5}})))
+    (alpha.setup {:layout [{:type :padding :val 2}
+                           header
+                           {:type :padding :val 5}
+                           buttons
+                           quotee]
+                  :opts {:margin 5}})))
 
 M
 

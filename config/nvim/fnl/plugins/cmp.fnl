@@ -5,11 +5,25 @@
                                :hrsh7th/cmp-buffer
                                :hrsh7th/cmp-path
                                :hrsh7th/cmp-cmdline
-                               :saadparwaiz1/cmp_luasnip]}))
+                               :L3MON4D3/LuaSnip
+                               :saadparwaiz1/cmp_luasnip
+                               :rafamadriz/friendly-snippets]}))
 
 (fn M.config []
   (local cmp (require :cmp))
   (local luasnip (require :luasnip))
+  ((. (require :luasnip.loaders.from_vscode) :lazy_load))
+  (luasnip.config.setup {:history false} :update_events :InsertLeave
+                        :region_check_events
+                        "CursorMoved,CursorHold,InsertEnter"
+                        :delete_check_events :InsertEnter)
+  (let [wk (require :which-key)]
+    (wk.register {:<C-L> [#(luasnip.jump 1) ""] :<C-H> [#(luasnip.jump -1) ""]}
+                 {:mode :i :silent true})
+    (wk.register {:<C-L> [#(luasnip.jump 1) ""] :<C-H> [#(luasnip.jump -1) ""]}
+                 {:mode :s :silent true}))
+  (vim.cmd "imap <silent><expr> <C-S> luasnip#choice_active() ? '<Plug>luasnip-next-choice' : ''")
+  (vim.cmd "smap <silent><expr> <C-S> luasnip#choice_active() ? '<Plug>luasnip-next-choice' : ''")
   (set vim.opt.completeopt "menu,menuone,noselect")
   (local kind-icons {:Text "  "
                      :Method "  "
@@ -56,11 +70,10 @@
                                                              (fallback))))}))
   (set t.sources (cmp.config.sources [{:name :nvim_lsp}
                                       {:name :path}
-                                      {:name :luasnip}
                                       {:name :crates}
                                       {:name :neorg}
-                                      {:name :buffer}]
-                                     [{:name :buffer}]))
+                                      {:name :luasnip}
+                                      {:name :buffer}]))
   (set t.formatting {:format (fn [_entry vim-item]
                                (set vim-item.kind
                                     (.. (or (. kind-icons vim-item.kind) "")
@@ -73,4 +86,3 @@
                                                    [{:name :cmdline}])}))
 
 M
-

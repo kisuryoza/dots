@@ -34,14 +34,17 @@
                       :r [#(ufo.openFoldsExceptKinds) :openFoldsExceptKinds]
                       :m [#(ufo.closeFoldsWith 3) :closeFoldsWith]}}
                  {:mode :n :noremap false})
-    (wk.register {:y ["ygv<esc>" "Yank sel text w/out moving cursor back"]}
+    (wk.register {:y [:ygv<esc> "Yank sel text w/out moving cursor back"]
+                  :J [":m '>+1<CR>gv=gv" "Move selected Down"]
+                  :K [":m '<-2<CR>gv=gv" "Move selected Up"]}
                  {:mode :v :noremap false})
     (wk.register {:<TAB> [(cmd :ToggleTerm) "Open Terminal"]
+                  :z [(cmd :ZenMode) :ZenMode]
                   :s {:name :+Sessions
                       :c [(cmd "e $MYVIMRC | :cd %:p:h") "Edit Neovm config"]
                       :l [(cmd "Telescope persisted") "List sessions"]
-                      :s [(cmd "SessionSave") "Save session"]
-                      :d [(cmd "SessionDelete") "Delete session"]}
+                      :s [(cmd :SessionSave) "Save session"]
+                      :d [(cmd :SessionDelete) "Delete session"]}
                   :b {:name :+Buffers
                       :d [(cmd "lcd %:p:h") "Set local working dir"]
                       :D [(cmd "cd %:p:h") "Set global working dir"]
@@ -66,7 +69,14 @@
                       :n [(cmd :Neogit) "Open Neogit"]
                       :l [(cmd "Gitsigns toggle_linehl") "Highlight lines"]
                       :b [(cmd "Gitsigns toggle_current_line_blame")
-                          "Toggle line blame"]}
+                          "Toggle line blame"]
+                      :h {:name :+Hunk
+                          :r [(cmd "Gitsigns reset_hunk") "Reset hunk"]
+                          :P [(cmd "Gitsigns preview_hunk_inline")
+                              "Preview hunk"]
+                          :p [(cmd "Gitsigns prev_hunk") "Prev hunk"]
+                          :n [(cmd "Gitsigns next_hunk") "Next hunk"]
+                          :s [(cmd "Gitsigns select_hunk") "Select hunk"]}}
                   :n {:name :+Neorg
                       :n [(cmd :Neorg) :Neorg]
                       :w [(cmd "Neorg workspace notes") "Workspace 'notes'"]

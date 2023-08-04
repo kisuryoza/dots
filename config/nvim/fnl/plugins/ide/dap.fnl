@@ -1,4 +1,4 @@
-(import-macros {: pack : setup!} :macros)
+(import-macros {: pack} :macros)
 
 (local M (pack :mfussenegger/nvim-dap
                {:dependencies [(pack :rcarriga/nvim-dap-ui
@@ -15,8 +15,8 @@
                                                        :dapui_config
                                                        #(dapui.close)))})
                                (pack :theHamsta/nvim-dap-virtual-text
-                                     {:config #((setup! :nvim-dap-virtual-text) {:all_references true
-                                                                                 :text_prefix "===> "})})]
+                                     {:opts {:all_references true
+                                             :text_prefix "===> "}})]
                 :ft [:c :cpp :rust]}))
 
 (fn M.config []
@@ -73,4 +73,3 @@
                  {:prefix :<leader> :silent true})))
 
 M
-
