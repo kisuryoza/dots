@@ -3,86 +3,106 @@
 (local M (pack :hrsh7th/nvim-cmp
                {:dependencies [:hrsh7th/cmp-nvim-lsp
                                :hrsh7th/cmp-buffer
-                               :hrsh7th/cmp-path
                                :hrsh7th/cmp-cmdline
+                               :FelipeLema/cmp-async-path
+                               :lukas-reineke/cmp-rg
+                               :kdheepak/cmp-latex-symbols
                                :L3MON4D3/LuaSnip
-                               :saadparwaiz1/cmp_luasnip
-                               :rafamadriz/friendly-snippets]}))
+                               :saadparwaiz1/cmp_luasnip]}))
+                               ;; :rafamadriz/friendly-snippets]}))
 
 (fn M.config []
   (local cmp (require :cmp))
   (local luasnip (require :luasnip))
   ((. (require :luasnip.loaders.from_vscode) :lazy_load))
-  (luasnip.config.setup {:history false} :update_events :InsertLeave
-                        :region_check_events
-                        "CursorMoved,CursorHold,InsertEnter"
-                        :delete_check_events :InsertEnter)
-  (let [wk (require :which-key)]
-    (wk.register {:<C-L> [#(luasnip.jump 1) ""] :<C-H> [#(luasnip.jump -1) ""]}
-                 {:mode :i :silent true})
-    (wk.register {:<C-L> [#(luasnip.jump 1) ""] :<C-H> [#(luasnip.jump -1) ""]}
-                 {:mode :s :silent true}))
-  (vim.cmd "imap <silent><expr> <C-S> luasnip#choice_active() ? '<Plug>luasnip-next-choice' : ''")
-  (vim.cmd "smap <silent><expr> <C-S> luasnip#choice_active() ? '<Plug>luasnip-next-choice' : ''")
+  (luasnip.setup {:history false
+                  :update_events [:TextChanged :TextChangedI]
+                  :region_check_events [:CursorMoved :CursorMovedI]
+                  :delete_check_events [:TextChanged :TextChangedI]})
+  (vim.keymap.set [:i] :<C-K> #(luasnip.expand) {:silent true})
+  (vim.keymap.set [:i :s] :<C-L>
+                  #(when (luasnip.locally_jumpable 1) (luasnip.jump 1))
+                  {:silent true})
+  (vim.keymap.set [:i :s] :<C-J>
+                  #(when (luasnip.locally_jumpable -1) (luasnip.jump -1))
+                  {:silent true})
+  (vim.keymap.set [:i :s] :<C-E>
+                  #(when (luasnip.choice_active) (luasnip.change_choice 1))
+                  {:silent true})
   (set vim.opt.completeopt "menu,menuone,noselect")
-  (local kind-icons {:Text "  "
-                     :Method "  "
-                     :Function "  "
-                     :Constructor "  "
-                     :Field "  "
-                     :Variable "  "
-                     :Class "  "
-                     :Interface "  "
-                     :Module "  "
-                     :Property "  "
-                     :Unit "  "
-                     :Value "  "
-                     :Enum "  "
-                     :Keyword "  "
-                     :Snippet "  "
-                     :Color "  "
-                     :File "  "
-                     :Reference "  "
-                     :Folder "  "
-                     :EnumMember "  "
-                     :Constant "  "
-                     :Struct "  "
-                     :Event "  "
-                     :Operator "  "
-                     :TypeParameter "  "})
+  (local kind-icons {:Text ""
+                     :Method "󰆧"
+                     :Function "󰊕"
+                     :Constructor ""
+                     :Field "󰇽"
+                     :Variable "󰂡"
+                     :Class "󰠱"
+                     :Interface ""
+                     :Module ""
+                     :Property "󰜢"
+                     :Unit ""
+                     :Value "󰎠"
+                     :Enum ""
+                     :Keyword "󰌋"
+                     :Snippet ""
+                     :Color "󰏘"
+                     :File "󰈙"
+                     :Reference ""
+                     :Folder "󰉋"
+                     :EnumMember ""
+                     :Constant "󰏿"
+                     :Struct ""
+                     :Event ""
+                     :Operator "󰆕"
+                     :TypeParameter "󰅲"})
   (var t {})
   (set t.snippet
        {:expand (fn [args]
                   ((. luasnip :lsp_expand) args.body))})
   (set t.mapping
-       (cmp.mapping.preset.insert {:<C-b> (cmp.mapping.scroll_docs -4)
-                                   :<C-f> (cmp.mapping.scroll_docs 4)
-                                   :<C-k> (cmp.mapping.select_prev_item)
-                                   :<C-j> (cmp.mapping.select_next_item)
-                                   :<Tab> (cmp.mapping (fn [fallback]
-                                                         (if (cmp.visible)
-                                                             (let [entry (cmp.get_selected_entry)]
-                                                               (if (not entry)
-                                                                   (cmp.select_next_item {:behavior cmp.SelectBehavior.Select})
-                                                                   (cmp.confirm)))
-                                                             ;; (luasnip.expand_or_jumpable)
-                                                             ;; (luasnip.expand_or_jump)
-                                                             (fallback))))}))
+       {:<C-b> (cmp.mapping.scroll_docs -4)
+        :<C-f> (cmp.mapping.scroll_docs 4)
+        :<C-k> (cmp.mapping.select_prev_item)
+        :<C-j> (cmp.mapping.select_next_item)
+        :<Tab> (cmp.mapping (fn [fallback]
+                              (if (cmp.visible)
+                                  (let [entry (cmp.get_selected_entry)]
+                                    (if (not entry)
+                                        (cmp.select_next_item {:behavior cmp.SelectBehavior.Select})
+                                        (cmp.confirm)))
+                                  (luasnip.expand_or_locally_jumpable)
+                                  (luasnip.expand_or_jump)
+                                  (fallback)))
+                            [:i :s])})
   (set t.sources (cmp.config.sources [{:name :nvim_lsp}
-                                      {:name :path}
+                                      {:name :luasnip}]
+                                     [{:name :async_path}
                                       {:name :crates}
-                                      {:name :neorg}
-                                      {:name :luasnip}
-                                      {:name :buffer}]))
+                                      {:name :buffer}
+                                      {:name :latex_symbols}
+                                      {:name :rg}]))
+  (set t.window {:completion {:col_offset -3}})
   (set t.formatting {:format (fn [_entry vim-item]
-                               (set vim-item.kind
-                                    (.. (or (. kind-icons vim-item.kind) "")
-                                        vim-item.kind))
-                               vim-item)})
+                               (when (not= vim-item.menu nil)
+                                 (set vim-item.menu
+                                      (string.sub vim-item.menu 1 25)))
+                               (let [kind vim-item.kind
+                                     icon (. kind-icons kind)]
+                                 (set vim-item.kind
+                                      (if (not= icon nil)
+                                          (.. "" icon " ")
+                                          "  ")))
+                               vim-item)
+                     :fields [:kind :abbr :menu]})
+  (let [color (vim.api.nvim_get_hl 0 {:name :CmpItemKind})]
+    (vim.api.nvim_set_hl 0 :CmpItemMenu {:fg color.fg}))
   (cmp.setup t)
+  (cmp.setup.cmdline "/"
+                     {:mapping (cmp.mapping.preset.cmdline)
+                      :sources (cmp.config.sources [{:name :buffer}])})
   (cmp.setup.cmdline ":"
                      {:mapping (cmp.mapping.preset.cmdline)
-                      :sources (cmp.config.sources [{:name :path}]
+                      :sources (cmp.config.sources [{:name :async_path}]
                                                    [{:name :cmdline}])}))
 
 M

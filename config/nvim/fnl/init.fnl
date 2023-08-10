@@ -28,7 +28,12 @@
                                 : group})
   ;; Reload file for changes
   (vim.api.nvim_create_autocmd [:FocusGained :BufEnter]
-                               {:pattern ["*"] :command :checktime : group}))
+                               {:pattern ["*"] :command :checktime : group})
+  ;; Formats rust files on save
+  (vim.api.nvim_create_autocmd :BufWritePre
+                              {:pattern :*.rs
+                                :callback #(vim.lsp.buf.format {:timeout_ms 200})
+                                : group}))
   ;; Wipes hidden buffers
   ;; (vim.api.nvim_create_autocmd [:BufReadPost]
   ;;                              {:pattern ["*"]

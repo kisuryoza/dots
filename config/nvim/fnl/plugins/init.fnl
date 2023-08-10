@@ -30,6 +30,8 @@
  (require :plugins.cmp)
  ;; syntax highlighting
  (require :plugins.treesitter)
+ ;; custom submodes and menus
+ (require :plugins.hydra)
  ;; syntax for Fennel
  (pack :jaawerth/fennel.vim)
  ;; syntax for yuck
@@ -41,17 +43,6 @@
                        ;; remote operations on Vim's native text objects
                        (pack :ggandor/leap-spooky.nvim {:config true})]
         :config #(vim.api.nvim_set_hl 0 :LeapBackdrop {:link :Comment})})
- ;; organizes life in plain text
- (pack :nvim-neorg/neorg
-       {:build ":Neorg sync-parsers"
-        :cmd :Neorg
-        :ft :norg
-        :opts {:load {:core.defaults {}}
-               :core.completion {:config {:engine :nvim-cmp}}
-               :core.integrations.nvim-cmp {}
-               :core.concealer {}
-               :core.dirman {:config {:workspaces {:notes "~/Sync/neorg"}}}
-               :core.journal {:config {:strategy :flat}}}})
  ;; Smooth scrolling <C-u>, <C-d> ; <C-b>, <C-f> ; <C-y>, <C-e> ; zt, zz, zb
  (pack :karb94/neoscroll.nvim {:config true :event :BufRead})
  ;; magit for neovim
@@ -102,7 +93,11 @@
  (pack :RaafatTurki/hex.nvim {:config true})
  ;; helping you establish good command workflow and habit
  (pack :m4xshen/hardtime.nvim
-       {:opts {:disabled_filetypes [:neo-tree
+       {:opts {:disabled_filetypes [:lazy
+                                    :mason
+                                    :neo-tree
                                     :noice
                                     :NeogitStatus
-                                    :spectre_panel]}})]
+                                    :spectre_panel]}})
+ ;; Flow state (bionic) reading in neovim
+ (pack :nullchilly/fsread.nvim {:cmd [:FSRead :FSClear :FSToggle]})]

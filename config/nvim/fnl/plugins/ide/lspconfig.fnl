@@ -28,7 +28,7 @@
                       {:text " " :texthl :DiagnosticSignInfo})
   (vim.fn.sign_define :DiagnosticSignHint
                       {:text "" :texthl :DiagnosticSignHint})
-  ;; Used by lsp-CodeAction (heirline's widget)
+  ;; Used by lsp-CodeAction (heirline"s widget)
   ;; (fn code-action-listener []
   ;;   (let [context {:diagnostics (vim.lsp.diagnostic.get_line_diagnostics)}
   ;;         params (vim.lsp.util.make_range_params)]
@@ -58,28 +58,32 @@
                           :settings {:fennel {:workspace {:library (vim.api.nvim_list_runtime_paths)}
                                               :diagnostics {:globals [:vim]}}}}})
 
-  (fn lsp-on-attach [args]
-    (when (and args.data args.data.client_id)
-      (local bufnr args.buf)
-      (local client (vim.lsp.get_client_by_id args.data.client_id))
+  (fn lsp-on-attach [ev]
+    (when (and ev.data ev.data.client_id)
+      (local bufnr ev.buf)
+      (local client (vim.lsp.get_client_by_id ev.data.client_id))
       ((. (require :lsp-inlayhints) :on_attach) client bufnr))
-    (let [wk (require :which-key)]
-      (wk.register {:l {:name :+LSP
-                        :R [(cmd "Glance references") :References]
-                        :d [(cmd "Glance definitions") :Definitions]
-                        :t [(cmd "Glance type_definitions") "Type definitions"]
-                        :i [(cmd "Glance implementations") :Implementations]
-                        :r [vim.lsp.buf.rename "Rename all references"]
-                        :K [vim.lsp.buf.hover "Hover info about symbol"]
-                        :<C-k> [vim.lsp.buf.signature_help
-                                "Show signature info about symbol"]
-                        :a [vim.lsp.buf.code_action "Code actions"]
-                        :f [#(vim.lsp.buf.format {:async true})
-                            "Format buffer"]}}
-                   {:prefix :<leader>
-                    :buffer args.buf
-                    :silent true
-                    :noremap true})))
+
+    (fn nmap [key func desc]
+      (vim.keymap.set :n key func {:buffer ev.buf : desc}))
+
+    (nmap :<leader>lR (cmd "Glance references") :References)
+    (nmap :<leader>ld (cmd "Glance definitions") :Definitions)
+    (nmap :<leader>lt (cmd "Glance type_definitions") "Type Definitions")
+    (nmap :<leader>li (cmd "Glance implementations") :Implementations)
+    (nmap :<leader>lD vim.lsp.buf.declaration :Declarations)
+    (nmap :<leader>lK vim.lsp.buf.hover "Hover Documentation")
+    (nmap :<leader>l<C-k> #(vim.lsp.buf.signature_help)
+          "Signature Documentation")
+    (nmap :<leader>lr vim.lsp.buf.rename :Rename)
+    (nmap :<leader>la vim.lsp.buf.code_action "Code Actions")
+    (nmap :<leader>lf #(vim.lsp.buf.format {:async true}) :Format)
+    (nmap :<leader>wa vim.lsp.buf.add_workspace_folder "Workspace Add Folder")
+    (nmap :<leader>wr vim.lsp.buf.remove_workspace_folder
+          "Workspace Remove Folder")
+    (nmap :<leader>wl
+          #(print (vim.inspect (vim.lsp.buf.list_workspace_folders)))
+          "Workspace List Folders"))
 
   (vim.api.nvim_create_augroup :UserLspConfig {})
   (vim.api.nvim_create_autocmd :LspAttach
@@ -96,6 +100,7 @@
                                     :cmd [:rustup :run :stable :rust-analyzer]})
     (lspconfig.fennel_language_server.setup {: capabilities})
     (lspconfig.bashls.setup {: capabilities})
+    (lspconfig.tsserver.setup {: capabilities})
     (lspconfig.nil_ls.setup {: capabilities})))
 
 M
