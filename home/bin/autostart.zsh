@@ -38,8 +38,8 @@ function start_X {
     # setxkbmap -layout us,ru -variant colemak,
 
     # Display Power Management Signaling
-    xset s off
-    xset dpms 130 130 130
+    xset s 170 170
+    xset dpms 180 180 180
 
     # Screen locker
     pgrep --exact xss-lock || xss-lock --transfer-sleep-lock -- i3lock -c 1a1b26 --nofork &>/dev/null &

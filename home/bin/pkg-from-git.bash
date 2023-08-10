@@ -35,29 +35,6 @@ function eww {
     fi
 }
 
-function leftwm {
-    if is_in_path startx; then
-        update "https://github.com/leftwm/leftwm"
-
-        if [[ ! -f ~/.xinitrc ]]; then
-            {
-                echo "#\!/usr/bin/env zsh"
-                echo "exec dbus-launch leftwm"
-            } >~/.xinitrc
-        fi
-
-        cargo build --release
-        install -vsDm 744 \
-            target/release/leftwm \
-            target/release/leftwm-worker \
-            target/release/lefthk-worker \
-            target/release/leftwm-state \
-            target/release/leftwm-check \
-            target/release/leftwm-command \
-            -t ~/.local/bin
-    fi
-}
-
 function allocscope {
     update "https://github.com/matt-kimball/allocscope"
 
@@ -83,12 +60,8 @@ case $1 in
 "eww")
     eww
     ;;
-"leftwm")
-    leftwm
-    ;;
 "all")
     eww
-    leftwm
     allocscope
     parinfer
     fennel_language_server
