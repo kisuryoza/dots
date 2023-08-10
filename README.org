@@ -4,7 +4,7 @@ My dot files
 
 - Terminal: [[https://github.com/alacritty/alacritty][alacritty]]
 - Shell: [[https://www.zsh.org/][Zsh]]
-- Window Manager: [[https://github.com/leftwm/leftwm][LeftWM]]
+- Window Manager: [[https://github.com/baskerville/bspwm][bspwm]]
 - Bar/Widget: [[https://github.com/elkowar/eww][eww]]
 - Compositor: [[https://github.com/yshui/picom][picom]]
 - Editor: [[https://github.com/neovim/neovim][neovim]]
