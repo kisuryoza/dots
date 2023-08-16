@@ -11,5 +11,10 @@
 (λ cmd [command]
   (.. :<cmd> command :<CR>))
 
-{: pack : setup! : cmd}
+(λ nmap [key func desc ?buffer]
+  (if (= nil ?buffer)
+    `(vim.keymap.set :n ,key ,func {:desc ,desc})
+    `(vim.keymap.set :n ,key ,func {:desc ,desc :buffer ,?buffer})))
+
+{: pack : setup! : cmd : nmap}
 

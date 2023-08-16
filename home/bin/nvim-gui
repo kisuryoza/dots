@@ -1,8 +1,0 @@
-#!/usr/bin/env zsh
-
-FONT="JetBrains Mono"
-if [[ $# -eq 0 ]]; then
-    alacritty --option="font.normal.family=$FONT" --option="font.bold.family=$FONT" --option="font.italic.family=$FONT" --option="font.bold_italic.family=$FONT" --command=nvim
-else
-    alacritty --option="font.normal.family=$FONT" --option="font.bold.family=$FONT" --option="font.italic.family=$FONT" --option="font.bold_italic.family=$FONT" --command=nvim --command="$*"
-fi

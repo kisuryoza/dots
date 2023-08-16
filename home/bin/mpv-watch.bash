@@ -29,6 +29,11 @@ function find_vid {
     for dub in "${dubs[@]}"; do
         OPTIONS+=(--audio-file="$dub")
     done
+
+    if [[ ! -d "fonts" ]]; then
+        mkdir "fonts"
+        (cd fonts && fd -e ttf -e otf . .. -x ln -sf "{}" .)
+    fi
 }
 
 function launch {
@@ -103,6 +108,9 @@ case "$1" in
     if [[ -e "$HIST_FILE" ]]; then
         rm "$HIST_FILE"
         echo "Deleted $HIST_FILE"
+    fi
+    if [[ -d "fonts" ]]; then
+        rm "fonts"
     fi
     ;;
 *)

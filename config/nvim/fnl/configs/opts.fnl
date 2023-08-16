@@ -49,7 +49,7 @@
    :swapfile false
    :backup false
    :undofile true
-   :undodir (.. (os.getenv "XDG_CACHE_HOME") "/nvim/undo//")
+   :undodir (.. (os.getenv "HOME") "/.cache/nvim/undo//")
    :history 100])
 
 (vim.opt.fillchars:append {:horiz "━"

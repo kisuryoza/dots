@@ -1,6 +1,5 @@
-(import-macros {: pack : setup! : cmd} :macros)
+(import-macros {: pack : setup! : cmd : nmap} :macros)
 
-;; lsp config
 (local M
        (pack :neovim/nvim-lspconfig
              {:dependencies [;; renders diagnostics using virtual lines on top of the real line of code
@@ -13,8 +12,6 @@
                                    {:opts {:inlay_hints {:type_hints {:prefix "=> "
                                                                       :remove_colon_start true}
                                                          :highlight :Comment}}})
-                             ;; A pretty window for previewing, navigating and editing your LSP locations in one place
-                             (pack :dnlhc/glance.nvim {:config true})
                              ;; helps managing crates.io dependencies
                              (pack :saecki/crates.nvim
                                    {:config true :event "BufRead Cargo.toml"})]}))
@@ -60,36 +57,31 @@
 
   (fn lsp-on-attach [ev]
     (when (and ev.data ev.data.client_id)
-      (local bufnr ev.buf)
       (local client (vim.lsp.get_client_by_id ev.data.client_id))
-      ((. (require :lsp-inlayhints) :on_attach) client bufnr))
+      ((. (require :lsp-inlayhints) :on_attach) client ev.buf))
 
-    (fn nmap [key func desc]
-      (vim.keymap.set :n key func {:buffer ev.buf : desc}))
-
-    (nmap :<leader>lR (cmd "Glance references") :References)
-    (nmap :<leader>ld (cmd "Glance definitions") :Definitions)
-    (nmap :<leader>lt (cmd "Glance type_definitions") "Type Definitions")
-    (nmap :<leader>li (cmd "Glance implementations") :Implementations)
-    (nmap :<leader>lD vim.lsp.buf.declaration :Declarations)
-    (nmap :<leader>lK vim.lsp.buf.hover "Hover Documentation")
+    (nmap :<leader>lR (cmd "Telescope lsp_references") :References ev.buf)
+    (nmap :<leader>ld (cmd "Telescope lsp_definitions") :Definitions ev.buf)
+    (nmap :<leader>lK vim.lsp.buf.hover "Hover Documentation" ev.buf)
     (nmap :<leader>l<C-k> #(vim.lsp.buf.signature_help)
-          "Signature Documentation")
-    (nmap :<leader>lr vim.lsp.buf.rename :Rename)
-    (nmap :<leader>la vim.lsp.buf.code_action "Code Actions")
-    (nmap :<leader>lf #(vim.lsp.buf.format {:async true}) :Format)
-    (nmap :<leader>wa vim.lsp.buf.add_workspace_folder "Workspace Add Folder")
+          "Signature Documentation" ev.buf)
+    (nmap :<leader>lr vim.lsp.buf.rename :Rename ev.buf)
+    (nmap :<leader>la vim.lsp.buf.code_action "Code Actions" ev.buf)
+    (nmap :<leader>lf #(vim.lsp.buf.format {:async true}) :Format ev.buf)
+    (nmap :<leader>wa vim.lsp.buf.add_workspace_folder "Workspace Add Folder" ev.buf)
     (nmap :<leader>wr vim.lsp.buf.remove_workspace_folder
-          "Workspace Remove Folder")
+          "Workspace Remove Folder" ev.buf)
     (nmap :<leader>wl
           #(print (vim.inspect (vim.lsp.buf.list_workspace_folders)))
-          "Workspace List Folders"))
+          "Workspace List Folders" ev.buf))
 
   (vim.api.nvim_create_augroup :UserLspConfig {})
   (vim.api.nvim_create_autocmd :LspAttach
                                {:callback (fn [args] (lsp-on-attach args))
                                 :group :UserLspConfig})
   (let [capabilities ((. (require :cmp_nvim_lsp) :default_capabilities))]
+        ;; filename (vim.fn.expand "%:p:t")
+        ;; autostart (if (or (= filename :main.rs) (= filename :lib.rs)) true false)]
     (lspconfig.clangd.setup {: capabilities})
     ;; (lspconfig.ccls.setup {: capabilities
     ;;                        :init_options {:compilationDatabaseDirectory :target
@@ -97,9 +89,9 @@
     ;;                        :clang {}})
     (lspconfig.rust_analyzer.setup {: capabilities
                                     :settings {:rust-analyzer {:check {:command :clippy}}}
-                                    :cmd [:rustup :run :stable :rust-analyzer]})
+                                    :cmd [:rustup :run :stable :rust-analyzer]
+                                    :autostart false})
     (lspconfig.fennel_language_server.setup {: capabilities})
-    (lspconfig.bashls.setup {: capabilities})
     (lspconfig.tsserver.setup {: capabilities})
     (lspconfig.nil_ls.setup {: capabilities})))
 

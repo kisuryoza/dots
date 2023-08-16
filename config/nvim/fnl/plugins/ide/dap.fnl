@@ -4,7 +4,7 @@
                {:dependencies [(pack :rcarriga/nvim-dap-ui
                                      {:config #(let [dap (require :dap)
                                                      dapui (require :dapui)]
-                                                 ((. dapui :setup))
+                                                 (dapui.setup)
                                                  (tset dap.listeners.after.event_initialized
                                                        :dapui_config
                                                        #(dapui.open))
@@ -20,56 +20,56 @@
                 :ft [:c :cpp :rust]}))
 
 (fn M.config []
-  (let [dap (require :dap)
-        wk (require :which-key)]
-    (set dap.adapters.codelldb
-         {:type :server
-          :port "${port}"
-          :executable {:command :/usr/bin/codelldb :args [:--port "${port}"]}})
-    (set dap.configurations.c
-         [{:name :codelldb
-           :type :codelldb
-           :request :launch
-           :program #(vim.fn.input "Path to executable: "
-                                   (.. (vim.fn.getcwd) "/") :file)
-           :cwd "${workspaceFolder}"
-           :stopOnEntry false}])
-    (set dap.configurations.cpp dap.configurations.c)
-    (set dap.configurations.rust
-         [{:name :codelldb
-           :type :codelldb
-           :request :launch
-           :program (fn []
-                      (vim.notify :Building... vim.log.levels.WARN)
-                      (vim.fn.system "cargo build")
-                      (let [output (vim.fn.system "cargo metadata --format-version=1 --no-deps")
-                            artifact (vim.fn.json_decode output)
-                            target-name (. (. (. (. artifact.packages 1)
-                                                 :targets)
-                                              1)
-                                           :name)
-                            target-dir artifact.target_directory]
-                        (vim.notify (.. "Binary name: " target-name)
-                                    vim.log.levels.INFO)
-                        (.. target-dir :/debug/ target-name)))}])
+  (local dap (require :dap))
+  (set dap.adapters.codelldb
+       {:type :server
+        :port "${port}"
+        :executable {:command :/usr/bin/codelldb :args [:--port "${port}"]}})
+  (set dap.configurations.c [{:name :codelldb
+                              :type :codelldb
+                              :request :launch
+                              :program #(vim.fn.input "Path to executable: "
+                                                      (.. (vim.fn.getcwd) "/")
+                                                      :file)
+                              :cwd "${workspaceFolder}"
+                              :stopOnEntry false}])
+  (set dap.configurations.cpp dap.configurations.c)
+  (set dap.configurations.rust
+       [{:name :codelldb
+         :type :codelldb
+         :request :launch
+         :program (fn []
+                    (vim.notify :Building... vim.log.levels.WARN)
+                    (vim.fn.system "cargo build")
+                    (let [output (vim.fn.system "cargo metadata --format-version=1 --no-deps")
+                          artifact (vim.fn.json_decode output)
+                          target-name (. (. (. (. artifact.packages 1) :targets)
+                                            1)
+                                         :name)
+                          target-dir artifact.target_directory]
+                      (vim.notify (.. "Binary name: " target-name)
+                                  vim.log.levels.INFO)
+                      (.. target-dir :/debug/ target-name)))}])
+  (when (pcall require :which-key)
+    (local wk (require :which-key))
     (wk.register {:d {:name :+DAP
-                      :t [#((. dap :terminate)) :Terminate]
-                      :c [#((. dap :continue)) :Continue]
+                      :t [#(dap.terminate) :Terminate]
+                      :c [#(dap.continue) :Continue]
                       :s {:name :+Step
-                          :o [#((. dap :step_over)) "Step over"]
-                          :i [#((. dap :step_into)) "Step into"]
-                          :O [#((. dap :step_out)) "Step out"]}
-                      :b [#((. dap :toggle_breakpoint)) "Toggle breakpoint"]
+                          :o [#(dap.step_over) "Step over"]
+                          :i [#(dap.step_into) "Step into"]
+                          :O [#(dap.step_out) "Step out"]}
+                      :b [#(dap.toggle_breakpoint) "Toggle breakpoint"]
                       :B {:name :+Breakpoints
-                          :b [#((. dap :set_breakpoint) nil nil
-                                                        (vim.fn.input "Log msg: "))
+                          :b [#(dap.set_breakpoint nil nil
+                                                   (vim.fn.input "Log msg: "))
                               "Set breakpoint"]
-                          :s [#((. dap :set_breakpoint) (vim.fn.input "Breakpoint condition: ")
-                                                        (vim.fn.input "Breakpoint hit condition: ")
-                                                        (vim.fn.input "Log msg: "))
+                          :s [#(dap.set_breakpoint (vim.fn.input "Breakpoint condition: "
+                                                                 (vim.fn.input "Breakpoint hit condition: ")
+                                                                 (vim.fn.input "Log msg: ")))
                               "Set breakpoint with conditions"]}
-                      :d {:r [#((. (. dap :repl) :open)) "Repl open"]
-                          :l [#((. dap :run_last)) "Run last"]}}}
+                      :d {:r [#(dap.repl.open) "Repl open"]
+                          :l [#(dap.run_last) "Run last"]}}}
                  {:prefix :<leader> :silent true})))
 
 M

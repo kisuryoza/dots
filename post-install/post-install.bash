@@ -86,7 +86,7 @@ function post_user {
     cat <<EOF >"$HOME/.local/share/applications/nvim.desktop"
 [Desktop Entry]
 Name=nvim
-Exec=/home/$USER/bin/nvim-gui
+Exec=alacritty --command=nvim --command=%F
 Type=Application
 EOF
 

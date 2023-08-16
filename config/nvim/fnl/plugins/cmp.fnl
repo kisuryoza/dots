@@ -5,11 +5,12 @@
                                :hrsh7th/cmp-buffer
                                :hrsh7th/cmp-cmdline
                                :FelipeLema/cmp-async-path
-                               :lukas-reineke/cmp-rg
+                               ;; :lukas-reineke/cmp-rg
                                :kdheepak/cmp-latex-symbols
                                :L3MON4D3/LuaSnip
-                               :saadparwaiz1/cmp_luasnip]}))
-                               ;; :rafamadriz/friendly-snippets]}))
+                               :saadparwaiz1/cmp_luasnip
+                               :rafamadriz/friendly-snippets]
+                :event :InsertEnter}))
 
 (fn M.config []
   (local cmp (require :cmp))
@@ -59,28 +60,26 @@
   (set t.snippet
        {:expand (fn [args]
                   ((. luasnip :lsp_expand) args.body))})
-  (set t.mapping
-       {:<C-b> (cmp.mapping.scroll_docs -4)
-        :<C-f> (cmp.mapping.scroll_docs 4)
-        :<C-k> (cmp.mapping.select_prev_item)
-        :<C-j> (cmp.mapping.select_next_item)
-        :<Tab> (cmp.mapping (fn [fallback]
-                              (if (cmp.visible)
-                                  (let [entry (cmp.get_selected_entry)]
-                                    (if (not entry)
-                                        (cmp.select_next_item {:behavior cmp.SelectBehavior.Select})
-                                        (cmp.confirm)))
-                                  (luasnip.expand_or_locally_jumpable)
-                                  (luasnip.expand_or_jump)
-                                  (fallback)))
-                            [:i :s])})
-  (set t.sources (cmp.config.sources [{:name :nvim_lsp}
-                                      {:name :luasnip}]
+  (set t.mapping {:<C-b> (cmp.mapping.scroll_docs -4)
+                  :<C-f> (cmp.mapping.scroll_docs 4)
+                  :<C-k> (cmp.mapping.select_prev_item)
+                  :<C-j> (cmp.mapping.select_next_item)
+                  :<Tab> (cmp.mapping (fn [fallback]
+                                        (if (cmp.visible)
+                                            (let [entry (cmp.get_selected_entry)]
+                                              (if (not entry)
+                                                  (cmp.select_next_item {:behavior cmp.SelectBehavior.Select})
+                                                  (cmp.confirm)))
+                                            (luasnip.expand_or_locally_jumpable)
+                                            (luasnip.expand_or_jump)
+                                            (fallback)))
+                                      [:i :s])})
+  (set t.sources (cmp.config.sources [{:name :nvim_lsp} {:name :luasnip}]
                                      [{:name :async_path}
-                                      {:name :crates}
                                       {:name :buffer}
                                       {:name :latex_symbols}
-                                      {:name :rg}]))
+                                      {:name :crates}]))
+                                      ;; {:name :rg}]))
   (set t.window {:completion {:col_offset -3}})
   (set t.formatting {:format (fn [_entry vim-item]
                                (when (not= vim-item.menu nil)
@@ -106,3 +105,4 @@
                                                    [{:name :cmdline}])}))
 
 M
+

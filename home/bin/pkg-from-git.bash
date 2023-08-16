@@ -45,11 +45,6 @@ function allocscope {
         -t ~/.local/bin
 }
 
-function parinfer {
-    update "https://github.com/eraserhd/parinfer-rust"
-    cargo build --release --features emacs
-}
-
 function fennel_language_server {
     update "https://github.com/rydesun/fennel-language-server"
     cargo build --release
@@ -63,7 +58,6 @@ case $1 in
 "all")
     eww
     allocscope
-    parinfer
     fennel_language_server
     ;;
 *) exit 1 ;;

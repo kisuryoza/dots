@@ -5,10 +5,6 @@ function start {
     # Polkit (graphical)
     pgrep --exact polkit-mate-aut || /usr/lib/mate-polkit/polkit-mate-authentication-agent-1 &> /dev/null &
 
-    # Hotkey daemon
-    pgrep --exact swhks || swhks &> /dev/null &
-    pgrep --exact swhkd || pkexec swhkd -c ~/.config/swhkd/swhkdrc &> /dev/null &
-
     # Audio Effects for Pipewire applications
     if [[ -x /usr/bin/easyeffects && ! $(pgrep -x easyeffects) ]]; then
         easyeffects --gapplication-service &
@@ -32,6 +28,9 @@ function start {
 }
 
 function start_X {
+    # Hotkey daemon
+    pgrep --exact sxhkd || sxhkd &> /dev/null &
+
     # Keyboard layout
     setxkbmap -option grp:win_space_toggle -option caps:escape
     setxkbmap -layout us,ru
@@ -90,7 +89,8 @@ function stop {
 
     pkill --exact dunst
 
-    pkill --exact xautolock
+    pkill --exact sxhkd
+    pkill --exact xss-lock
     pkill --exact picom
     pkill --exact flameshot
 

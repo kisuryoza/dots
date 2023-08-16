@@ -8,7 +8,6 @@ local function bootstrap(user, repo)
     vim.opt.runtimepath:prepend(install_path)
 end
 
-vim.cmd("colorscheme habamax")
 bootstrap("folke", "lazy.nvim")
 bootstrap("udayvir-singh", "tangerine.nvim")
 
