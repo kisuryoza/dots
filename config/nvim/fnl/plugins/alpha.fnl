@@ -46,11 +46,6 @@
         buttons {:type :group
                  :opts {:spacing 1}
                  :val [(button "" "> new file" :enew)]}
-                       ;; (button "SPC f F" "> file manager" :NeoTreeFocus)
-                       ;; (button "SPC f r" "> recent files" "Telescope oldfiles")
-                       ;; (button "SPC f f" "> find files" "Telescope find_files")
-                       ;; (button "SPC s c" "> neovim config"
-                       ;;         "e $MYVIMRC | :cd %:p:h")]}
         quotee {:type :text
                 :opts {:position :center :hl :Type}
                 :val "Well are those who rise in the early morn, while those late to bed I shall forewarn"}]

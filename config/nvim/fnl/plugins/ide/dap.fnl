@@ -1,4 +1,4 @@
-(import-macros {: pack} :macros)
+(import-macros {: pack : nmapp!} :macros)
 
 (local M (pack :mfussenegger/nvim-dap
                {:dependencies [(pack :rcarriga/nvim-dap-ui
@@ -50,26 +50,25 @@
                       (vim.notify (.. "Binary name: " target-name)
                                   vim.log.levels.INFO)
                       (.. target-dir :/debug/ target-name)))}])
-  (when (pcall require :which-key)
-    (local wk (require :which-key))
-    (wk.register {:d {:name :+DAP
-                      :t [#(dap.terminate) :Terminate]
-                      :c [#(dap.continue) :Continue]
-                      :s {:name :+Step
-                          :o [#(dap.step_over) "Step over"]
-                          :i [#(dap.step_into) "Step into"]
-                          :O [#(dap.step_out) "Step out"]}
-                      :b [#(dap.toggle_breakpoint) "Toggle breakpoint"]
-                      :B {:name :+Breakpoints
-                          :b [#(dap.set_breakpoint nil nil
-                                                   (vim.fn.input "Log msg: "))
-                              "Set breakpoint"]
-                          :s [#(dap.set_breakpoint (vim.fn.input "Breakpoint condition: "
-                                                                 (vim.fn.input "Breakpoint hit condition: ")
-                                                                 (vim.fn.input "Log msg: ")))
-                              "Set breakpoint with conditions"]}
-                      :d {:r [#(dap.repl.open) "Repl open"]
-                          :l [#(dap.run_last) "Run last"]}}}
-                 {:prefix :<leader> :silent true})))
+
+  (nmapp! :dt #(dap.terminate) :Terminate)
+  (nmapp! :dc #(dap.continue) :Continue)
+
+  (nmapp! :dso #(dap.step_over) "Step over")
+  (nmapp! :dsi #(dap.step_into) "Step into")
+  (nmapp! :dsO #(dap.step_out) "Step out")
+
+  (nmapp! :db #(dap.toggle_breakpoint) "Toggle breakpoint")
+  (nmapp! :dBb #(dap.set_breakpoint nil nil (vim.fn.input "Log msg: "))
+         "Set breakpoint")
+  (nmapp! :dBs
+         #(dap.set_breakpoint (vim.fn.input "Breakpoint condition: "
+                                            (vim.fn.input "Breakpoint hit condition: ")
+                                            (vim.fn.input "Log msg: ")))
+         "Set breakpoint with conditions")
+
+  (nmapp! :ddr #(dap.repl.open) "Repl open")
+  (nmapp! :ddl #(dap.run_last) "Run last"))
 
 M
+

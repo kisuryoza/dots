@@ -19,7 +19,6 @@ function post_user {
     AUR_PKG+=(freetube-bin) # An open source desktop YouTube player built with privacy in mind.
     AUR_PKG+=(catppuccin-gtk-theme-mocha ttf-material-design-icons-desktop-git ttf-comic-neue ttf-comic-mono-git)
     AUR_PKG+=(downgrade rate-mirrors-bin)
-    AUR_PKG+=(bob-bin) # A version manager for neovim
     # AUR_PKG+=(xkb-switch-git) # Program that allows to query and change the XKB layout state
     # AUR_PKG+=(thokr-git)      # A sleek typing tui written in rust
     # AUR_PKG+=(greetd greetd-tuigreet-bin)
@@ -79,16 +78,6 @@ function post_user {
 
     log "Installing packages from git..."
     ~/bin/pkg-from-git.bash all
-
-    log "Installing neovim"
-    bob use nightly
-    mkdir -p "$HOME/.local/share/applications/"
-    cat <<EOF >"$HOME/.local/share/applications/nvim.desktop"
-[Desktop Entry]
-Name=nvim
-Exec=alacritty --command=nvim --command=%F
-Type=Application
-EOF
 
     (
         log "Installing zsh plugins"
@@ -155,6 +144,14 @@ EOF
         handlr set 'image/jpeg' imv-dir.desktop
         handlr set 'image/png' imv-dir.desktop
     fi
+
+    mkdir -p "$HOME/.local/share/applications/"
+    cat <<EOF >"$HOME/.local/share/applications/nvim.desktop"
+[Desktop Entry]
+Name=nvim
+Exec=alacritty --command=nvim --command=%F
+Type=Application
+EOF
 
     git clone --depth 1 https://github.com/kisuryoza/arch-deploy ~/.local/bin/arch-deploy
 }

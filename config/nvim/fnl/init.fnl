@@ -16,8 +16,6 @@
 
 (change-alacritty-font "JetBrains Mono")
 
-(require :configs.opts)
-
 ((setup! :lazy) (require :plugins)
                 {:lockfile (.. (vim.fn.stdpath :data) :/lazy-lock.json)
                  :performance {:cache {:enabled true}
@@ -27,6 +25,9 @@
                                                         :tarPlugin
                                                         :tohtml
                                                         :tutor]}}})
+
+(require :configs.opts)
+(require :configs.key_maps)
 
 ;; Deletes trailing spaces and replaces tabs w/ spaces on save
 (vim.api.nvim_create_autocmd :FileWritePre

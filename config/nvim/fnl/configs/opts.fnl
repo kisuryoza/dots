@@ -1,56 +1,35 @@
-(fn set-opts [opts]
-  (for [i 1 (length opts) 2]
-    (let [key (. opts i)
-          value (. opts (+ i 1))]
-      (tset vim.opt key value))))
+(import-macros {: set!} :macros)
 
-(set-opts
-  [:autoread true
-   :shadafile "NONE"
-   :clipboard "unnamedplus"
-   :fileformat "unix"
-   :guifont "JetBrains Mono:h10"
-   :termguicolors true
+(set! :clipboard "unnamedplus")
+(set! :termguicolors true)
 
-   :autoindent true
-   :expandtab true
-   :tabstop 4
-   :shiftwidth 4
-   :shiftround true
-   :softtabstop 4
-   :smartindent true
-   ;; :colorcolumn "80"
+(set! :expandtab true)
+(set! :tabstop 4)
+(set! :shiftwidth 4)
+(set! :shiftround true)
+(set! :softtabstop 4)
+(set! :smartindent true)
 
-   :number true
-   :relativenumber true
-   :numberwidth 3
-   :foldmethod "marker"
-   :hlsearch true
-   :showmode false
+(set! :number true)
+(set! :relativenumber true)
+(set! :foldmethod "marker")
+(set! :hlsearch true)
+(set! :showmode false)
+(set! :cursorline true)
+(set! :scrolloff 2)
+(set! :virtualedit "block")
+(set! :wrap false)
+(set! :timeoutlen 300)
+(set! :ignorecase true)
+(set! :smartcase true)
+(set! :updatetime 300)
+(set! :splitbelow true)
+(set! :splitright true)
 
-   :mouse "a"
-   :updatetime 500
-   :cursorline true
-   :cursorlineopt "both"
-   :scrolloff 2
-   :whichwrap "[,]"
-   :virtualedit "block"
-   :conceallevel 0
-   :concealcursor "nc"
-   :wrap false
-
-   :ignorecase true
-   :smartcase true
-
-   :splitbelow true
-   :splitright true
-
-   :shadafile ""
-   :swapfile false
-   :backup false
-   :undofile true
-   :undodir (.. (os.getenv "HOME") "/.cache/nvim/undo//")
-   :history 100])
+(set! :swapfile false)
+(set! :undofile true)
+(set! :undodir (.. (os.getenv "HOME") "/.cache/nvim/undo//"))
+(set! :history 100)
 
 (vim.opt.fillchars:append {:horiz "━"
                            :horizup "┻"
@@ -60,5 +39,3 @@
                            :vertright "┣"
                            :verthoriz "╋"})
 
-(set vim.g.mapleader " ")
-(set vim.g.maplocalleader "\\")

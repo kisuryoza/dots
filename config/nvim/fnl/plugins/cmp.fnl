@@ -1,16 +1,14 @@
-(import-macros {: pack} :macros)
+(import-macros {: pack : map!} :macros)
 
 (local M (pack :hrsh7th/nvim-cmp
                {:dependencies [:hrsh7th/cmp-nvim-lsp
                                :hrsh7th/cmp-buffer
                                :hrsh7th/cmp-cmdline
                                :FelipeLema/cmp-async-path
-                               ;; :lukas-reineke/cmp-rg
-                               :kdheepak/cmp-latex-symbols
                                :L3MON4D3/LuaSnip
                                :saadparwaiz1/cmp_luasnip
                                :rafamadriz/friendly-snippets]
-                :event :InsertEnter}))
+                :event :BufRead}))
 
 (fn M.config []
   (local cmp (require :cmp))
@@ -20,16 +18,10 @@
                   :update_events [:TextChanged :TextChangedI]
                   :region_check_events [:CursorMoved :CursorMovedI]
                   :delete_check_events [:TextChanged :TextChangedI]})
-  (vim.keymap.set [:i] :<C-K> #(luasnip.expand) {:silent true})
-  (vim.keymap.set [:i :s] :<C-L>
-                  #(when (luasnip.locally_jumpable 1) (luasnip.jump 1))
-                  {:silent true})
-  (vim.keymap.set [:i :s] :<C-J>
-                  #(when (luasnip.locally_jumpable -1) (luasnip.jump -1))
-                  {:silent true})
-  (vim.keymap.set [:i :s] :<C-E>
-                  #(when (luasnip.choice_active) (luasnip.change_choice 1))
-                  {:silent true})
+  (map! :i :<C-K> #(luasnip.expand))
+  (map! [:i :s] :<C-L> #(when (luasnip.locally_jumpable 1) (luasnip.jump 1)))
+  (map! [:i :s] :<C-J> #(when (luasnip.locally_jumpable -1) (luasnip.jump -1)))
+  (map! [:i :s] :<C-E> #(when (luasnip.choice_active) (luasnip.change_choice 1)))
   (set vim.opt.completeopt "menu,menuone,noselect")
   (local kind-icons {:Text ""
                      :Method "󰆧"
@@ -77,9 +69,7 @@
   (set t.sources (cmp.config.sources [{:name :nvim_lsp} {:name :luasnip}]
                                      [{:name :async_path}
                                       {:name :buffer}
-                                      {:name :latex_symbols}
                                       {:name :crates}]))
-                                      ;; {:name :rg}]))
   (set t.window {:completion {:col_offset -3}})
   (set t.formatting {:format (fn [_entry vim-item]
                                (when (not= vim-item.menu nil)

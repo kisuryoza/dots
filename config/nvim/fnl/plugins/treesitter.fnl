@@ -3,24 +3,22 @@
 (local M (pack :nvim-treesitter/nvim-treesitter
                {:dependencies [:nvim-treesitter/nvim-treesitter-textobjects
                                :nvim-treesitter/nvim-treesitter-refactor
-                               :nvim-treesitter/nvim-treesitter-context
-                               :mrjones2014/nvim-ts-rainbow]
+                               :nvim-treesitter/nvim-treesitter-context]
                 :build ":TSUpdate"
                 :event :BufRead}))
 
 (fn M.config []
   (local treesitter (require :nvim-treesitter.configs))
   (var t {})
-  (set t {:ensure_installed [:rust :bash :fennel]
+  (set t {:ensure_installed [:rust :c :cpp :bash :lua :fennel :markdown :nix]
           :auto_install true
-          :ignore_install [:javascript]
           :highlight {:enable true}
           :incremental_selection {:enable true
                                   :keymaps {:init_selection :<CR>
                                             :node_incremental :<CR>
                                             :scope_incremental :<S-CR>
                                             :node_decremental :<BS>}}})
-  ;; nvim-treesitter/nvim-treesitter-textobjects
+  ;; nvim-treesitter-textobjects
   (set t.textobjects
        {:enable true
         :select {:enable true
@@ -62,19 +60,18 @@
                                          :desc "Prev func end"}
                                    "[]" {:query "@class.outer"
                                          :desc "Prev class end"}}}})
-  ;; nvim-treesitter/nvim-treesitter-refactor
+  ;; nvim-treesitter-refactor
   (set t.refactor
        {:highlight_definitions {:enable true :clear_on_cursor_move true}
         :highlight_current_scope {:enable false}
         :smart_rename {:enable true :keymaps {:smart_rename :<leader>cr}}
-        :navigation {:enable false
+        :navigation {:enable true
                      :keymaps {:goto_definition :gnd
                                :list_definitions :gnD
                                :list_definitions_toc :gO
                                :goto_next_usage :<a-*>
                                :goto_previous_usage "<a-#>"}}})
-  ;; mrjones2014/nvim-ts-rainbow
-  (set t.rainbow {:enable true :extended_mode true :max_file_lines nil})
   (treesitter.setup t))
 
 M
+
