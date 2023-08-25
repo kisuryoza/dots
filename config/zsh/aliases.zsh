@@ -15,14 +15,11 @@ alias ua-update-all='export TMPFILE="$(mktemp)"; \
 alias ssc="sudo systemctl"
 alias scu="systemctl --user"
 
-alias rg="rg --color=always"
-alias ip="ip -color=always"
-alias diff="diff -u --color=always"
+alias fcd='cd "$((fd -td -L | sk) || echo .)"'
+alias exa="exa --all --group-directories-first"
 
 alias gitc="git clone --depth 1"
-alias exa="exa --all --group-directories-first"
-alias cat="bat -pp"
-alias xcd='cd "$(xplr --print-pwd-as-result)"'
 alias yt-dlp-audio="yt-dlp --extract-audio --audio-format mp3 --audio-quality 0"
 alias wget="wget --hsts-file=$XDG_DATA_HOME/wget-hsts"
+alias ip="ip -color=always"
 alias tsc="tsc -t esnext"

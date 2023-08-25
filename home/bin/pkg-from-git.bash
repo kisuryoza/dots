@@ -33,22 +33,16 @@ function eww {
         cargo build --release --no-default-features --features=wayland
         install -vsDm 744 target/release/eww ~/.local/bin/eww-wayland
     fi
-}
 
-function allocscope {
-    update "https://github.com/matt-kimball/allocscope"
-
-    cargo build --release
-    install -vsDm 744 \
-        target/release/allocscope-trace \
-        target/release/allocscope-view \
-        -t ~/.local/bin
+    cargo clean
 }
 
 function fennel_language_server {
     update "https://github.com/rydesun/fennel-language-server"
     cargo build --release
     install -vsDm 744 target/release/fennel-language-server ~/.local/bin
+
+    cargo clean
 }
 
 case $1 in
@@ -57,7 +51,6 @@ case $1 in
     ;;
 "all")
     eww
-    allocscope
     fennel_language_server
     ;;
 *) exit 1 ;;

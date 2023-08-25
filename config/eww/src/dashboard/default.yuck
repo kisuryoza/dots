@@ -140,17 +140,19 @@
                      (dashboard-element :width 1
                                         :height 1
                                         :space-evenly true
-                                        :tooltip "GPU: ${gpu}%"
+                                        ;; :tooltip "GPU: ${gpu}%"
                                         (dashboard-circular-element :class "dashboard-gpu"
                                                                     :value gpu
-                                                                    :text "󰒇"))
+                                                                    :text "GPU"))
+                                                                    ;; :text "󰒇"))
                      (dashboard-element :width 1
                                         :height 1
                                         :space-evenly true
-                                        :tooltip "CPU: ${round(EWW_CPU.avg, 0)}%"
+                                        ;; :tooltip "CPU: ${round(EWW_CPU.avg, 0)}%"
                                         (dashboard-circular-element :class "dashboard-cpu"
                                                                     :value "${EWW_CPU.avg}"
-                                                                    :text "󰻠"))))
+                                                                    :text "CPU"))))
+                                                                    ;; :text "󰻠"))))
 
 (defwidget pkg-ram []
   (dashboard-element :class "dashboard-element-nested"
@@ -179,10 +181,11 @@
                      (dashboard-element :width 1
                                         :height 1
                                         :space-evenly true
-                                        :tooltip "RAM: ${round(EWW_RAM.used_mem_perc, 0)}%"
+                                        ;; :tooltip "RAM: ${round(EWW_RAM.used_mem_perc, 0)}%"
                                         (dashboard-circular-element :class "dashboard-ram"
                                                                     :value "${EWW_RAM.used_mem_perc}"
-                                                                    :text "󰍛"))))
+                                                                    :text "RAM"))))
+                                                                    ;; :text "󰍛"))))
 
 (defwidget uptime-kernel []
   (dashboard-element :width 2

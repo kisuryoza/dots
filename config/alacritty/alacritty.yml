@@ -1,5 +1,13 @@
 import:
-  - ~/.config/alacritty/themes.yml
+  # - ~/.config/alacritty/kanagawa.yml
+  # - ~/.config/alacritty/tokyonight_night.yml
+  # - ~/.config/alacritty/tokyonight_moon.yml
+  # - ~/.config/alacritty/tokyonight_storm.yml
+  # - ~/.config/alacritty/tokyonight_day.yml
+  - ~/.config/alacritty/catppuccin-mocha.yml
+  # - ~/.config/alacritty/catppuccin-macchiato.yml
+  # - ~/.config/alacritty/catppuccin-frappe.yml
+  # - ~/.config/alacritty/catppuccin-latte.yml
 
 env:
   TERM: xterm-256color
