@@ -1,20 +1,23 @@
 (import-macros {: setup!} :macros)
 
-(fn change-alacritty-font [font]
-  (let [font (if (= nil font)
-                 ;; Get a default font from the config
-                 (let [command "awk -F ': ' '/family/ {print $NF; exit}' ~/.config/alacritty/alacritty.yml"
-                       handle (io.popen command)
-                       result (handle:read :*a)]
-                   (handle:close)
-                   result)
-                 font)
-        str (.. "alacritty msg config font.normal.family='" font
-                "' font.bold.family='" font "' font.italic.family='" font
-                "' font.bold_italic.family='" font "'")]
-    (os.execute str)))
+; (fn change-alacritty-font [font]
+;   (let [font (if (= nil font)
+;                  ;; Get a default font from the config
+;                  (let [command "awk -F ': ' '/family/ {print $NF; exit}' ~/.config/alacritty/alacritty.yml"
+;                        handle (io.popen command)
+;                        result (handle:read :*a)]
+;                    (handle:close)
+;                    result)
+;                  font)
+;         str (.. "alacritty msg config font.normal.family='" font
+;                 "' font.bold.family='" font "' font.italic.family='" font
+;                 "' font.bold_italic.family='" font "'")]
+;     (os.execute str)))
 
-(change-alacritty-font "JetBrains Mono")
+; (change-alacritty-font "JetBrains Mono")
+
+;; Change terminal font back on nvim exit
+; (vim.api.nvim_create_autocmd :VimLeavePre {:callback #(change-alacritty-font)})
 
 ((setup! :lazy) (require :plugins)
                 {:lockfile (.. (vim.fn.stdpath :data) :/lazy-lock.json)
@@ -48,10 +51,3 @@
                              {:pattern :*.rs
                               :callback #(vim.lsp.buf.format {:timeout_ms 200})})
 
-;; Change terminal font back on nvim exit
-(vim.api.nvim_create_autocmd :VimLeavePre {:callback #(change-alacritty-font)})
-
-;; Wipes hidden buffers
-;; (vim.api.nvim_create_autocmd [:BufReadPost]
-;;                              {:pattern ["*"]
-;;                               :command "set bufhidden=wipe"}))

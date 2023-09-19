@@ -1,0 +1,16 @@
+#!/usr/bin/env -S just --justfile
+
+wp := "wp"
+# wp_db := "sqlite://" + wp + "/db/data.db"
+
+reset-wp-db:
+  sqlx db drop
+  sqlx db create 
+  sqlx migrate run --source {{wp}}/migrations 
+
+install-all:
+	cargo build --release --bins
+	install -vDm 744 ./target/release/wp ~/.local/bin
+	install -vDm 744 ./target/release/gmods ~/.local/bin
+
+# vim: set ft=make ts=2 sw=2 sts=2 :

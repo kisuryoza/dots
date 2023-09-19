@@ -1,41 +1,30 @@
-#!/usr/bin/env sh
+#!/usr/bin/env bash
 
 word="$2"
 
-case "$1" in
-"path")
-    if [ -d "$word" ]; then
-        exa --git -l --color=always --icons "$word"
-    else
-        if [ -f "$word" ]; then
-            MIME=$(file --brief --dereference --mime-type "$word")
-            CATEGORY=${MIME%%/*}
-            KIND=${MIME##*/}
+if [ -d "$word" ]; then
+    eza --oneline --git --group-directories-first --color=always --icons "$word"
+else
+    if [ -f "$word" ]; then
+        MIME=$(file --brief --dereference --mime-type "$word")
+        CATEGORY=${MIME%%/*}
+        KIND=${MIME##*/}
 
+        case "$CATEGORY" in
+        "text")
             echo "$MIME"
+            bat --plain --color=always "$word"
+            ;;
+        "audio" | "video")
+            echo "$MIME"
+            mediainfo "$word" | bat --plain --language=help --color=always
+            ;;
+        esac
 
-            case "$CATEGORY" in
-            "text")
-                bat --plain --color=always "$word"
-                ;;
-            "image")
-                exa --git -l --color=always --icons "$word"
-                ;;
-            "audio" | "video")
-                mediainfo "$word" | bat --plain --language=help --color=always
-                ;;
-            esac
-
-            case "$KIND" in
-            "pdf")
-                pdftotext "$word" /dev/stdout
-                ;;
-            esac
-        fi
+        case "$KIND" in
+        "pdf")
+            pdftotext "$word" /dev/stdout
+            ;;
+        esac
     fi
-    ;;
-"make")
-    make -n "$word" | bat --plain --language=sh --color=always
-    ;;
-*) ;;
-esac
+fi

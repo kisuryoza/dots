@@ -56,10 +56,9 @@
  (pack :kylechui/nvim-surround {:event :BufRead :config true})
  ;; Replace with regex
  (pack :nvim-pack/nvim-spectre {:lazy true :config true})
- ;; A color highlighter
- (pack :NvChad/nvim-colorizer.lua
-       {:event :BufRead
-        :opts {:filetypes [:css :scss] :user_default_options {:css true}}})
+ ;; Highlight colors
+ (pack :brenoprata10/nvim-highlight-colors
+       {:event :BufRead :opts {:enable_tailwind true}})
  ;; highlight and search for todo comments
  (pack :folke/todo-comments.nvim {:event :BufRead :config true})
  ;; Distraction-free coding
@@ -69,6 +68,12 @@
         :opts {:window {:options {:signcolumn :no :number false}}}})
  ;; calculator
  (pack :Apeiros-46B/qalc.nvim {:cmd [:Qalc :QalcAttach]})
+ ;; The goal of nvim-fundo is to make Neovim's undo file become stable and useful.
+ (pack :kevinhwang91/nvim-fundo {:dependencies [:kevinhwang91/promise-async]
+                                 :build #((. (require :fundo) :install))
+                                 :config true})
+ ;; Practise typing
+ (pack :NStefan002/speedtyper.nvim {:cmd :Speedtyper :config true})
  ;; helping you establish good command workflow and habit
  (pack :m4xshen/hardtime.nvim
        {:opts {:disabled_filetypes [:lazy
@@ -78,5 +83,11 @@
                                     :NeogitStatus
                                     :NeogitPopup
                                     :spectre_panel
+                                    :qf
+                                    :crates.nvim
+                                    :harpoon
+                                    :help
                                     :checkhealth]}})]
+ ;; Delete Neovim buffers without losing window layout
+ ; (pack :famiu/bufdelete.nvim)
 

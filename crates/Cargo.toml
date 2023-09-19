@@ -1,0 +1,3 @@
+[workspace]
+members = ["gmods", "wp"]
+resolver = "2"

@@ -38,6 +38,7 @@
 (nmapp! :ol #(toggle-opt :cursorline true false) "Cursor line")
 
 (nmapp! :z (cmd! :ZenMode) :ZenMode)
+(nmapp! :e vim.diagnostic.open_float "Diagnostic menu")
 (nmapp! :sc (cmd! "e $MYVIMRC | :cd %:p:h") "Edit Neovm config")
 
 ;; Buffers managment
@@ -50,7 +51,6 @@
 (nmapp! :fr (cmd! "Telescope oldfiles") :Recent)
 (nmapp! :fF (cmd! "DrexDrawerToggle") "File Manager")
 (nmapp! :fg (cmd! "Telescope live_grep") "Live Grep")
-(nmapp! :fR (cmd! "lua require('spectre').open()") "Regex replace")
 (nmapp! :fx (cmd! "!chmod +x %") "Make curr file executable")
 
 ;; Code related 
@@ -73,8 +73,14 @@
 (let [mark (require "harpoon.mark")
       ui (require "harpoon.ui")]
   (nmapp! :a mark.add_file "Harpoon add file")
+  (nmap! :<C-k> #(ui.nav_prev) "Navig prev")
+  (nmap! :<C-j> #(ui.nav_next) "Navig next")
   (nmapp! :hh ui.toggle_quick_menu "Harpoon open")
-  (nmapp! :ht (cmd! "Telescope harpoon marks") "Harpoon telescope"))
+  (nmapp! :ht (cmd! "Telescope harpoon marks") "Harpoon telescope")
+  (nmapp! :hq #(ui.nav_file 1) "Navig 1")
+  (nmapp! :hw #(ui.nav_file 2) "Navig 2")
+  (nmapp! :he #(ui.nav_file 3) "Navig 3")
+  (nmapp! :hr #(ui.nav_file 4) "Navig 4"))
 
 (fn crates-mapping [args]
     (let [buff args.buf

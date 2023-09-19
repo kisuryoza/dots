@@ -15,11 +15,12 @@ alias ua-update-all='export TMPFILE="$(mktemp)"; \
 alias ssc="sudo systemctl"
 alias scu="systemctl --user"
 
-alias fcd='cd "$((fd -td -L | sk) || echo .)"'
-alias exa="exa --all --group-directories-first"
-
-alias gitc="git clone --depth 1"
 alias yt-dlp-audio="yt-dlp --extract-audio --audio-format mp3 --audio-quality 0"
 alias wget="wget --hsts-file=$XDG_DATA_HOME/wget-hsts"
 alias ip="ip -color=always"
+
+alias fcd='cd "$((fd -td -L --max-depth=5 | fzf) || echo .)"'
+alias eza="eza --all --long --group-directories-first --color=always"
+alias gitc="git clone --depth 1"
 alias tsc="tsc -t esnext"
+alias zellijk='zellij k $(zellij ls | fzf | cut -f1 -d" ")'

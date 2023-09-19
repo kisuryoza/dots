@@ -1,3 +1,4 @@
+add_newline = false
 format = """
  $nix_shell\
 $username\
@@ -7,7 +8,6 @@ $git_branch\
 $git_status\
 $rust\
 $lua\
-\n\
 $character"""
 
 right_format = """

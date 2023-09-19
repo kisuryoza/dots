@@ -8,6 +8,9 @@ set laststatus=2
 set encoding=utf-8
 set showmatch
 set noswapfile
+set cursorline
+set splitbelow splitright
+set history=100
 
 set autoindent
 set expandtab
@@ -15,11 +18,7 @@ set tabstop=4
 set shiftwidth=4
 set softtabstop=4
 set smartindent
-set number "relativenumber
-
-set mouse=a
-"set guioptions=a
-set cursorline
+set number relativenumber
 
 set ignorecase
 set smartcase
@@ -27,45 +26,22 @@ set smartcase
 set wrap
 set linebreak
 
-set splitbelow splitright
-
-set history=100
-
 filetype plugin on
 syntax enable
 
-" Tabs
-nnoremap <silent> <C-t> :tabnew<CR>
-nnoremap <C-Left> :tabprevious<CR>
-nnoremap <C-Right> :tabnext<CR>
-
-" Binding to turn the highlights off
 nnoremap <silent> <esc> :noh<cr><esc>
 
 " replace currently selected text with default register without yanking it
 "vmap p "_dP
 
-" function! <SID>StripTrailingWhitespaces()
-"   if !&binary && &filetype != 'diff'
-"     let l:save = winsaveview()
-"     keeppatterns %s/\s\+$//e
-"     call winrestview(l:save)
-"   endif
-" endfun
+function! <SID>StripTrailingWhitespaces()
+  if !&binary && &filetype != 'diff'
+    let l:save = winsaveview()
+    keeppatterns %s/\s\+$//e
+    call winrestview(l:save)
+  endif
+endfun
 
-"autocmd FileType c,cpp,java,php,ruby,python autocmd BufWritePre <buffer> :call <SID>StripTrailingWhitespaces()
+autocmd BufWritePre,FileWritePre,FileAppendPre,FilterWritePre *
+  \ :call <SID>StripTrailingWhitespaces()
 
-" autocmd BufWritePre,FileWritePre,FileAppendPre,FilterWritePre *
-"   \ :call <SID>StripTrailingWhitespaces()
-"
-" autocmd BufWritePre,FileWritePre,FileAppendPre,FilterWritePre *
-"   \ %retab!
-
-" Plugins variables section
-" Run
-" :PlugInstall
-"call plug#begin()
-"Plug 'dense-analysis/ale'
-"Plug 'preservim/nerdtree'
-"Plug 'vim-airline/vim-airline'
-"call plug#end()

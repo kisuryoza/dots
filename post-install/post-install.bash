@@ -20,7 +20,6 @@ function post_user {
     AUR_PKG+=(catppuccin-gtk-theme-mocha ttf-material-design-icons-desktop-git ttf-comic-neue ttf-comic-mono-git)
     AUR_PKG+=(downgrade rate-mirrors-bin)
     # AUR_PKG+=(xkb-switch-git) # Program that allows to query and change the XKB layout state
-    # AUR_PKG+=(thokr-git)      # A sleek typing tui written in rust
     # AUR_PKG+=(greetd greetd-tuigreet-bin)
     # AUR_PKG+=(pince-git bottles)
 
@@ -40,14 +39,14 @@ function post_user {
 
     declare -a DIRS
     DIRS+=("$XDG_CONFIG_HOME" "$XDG_CACHE_HOME" "$XDG_DATA_HOME" "$XDG_STATE_HOME")
-    DIRS+=("$XDG_CONFIG_HOME/android/" "$XDG_CACHE_HOME/less/" "$XDG_DATA_HOME/wallpapers/" "$HOME/.local/bin/")
+    DIRS+=("$XDG_CONFIG_HOME/android/" "$XDG_CACHE_HOME/less/" "$HOME/.local/bin/")
 
     for DIR in "${DIRS[@]}"; do
         mkdir -p "$DIR"
     done
 
     log "Stowing $REPO_NAME"
-    mkdir ~/.librewolf ~/gitclones
+    mkdir ~/gitclones
     cd ~/"$REPO_NAME" || log "Couldn't cd to ~/$REPO_NAME" err 1
     stow -vt ~/.config config
     stow -v home

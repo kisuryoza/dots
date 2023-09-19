@@ -21,20 +21,22 @@ scrolling:
   multiplier: 8
 
 font:
+  size: 9.0
   normal:
-    family: Iosevka Term SS14
+    # family: Iosevka Term SS14
+    family: JetBrains Mono
     style: Regular
 
   bold:
-    family: Iosevka Term SS14
+    family: JetBrains Mono
     style: Bold
 
   italic:
-    family: Iosevka Term SS14
+    family: JetBrains Mono
     style: Italic
 
   bold_italic:
-    family: Iosevka Term SS14
+    family: JetBrains Mono
     style: Bold Italic
 
 colors:
@@ -53,3 +55,7 @@ shell:
 
 mouse:
   hide_when_typing: true
+
+key_bindings:
+  # Vi Mode
+  - { key: Space,  mods: Shift|Control, mode: ~Search,    action: ToggleViMode            }

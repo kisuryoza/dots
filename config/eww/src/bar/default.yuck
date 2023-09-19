@@ -38,35 +38,35 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defwidget launcher []
-  (eventbox :onhover "${EWW_CMD} update isLauncherUnderHover=true"
-            :onhoverlost "${EWW_CMD} update isLauncherUnderHover=false"
-            (box :spacing 0
-                 :orientation "v"
-                 :space-evenly false
-                 (button :class "button-launch"
-                         :onclick "~/.config/eww/scripts/dashboard.bash &"
-                         (label :text "󰺔"))
-                 (revealer :transition "slidedown"
-                           :reveal isLauncherUnderHover
-                           :duration "350ms"
-                           (box :spacing 1
-                                :orientation "v"
-                                ;; :space-evenly false
-                                (button :class "button-launch-1"
-                                        :onclick "fork.bash /usr/bin/librewolf"
-                                        (label :text "󰖟"))
-                                (button :class "button-launch-2"
-                                        :onclick "fork.bash /usr/bin/keepassxc"
-                                        (label :text "󰌆"))
-                                (button :class "button-launch-3"
-                                        :onclick "fork.bash /usr/bin/freetube"
-                                        (label :text "󰕧"))
-                                (button :class "button-launch-4"
-                                        :onclick "fork.bash /usr/bin/steam"
-                                        (label :text "󰊴"))
-                                (button :class "button-launch-5"
-                                        :onclick "fork.bash /usr/bin/qbittorrent"
-                                        (label :text "󰳛")))))))
+ (box :spacing 0
+  :orientation "v"
+  :space-evenly false
+  (button :class "button-launch"
+   :onclick "~/.config/eww/scripts/dashboard.bash &"
+   (label :text "󰺔"))))
+  ;; (eventbox :onhover "${EWW_CMD} update isLauncherUnderHover=true"
+  ;;  :onhoverlost "${EWW_CMD} update isLauncherUnderHover=false"
+  ;;  (revealer :transition "slidedown"
+  ;;   :reveal isLauncherUnderHover
+  ;;   :duration "350ms"
+  ;;   (box :spacing 1
+  ;;    :orientation "v"
+  ;;    ;; :space-evenly false
+  ;;    (button :class "button-launch-1"
+  ;;     :onclick "fork.bash /usr/bin/librewolf"
+  ;;     (label :text "󰖟"))
+  ;;    (button :class "button-launch-2"
+  ;;     :onclick "fork.bash /usr/bin/keepassxc"
+  ;;     (label :text "󰌆"))
+  ;;    (button :class "button-launch-3"
+  ;;     :onclick "fork.bash /usr/bin/freetube"
+  ;;     (label :text "󰕧"))
+  ;;    (button :class "button-launch-4"
+  ;;     :onclick "fork.bash /usr/bin/steam"
+  ;;     (label :text "󰊴"))
+  ;;    (button :class "button-launch-5"
+  ;;     :onclick "fork.bash /usr/bin/qbittorrent"
+  ;;     (label :text "󰳛")))))))
 
 (defwidget workspaces []
   (for entry in {workspaces-list["list"]}

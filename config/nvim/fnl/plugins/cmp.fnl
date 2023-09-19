@@ -72,9 +72,9 @@
                                       {:name :crates}]))
   (set t.window {:completion {:col_offset -3}})
   (set t.formatting {:format (fn [_entry vim-item]
-                               (when (not= vim-item.menu nil)
-                                 (set vim-item.menu
-                                      (string.sub vim-item.menu 1 25)))
+                               ; (when (not= vim-item.menu nil)
+                               ;   (set vim-item.menu
+                               ;        (string.sub vim-item.menu 1 25)))
                                (let [kind vim-item.kind
                                      icon (. kind-icons kind)]
                                  (set vim-item.kind

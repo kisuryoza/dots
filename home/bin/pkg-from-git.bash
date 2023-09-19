@@ -14,13 +14,13 @@ fi
 function update {
     NAME="$(echo "$1" | awk -F '/' '{print $NF}')"
 
-    if [[ -d ~/gitclone/"$NAME" ]]; then
+    if [[ -d ~/gitclones/"$NAME" ]]; then
         log "Updating $NAME"
-        cd ~/gitclone/"$NAME" && git pull
+        cd ~/gitclones/"$NAME" && git pull
     else
         log "Installing $NAME"
-        git clone --depth 1 "$1.git" ~/gitclone/"$NAME" &&
-            cd ~/gitclone/"$NAME"
+        git clone --depth 1 "$1.git" ~/gitclones/"$NAME" &&
+            cd ~/gitclones/"$NAME"
     fi
 }
 

@@ -1,6 +1,16 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
+if [[ -z "$ZELLIJ" ]]; then
+    sleep 0.1
+    if [[ "$ZELLIJ_AUTO_ATTACH" == "true" ]]; then
+        zellij attach -c
+    else
+        zellij
+    fi
+    exit
+fi
+
 HISTFILE=$XDG_CACHE_HOME/zhistory
 HISTSIZE=50000
 SAVEHIST=50000
@@ -78,42 +88,40 @@ fpath+="$ZDOTDIR"/zfunc
 
 chpwd () command exa -a --group-directories-first
 
-function sort_history ()
-{
+sort_history() {
     local temp=$(mktemp)
     cp "$HISTFILE" $temp
     cat -n "$temp" | sort -uk2 | sort -nk1 | cut -f2- > "$HISTFILE"
 }
 
-function cpp_compile ()
-{
+cpp_compile() {
     [[ $1 ]]    || { echo "Missing operand" >&2; return 1; }
-    [[ -r $1 ]] || { printf "File %s does not exist or is not readable\n" "$1" >&2; return 1; }
+    [[ -r $1 ]] || { printf "File %s does not exist or is not readable" "$1" >&2; return 1; }
     local output=/tmp/$(basename $1)
     g++ "$1" -o "$output" && "$output"
 }
 
-function help()
-{
-    "$@" --help | bat --plain --language=help
-}
+help() { "$@" --help | bat --plain --language=help }
 
-function shutdown ()
-{
-    sleep $((60 * $1))
-    systemctl poweroff
+vmrss() {
+    [[ $1 ]] || { echo "Missing name of process(es)" >&2; return 1; }
+    IFS=$' ' pidofs=($(pidof "$1"))
+    for pid in "${pidofs[@]}"; do
+        awk -v var="$pid" '/VmRSS/ {OFS="\t"; print "pid:", var, "|", "VmRSS:", $2, $3}' "/proc/$pid/status"
+    done
 }
 
 source "$ZDOTDIR/aliases.zsh"
 
-if [[ -r "$HOME"/.local/share/zsh/fzf-tab-completion/zsh/fzf-zsh-completion.sh && -n $(whence -p fzf) ]]; then
-    source "$HOME"/.local/share/zsh/fzf-tab-completion/zsh/fzf-zsh-completion.sh
+local ZSH_PUGINS="$HOME/.local/share/zsh"
+if [[ -r "$ZSH_PUGINS"/fzf-tab-completion/zsh/fzf-zsh-completion.sh && -n $(whence -p fzf) ]]; then
+    source "$ZSH_PUGINS"/fzf-tab-completion/zsh/fzf-zsh-completion.sh
     bindkey '^I' fzf_completion
     zstyle ':completion:*' fzf-search-display true
 
     # zstyle ':completion::*:*::*' fzf-completion-opts --preview='~/.config/zsh/fzf-preview.sh path $(eval echo {1})'
     zstyle ':completion::*:systemctl::systemctl,status,*' fzf-completion-opts --preview='SYSTEMD_COLORS=1 systemctl status -- $(eval echo {1})'
-    zstyle ':completion::*:make::*' fzf-completion-opts --preview='~/.config/zsh/fzf-preview.sh make $(eval echo {1})'
+    zstyle ':completion::*:make::*' fzf-completion-opts --preview='make -n $(eval echo {1}) | bat --plain --language=sh --color=always'
     zstyle ':completion::*:btrfs::*' fzf-completion-opts --preview='btrfs $(eval echo {1}) --help | bat --plain --language=help --color=always'
 
     zstyle ':completion::*:git::git,diff,*' fzf-completion-opts --preview='git diff --color=always $(eval echo {1}) | delta'
@@ -127,16 +135,19 @@ if [[ -r "$HOME"/.local/share/zsh/fzf-tab-completion/zsh/fzf-zsh-completion.sh &
     zstyle ':completion::*:nix::nix,profile,*' fzf-completion-opts --preview='nix profile $(eval echo {1}) --help | bat --plain --language=help --color=always'
 fi
 
-if [[ -r "$HOME"/.local/share/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
-    source "$HOME"/.local/share/zsh/zsh-autosuggestions/zsh-autosuggestions.zsh
+if [[ -r "$ZSH_PUGINS"/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
+    source "$ZSH_PUGINS"/zsh-autosuggestions/zsh-autosuggestions.zsh
 fi
-if [[ -r "$HOME"/.local/share/zsh/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh ]]; then
-    source "$HOME"/.local/share/zsh/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
+if [[ -r "$ZSH_PUGINS"/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh ]]; then
+    source "$ZSH_PUGINS"/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
 fi
-if [[ -r "$HOME"/.local/share/zsh/nix-zsh-completions/nix-zsh-completions.plugin.zsh ]]; then
-    source "$HOME"/.local/share/zsh/nix-zsh-completions/nix-zsh-completions.plugin.zsh
-    fpath+="$HOME"/.local/share/zsh/nix-zsh-completions
+if [[ -r "$ZSH_PUGINS"/nix-zsh-completions/nix-zsh-completions.plugin.zsh ]]; then
+    source "$ZSH_PUGINS"/nix-zsh-completions/nix-zsh-completions.plugin.zsh
+    fpath+="$ZSH_PUGINS"/nix-zsh-completions
 fi
+
+# fpath+="/nix/var/nix/profiles/default/share/zsh/site-functions"
+autoload -Uz compinit && compinit
 
 if [[ $(id -u) -ne 0 ]]; then
     # Auto starting ssh-agent
@@ -148,8 +159,6 @@ if [[ $(id -u) -ne 0 ]]; then
     fi
 fi
 
-fpath+="/nix/var/nix/profiles/default/share/zsh/site-functions"
-autoload -Uz compinit && compinit
-
 eval "$(starship init zsh)"
+
 task

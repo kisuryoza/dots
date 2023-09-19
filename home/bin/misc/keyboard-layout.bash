@@ -14,12 +14,10 @@ function switch_eww {
 }
 
 if [[ "$1" == "x" ]]; then
-    while true; do
-        xkb-switch -w -p |
-            while read -r line; do
-                switch_eww "$line"
-            done
-    done
+    xkb-switch -W |
+        while read -r line; do
+            switch_eww "$line"
+        done
 fi
 
 if [[ "$1" == "wayland" ]]; then
