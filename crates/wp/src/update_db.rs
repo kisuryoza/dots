@@ -1,5 +1,3 @@
-use image::GenericImageView;
-use redb::{Database, ReadableTable};
 use std::{
     fs,
     io::{self, Write},
@@ -8,27 +6,30 @@ use std::{
     rc::Rc,
 };
 
+use color_eyre::Result;
+use image::GenericImageView;
+use redb::{Database, ReadableTable};
+
+#[allow(unused_imports)]
+use tracing::{debug, error, info, trace, warn};
+
 use crate::TABLE;
 
-pub fn update_db(
-    destination: PathBuf,
-    soft: bool,
-    db: Database,
-) -> Result<(), Box<dyn std::error::Error>> {
-    let files = visit_dirs(&destination).unwrap();
+pub fn update_db(destination: PathBuf, soft: bool, db: Database) -> Result<()> {
+    let files = visit_dirs(&destination)?;
 
-    init_table(&db).unwrap();
+    init_table(&db)?;
 
-    let amount_of_new_entries = set_new_entries(&db, &destination, soft, &files).unwrap();
-    let amount_of_obsolete_entries = remove_obsolete_entries(&db, &files).unwrap();
+    let amount_of_new_entries = set_new_entries(&db, &destination, soft, &files)?;
+    let amount_of_obsolete_entries = remove_obsolete_entries(&db, &files)?;
 
-    tracing::info!("New entries: {}", amount_of_new_entries);
-    tracing::info!("Obsolete entries: {}", amount_of_obsolete_entries);
+    info!("New entries: {}", amount_of_new_entries);
+    info!("Obsolete entries: {}", amount_of_obsolete_entries);
 
     Ok(())
 }
 
-fn init_table(db: &Database) -> Result<(), Box<dyn std::error::Error>> {
+fn init_table(db: &Database) -> Result<()> {
     let write_txn = db.begin_write()?;
     let _ = write_txn.open_table(TABLE)?;
     write_txn.commit()?;
@@ -36,78 +37,75 @@ fn init_table(db: &Database) -> Result<(), Box<dyn std::error::Error>> {
 }
 
 /// INSERT files into DB that exist in Filesystem but not in DB
-fn set_new_entries(
-    db: &Database,
-    destination: &Path,
-    soft: bool,
-    files: &[Rc<str>],
-) -> Result<usize, Box<dyn std::error::Error>> {
-    tracing::trace!("Setting new entries");
-
+fn set_new_entries<T>(db: &Database, destination: &Path, soft: bool, files: &[T]) -> Result<usize>
+where
+    T: AsRef<str>,
+{
     let read_txn = db.begin_read()?;
     let table = read_txn.open_table(TABLE)?;
 
-    let mut new_files: Vec<&str> = Vec::new();
-    for file in files.iter() {
+    let new_files = files.iter().filter(|file| {
         let file = file.as_ref();
-        if table.get(file).unwrap().is_some() {
-            continue;
-        }
-        if !soft {
-            compress(file)?;
-        }
-        new_files.push(file)
-    }
-    let amount_of_new_entries = new_files.len();
+        table.get(file).unwrap().is_none()
+    });
 
     let write_txn = db.begin_write()?;
-    {
-        let mut table = write_txn.open_table(TABLE)?;
-        for file in new_files {
+    let mut table = write_txn.open_table(TABLE)?;
+
+    let amount_of_new_entries = new_files
+        .map(|file| -> Result<()> {
+            let file = file.as_ref();
+            if !soft {
+                compress(file)?;
+            }
             let (width, height) = get_dimensions(destination.join(file));
             table.insert(file, (width, height))?;
-        }
-    }
+            Ok(())
+        })
+        .count();
+    drop(table);
+
     write_txn.commit()?;
     Ok(amount_of_new_entries)
 }
 
 /// DELETE files from DB that dont exist in Filesystem but do in DB
-fn remove_obsolete_entries(
-    db: &Database,
-    files: &[Rc<str>],
-) -> Result<usize, Box<dyn std::error::Error>> {
-    tracing::trace!("Removing obsolete entries");
-
+fn remove_obsolete_entries<T>(db: &Database, files: &[T]) -> Result<usize>
+where
+    T: AsRef<str>,
+{
     let read_txn = db.begin_read()?;
     let table = read_txn.open_table(TABLE)?;
 
-    let mut obsolete_keys: Vec<Rc<str>> = Vec::new();
-    for entry in table.iter()? {
-        let (key, _) = entry?;
+    let obsolete_keys = table.iter()?.filter_map(|entry| {
+        let (key, _) = entry.unwrap();
         let key = key.value();
-        if files.iter().any(|p| p.as_ref() == key) {
-            continue;
-        };
-        let rc: Rc<str> = Rc::from(key);
-        obsolete_keys.push(rc);
-    }
-    let amount_of_obsolete_entries = obsolete_keys.len();
+
+        if !files.iter().any(|p| p.as_ref() == key) {
+            let rc: Rc<str> = Rc::from(key);
+            Some(rc)
+        } else {
+            None
+        }
+    });
 
     let write_txn = db.begin_write()?;
-    {
-        let mut table = write_txn.open_table(TABLE)?;
-        obsolete_keys.into_iter().for_each(|key| {
-            table.remove(key.as_ref()).unwrap();
-        });
-    }
+    let mut table = write_txn.open_table(TABLE)?;
+
+    let amount_of_obsolete_entries = obsolete_keys
+        .map(|key| -> Result<()> {
+            table.remove(key.as_ref())?;
+            Ok(())
+        })
+        .count();
+    drop(table);
+
     write_txn.commit()?;
     Ok(amount_of_obsolete_entries)
 }
 
-fn visit_dirs(path: &Path) -> std::io::Result<Vec<Rc<str>>> {
-    tracing::trace!("Visiting directories");
-    fn visit(prefix: &Path, path: &Path, buffer: &mut Vec<Rc<str>>) -> std::io::Result<()> {
+fn visit_dirs(path: &Path) -> Result<Vec<Rc<str>>> {
+    fn visit(prefix: &Path, path: &Path, buffer: &mut Vec<Rc<str>>) -> Result<()> {
         for entry in fs::read_dir(path)? {
             let path = entry?.path();
 
@@ -122,7 +120,7 @@ fn visit_dirs(path: &Path) -> std::io::Result<Vec<Rc<str>>> {
                     continue;
                 }
 
-                let path = path.strip_prefix(prefix).unwrap().to_str().unwrap();
+                let path = path.strip_prefix(prefix)?.to_str().unwrap();
                 let rc: Rc<str> = Rc::from(path);
                 buffer.push(rc)
             };
@@ -177,15 +175,17 @@ where
                     .arg(file_str)
                     .output()?;
                 io::stdout().write_all(&output.stdout)?;
+                io::stdout().flush()?
             }
             Some("jpg") => {
                 let output = Command::new("jpegoptim").arg(file_str).output()?;
                 io::stdout().write_all(&output.stdout)?;
+                io::stdout().flush()?
             }
             _ => (),
         };
     }
-    tracing::info!("Compressed {}", file.display());
+    info!("Compressed {}", file.display());
 
     Ok(())
 }
@@ -199,7 +199,7 @@ where
     } else {
         (0, 0)
     };
-    tracing::trace!(
+    info!(
         "Dimensions of {} - {width} {height}",
         file.as_ref().display()
     );
@@ -301,3 +301,55 @@ fn remove_obsolete_entries(db: sqlx::Pool<sqlx::Sqlite>, files: &[PathBuf]) -> R
     }
     Ok(())
 } */
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn generate_arrays() -> (Vec<String>, Vec<String>) {
+        let more: Vec<_> = (0..10_000).map(|n| format!("file_{}", n)).collect();
+        let less: Vec<_> = more.iter().take(7_000).cloned().collect();
+        (more, less)
+    }
+
+    fn create_db<T>(files: &[T]) -> Database
+    where
+        T: AsRef<str>,
+    {
+        let tmpfile = tempfile::NamedTempFile::new().unwrap();
+        let db = Database::create(tmpfile.path()).unwrap();
+        let write_txn = db.begin_write().unwrap();
+        {
+            let mut table = write_txn.open_table(TABLE).unwrap();
+            files.iter().for_each(|file| {
+                table.insert(file.as_ref(), (0, 0)).unwrap();
+            });
+        }
+        write_txn.commit().unwrap();
+        db
+    }
+
+    fn pre_build(for_db: Vec<String>, as_files: Vec<String>) -> (Database, Vec<Rc<str>>) {
+        let db = create_db(&for_db);
+        let files: Vec<Rc<str>> = as_files.into_iter().map(Rc::from).collect();
+        (db, files)
+    }
+
+    #[test]
+    fn new_entries() {
+        let (more, less) = generate_arrays();
+        let (db, files) = pre_build(less, more);
+        let amount_of_new_entries = set_new_entries(&db, Path::new(""), true, &files).unwrap();
+
+        assert_eq!(amount_of_new_entries, 3000)
+    }
+
+    #[test]
+    fn obsolete_entries() {
+        let (more, less) = generate_arrays();
+        let (db, files) = pre_build(more, less);
+        let amount_of_obsolete_entries = remove_obsolete_entries(&db, &files).unwrap();
+
+        assert_eq!(amount_of_obsolete_entries, 3000)
+    }
+}

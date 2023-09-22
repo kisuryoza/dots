@@ -9,7 +9,7 @@ reset-wp-db:
   sqlx migrate run --source {{wp}}/migrations 
 
 install-all:
-	cargo build --release --bins
+	RUSTFLAGS="-C target-cpu=native" cargo build --release --bins
 	install -vDm 744 ./target/release/wp ~/.local/bin
 	install -vDm 744 ./target/release/gmods ~/.local/bin
 

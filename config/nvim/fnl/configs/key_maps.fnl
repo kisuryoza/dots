@@ -52,6 +52,7 @@
 (nmapp! :fF (cmd! "DrexDrawerToggle") "File Manager")
 (nmapp! :fg (cmd! "Telescope live_grep") "Live Grep")
 (nmapp! :fx (cmd! "!chmod +x %") "Make curr file executable")
+(nmapp! :fR (cmd! "lua require('spectre').open()") "Regex replace")
 
 ;; Code related 
 (nmapp! :ca vim.lsp.buf.code_action "Code actions")
@@ -59,6 +60,7 @@
 (nmapp! :cx (cmd! :TroubleToggle) "List of errors")
 (nmapp! :ct (cmd! :TodoTrouble) "List of TODOs")
 (nmapp! :cu #((. (require :undotree) :toggle)) :Undotree)
+; (nmapp! :csr #((. (require :ssr) :open)) :SSR)
 
 ;; Git
 (nmapp! :gn (cmd! :Neogit) "Open Neogit")

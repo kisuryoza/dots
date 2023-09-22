@@ -3,10 +3,14 @@ mod daemonize;
 mod start;
 mod update_db;
 
+use std::io::{stdout, Write};
 use std::rc::Rc;
 
+use color_eyre::Result;
 use redb::{ReadableTable, TableDefinition};
-use tracing::Level;
+
+#[allow(unused_imports)]
+use tracing::{debug, error, info, trace, warn};
 
 #[allow(unused)]
 #[derive(Debug)]
@@ -29,16 +33,8 @@ impl File {
 const LOCAL_DATABASE: &str = "wallpapers.redb";
 const TABLE: TableDefinition<&str, (u32, u32)> = TableDefinition::new("wallpapers");
 
-fn main() {
-    let _ = dotenvy::dotenv();
-    let tracing_level = &std::env::var("DEBUG_LEVEL").unwrap_or("INFO".to_string());
-    tracing_subscriber::fmt()
-        .with_max_level(
-            <Level as std::str::FromStr>::from_str(tracing_level).unwrap_or(Level::INFO),
-        )
-        .init();
-
-    let cli = cli::cli();
+fn main() -> Result<()> {
+    let cli = setup()?;
 
     if let cli::Commands::Start {
         interval: _,
@@ -53,15 +49,15 @@ fn main() {
     let path = cli.destination.join(LOCAL_DATABASE);
 
     if let cli::Commands::ResetDB = &cli.command {
-        std::fs::remove_file(&path).unwrap();
-        tracing::info!("Removed database file at {}", path.display());
-        return;
+        std::fs::remove_file(&path)?;
+        info!("Removed database file at {}", path.display());
+        return Ok(());
     }
 
     let db = if let Ok(db) = redb::Database::open(&path) {
         db
     } else {
-        redb::Database::create(path).unwrap()
+        redb::Database::create(path)?
     };
 
     match &cli.command {
@@ -69,15 +65,35 @@ fn main() {
         cli::Commands::Start { interval, .. } => start::start(cli.destination, *interval, db),
         cli::Commands::PrintDB => print_db(db),
         cli::Commands::ResetDB => unreachable!(),
-    }
-    .unwrap()
+    }?;
+    Ok(())
 }
 
-fn print_db(db: redb::Database) -> Result<(), Box<dyn std::error::Error>> {
+fn setup() -> Result<cli::Cli> {
+    let _ = dotenvy::dotenv();
+
+    if std::env::var("RUST_LIB_BACKTRACE").is_err() {
+        std::env::set_var("RUST_LIB_BACKTRACE", "1")
+    }
+    color_eyre::install()?;
+
+    if std::env::var("RUST_LOG").is_err() {
+        std::env::set_var("RUST_LOG", "info")
+    }
+
+    tracing_subscriber::fmt()
+        .with_env_filter(tracing_subscriber::filter::EnvFilter::from_default_env())
+        .init();
+
+    Ok(cli::cli())
+}
+
+fn print_db(db: redb::Database) -> Result<()> {
     let read_txn = db.begin_read()?;
     let table = read_txn.open_table(TABLE)?;
     let mut entries = 0;
     let mut wide_images = 0;
+    let mut lock = stdout().lock();
     table.iter()?.for_each(|entry| {
         let item = entry.unwrap();
         let key = item.0.value();
@@ -86,16 +102,16 @@ fn print_db(db: redb::Database) -> Result<(), Box<dyn std::error::Error>> {
         if values.0 > values.1 {
             wide_images += 1;
         }
-        println!("{key} - {:?}", values)
+        writeln!(lock, "{key} - {:?}", values).unwrap();
     });
-    tracing::info!(entries, wide_images);
+    info!(entries, wide_images);
     Ok(())
 }
 
 #[allow(unused)]
 fn re_table(db: &redb::Database) -> Result<(), redb::Error> {
     let old_table: TableDefinition<&str, (u32, u32, u8)> = TableDefinition::new("wallpapers");
-    let new_table: TableDefinition<&str, (u32, u32)> = TABLE;
+    let new_table = TABLE;
 
     let mut old_items: Vec<_> = Vec::new();
     {
@@ -125,23 +141,3 @@ fn re_table(db: &redb::Database) -> Result<(), redb::Error> {
 
     std::process::exit(0)
 }
-
-/* fn main() {
-    let _ = dotenvy::dotenv();
-    let database_url: &str =
-        &std::env::var("DATABASE_URL").unwrap_or("sqlite://data.db".to_owned());
-
-    let db = async_std::task::block_on(async {
-        sqlx::sqlite::SqlitePoolOptions::new()
-            .connect(database_url)
-            .await
-            .unwrap()
-    });
-
-    let cli = Cli::parse();
-    match &cli.command {
-        Commands::Start => set_wallpaper::main(db),
-        Commands::Update => async_std::task::block_on(async { update::main(db).await }),
-    }
-    .unwrap()
-} */

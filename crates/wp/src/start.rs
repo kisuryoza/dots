@@ -1,21 +1,21 @@
 use std::{path::PathBuf, process::Command, thread::sleep, time::Duration};
 
+use color_eyre::Result;
 use rand::seq::SliceRandom;
 use redb::ReadableTable;
 
+#[allow(unused_imports)]
+use tracing::{debug, error, info, trace, warn};
+
 use crate::{File, TABLE};
 
-pub fn start(
-    destination: PathBuf,
-    interval: u64,
-    db: redb::Database,
-) -> Result<(), Box<dyn std::error::Error>> {
+pub fn start(destination: PathBuf, interval: u64, db: redb::Database) -> Result<()> {
     let read_txn = db.begin_read()?;
     let table = read_txn.open_table(TABLE)?;
 
     let mut files: Vec<File> = Vec::new();
     for entry in table.iter()? {
-        let (key, values) = entry.unwrap();
+        let (key, values) = entry?;
         let (width, height) = values.value();
 
         if width < height {
@@ -28,7 +28,6 @@ pub fn start(
 
         files.push(File::new(path, width, height))
     }
-    tracing::trace!("Vec of files is assembled");
 
     // Drop database and free fs
     drop(table);
@@ -37,13 +36,15 @@ pub fn start(
 
     let mut rng = rand::thread_rng();
     files.shuffle(&mut rng);
-    set_wallpaper(interval, files);
-    Ok(())
+
+    if std::env::var("WAYLAND_DISPLAY").is_ok() {
+        Command::new("swww").arg("init").status()?;
+    }
+    set_wallpaper(interval, files)
 }
 
 fn command() -> Command {
     if std::env::var("WAYLAND_DISPLAY").is_ok() {
-        Command::new("swww").arg("init").status().unwrap();
         let mut p = Command::new("swww");
         p.arg("img");
         p
@@ -54,14 +55,12 @@ fn command() -> Command {
     }
 }
 
-fn set_wallpaper(interval: u64, files: Vec<File>) {
-    tracing::trace!("Looping over files");
-
+fn set_wallpaper(interval: u64, files: Vec<File>) -> ! {
     let mut iterator = files.iter().cycle();
     loop {
         if let Some(file) = iterator.next() {
             let path = file.path.as_ref();
-            tracing::info!("Setting wallpaper: {}", path);
+            info!("Setting wallpaper: {}", path);
             let mut command = command();
             command
                 .arg(path)

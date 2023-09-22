@@ -6,13 +6,16 @@ edition = "2021"
 
 [dependencies]
 clap = { version = "4.4", features = ["derive"] }
+color-eyre = "0.6"
 dotenvy = "0.15"
 image = "0.24"
 libc = "0.2"
 rand = "0.8"
 redb = "1.1"
 tracing = "0.1"
-tracing-subscriber = "0.3"
-
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 # async-std = { version = "1.12" }
 # sqlx = { version = "0.7", features = [ "runtime-async-std" , "sqlite", "macros"] }
+
+[dev-dependencies]
+tempfile = "3.8"
