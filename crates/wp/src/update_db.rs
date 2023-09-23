@@ -55,10 +55,11 @@ where
     let amount_of_new_entries = new_files
         .map(|file| -> Result<()> {
             let file = file.as_ref();
+            let path = destination.join(file);
             if !soft {
-                compress(file)?;
+                compress(&path)?;
             }
-            let (width, height) = get_dimensions(destination.join(file));
+            let (width, height) = get_dimensions(path);
             table.insert(file, (width, height))?;
             Ok(())
         })

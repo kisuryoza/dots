@@ -106,8 +106,11 @@ help() { "$@" --help | bat --plain --language=help }
 vmrss() {
     [[ $1 ]] || { echo "Missing name of process(es)" >&2; return 1; }
     IFS=$' ' pidofs=($(pidof "$1"))
-    for pid in "${pidofs[@]}"; do
-        awk -v var="$pid" '/VmRSS/ {OFS="\t"; print "pid:", var, "|", "VmRSS:", $2, $3}' "/proc/$pid/status"
+    while true; do
+        for pid in "${pidofs[@]}"; do
+            awk -v var="$pid" '/VmRSS/ {OFS="\t"; print "pid:", var, "|", "VmRSS:", $2, $3, int($2 / 1024), "mB"}' "/proc/$pid/status"
+        done
+        sleep 1
     done
 }
 
