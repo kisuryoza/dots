@@ -42,6 +42,8 @@
         :config #(vim.api.nvim_set_hl 0 :LeapBackdrop {:link :Comment})})
  ;; Getting you where you want with the fewest keystrokes
  (pack :ThePrimeagen/harpoon)
+ ;; frecency-based buffer switcher that allows you to hop between files
+ (pack :dzfrias/arena.nvim {:config true})
  ;; magit for neovim
  (pack :NeogitOrg/neogit {:cmd :Neogit :opts {:integrations {:diffview true}}})
  ;; Single tabpage interface for easily cycling through diffs for all modified files for any git rev
@@ -86,6 +88,7 @@
                                     :qf
                                     :crates.nvim
                                     :harpoon
+                                    :arena
                                     :help
                                     :checkhealth]}})]
  ;; Delete Neovim buffers without losing window layout

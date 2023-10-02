@@ -94,11 +94,15 @@ sort_history() {
     cat -n "$temp" | sort -uk2 | sort -nk1 | cut -f2- > "$HISTFILE"
 }
 
-cpp_compile() {
-    [[ $1 ]]    || { echo "Missing operand" >&2; return 1; }
+cx_repl() {
     [[ -r $1 ]] || { printf "File %s does not exist or is not readable" "$1" >&2; return 1; }
+    local ext=$(awk -F. '{print $NF}' <<<"$1")
     local output=/tmp/$(basename $1)
-    g++ "$1" -o "$output" && "$output"
+    if [[ "$ext" -eq "c" ]]; then
+        clang "$1" -o "$output" && "$output"
+    elif [[ "$ext" -eq "cpp" ]]; then
+        g++ "$1" -o "$output" && "$output"
+    fi
 }
 
 help() { "$@" --help | bat --plain --language=help }

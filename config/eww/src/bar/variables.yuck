@@ -5,6 +5,8 @@
 (defvar isLauncherUnderHover false)
 (defvar isNetworkUnderHover false)
 (defvar isBatteryUnderHover false)
+(defvar is_CPU_underHover false)
+(defvar is_RAM_underHover false)
 (defvar keyboardLayout "US")
 
 (defvar workspaces-list "[]")

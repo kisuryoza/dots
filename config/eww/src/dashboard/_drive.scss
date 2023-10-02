@@ -1,7 +1,6 @@
 @use "defaults";
 
 @use "src/colors";
-@use "src/mixins";
 
 .drive scale trough {
     background-color: colors.$black;

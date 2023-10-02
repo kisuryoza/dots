@@ -74,7 +74,7 @@
 
 (let [mark (require "harpoon.mark")
       ui (require "harpoon.ui")]
-  (nmapp! :a mark.add_file "Harpoon add file")
+  (nmapp! :ha mark.add_file "Add file")
   (nmap! :<C-k> #(ui.nav_prev) "Navig prev")
   (nmap! :<C-j> #(ui.nav_next) "Navig next")
   (nmapp! :hh ui.toggle_quick_menu "Harpoon open")
@@ -83,6 +83,9 @@
   (nmapp! :hw #(ui.nav_file 2) "Navig 2")
   (nmapp! :he #(ui.nav_file 3) "Navig 3")
   (nmapp! :hr #(ui.nav_file 4) "Navig 4"))
+
+(let [arena (require "arena")]
+  (nmapp! :a #(arena.toggle) "Arena toggle"))
 
 (fn crates-mapping [args]
     (let [buff args.buf

@@ -1,47 +1,113 @@
 @use "src/colors";
-@use "src/mixins";
-
-@use "calendar";
-@use "workspace-tags";
 
 .bar {
     background-color: colors.$background-primary;
 }
 
+.workspace-tag-mine {
+    color: colors.$yellow;
+}
+.workspace-tag-visible {
+    color: colors.$red;
+}
+.workspace-tag-busy {
+    color: colors.$red;
+}
+.workspace-tag {
+    color: colors.$background-secondary;
+}
+
 .button-launch {
-    @include mixins.bar-button();
+    background-color: colors.$cyan;
+    color: colors.$background-primary;
 }
 
-.button-launch-1 {
-    @include mixins.bar-button($color: colors.$red);
+.cpu-icon {
+    background-color: colors.$green;
+    color: colors.$background-primary;
 }
 
-.button-launch-2 {
-    @include mixins.bar-button($color: colors.$green);
+.cpu-result {
+    background-color: colors.$background-primary;
+    color: colors.$green;
+    padding: 0.5em 0em 0.5em 0em;
 }
 
-.button-launch-3 {
-    @include mixins.bar-button($color: colors.$yellow);
+.ram-icon {
+    background-color: colors.$yellow;
+    color: colors.$background-primary;
 }
 
-.button-launch-4 {
-    @include mixins.bar-button($color: colors.$blue);
+.ram-result {
+    background-color: colors.$background-primary;
+    color: colors.$yellow;
+    padding: 0.5em 0em 0.5em 0em;
 }
 
-.button-launch-5 {
-    @include mixins.bar-button($color: colors.$magenta);
+.net-icon {
+    background-color: colors.$cyan;
+    color: colors.$background-primary;
 }
 
-.button-keyboard {
-    @include mixins.bar-button();
+.net-result {
+    background-color: colors.$background-primary;
+    color: colors.$cyan;
+    padding: 0.5em 0em 0.5em 0em;
+}
+
+.power-icon {
+    background-color: colors.$white;
+    color: colors.$background-primary;
+}
+
+.power-result {
+    background-color: colors.$background-primary;
+    color: colors.$white;
+    padding: 0.5em 0em 0.5em 0em;
+}
+
+.button-keyboardLayout {
+    font-size: 1.2em;
     font-weight: bold;
-}
-
-.button-net {
-    @include mixins.bar-button();
+    padding: 0.5em 0em 0.5em 0em;
 }
 
 .button-time {
-    @include mixins.bar-button($color: colors.$blue);
+    font-size: 1.2em;
     font-weight: bold;
+    padding: 0.5em 0em 0.5em 0em;
+}
+
+calendar {
+    background-color: colors.$background-primary;
+    border-radius: 15px;
+    padding: 0.5em;
+
+    &:selected {
+        color: colors.$yellow;
+    }
+
+    &:indeterminate {
+        color: colors.$background-secondary;
+    }
+}
+
+calendar.button {
+    color: colors.$background-secondary;
+}
+
+calendar.highlight {
+    color: colors.$foreground-secondary;
+}
+
+.window-calendar-box {
+    background-color: colors.$background-primary;
+    border-right: 3px solid colors.$black;
+    border-bottom: 3px solid colors.$black;
+    border-radius: 15px;
+    padding: 1em;
+}
+
+.calendar-title {
+    font-size: 2em;
 }

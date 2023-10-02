@@ -172,8 +172,7 @@ where
         match ext.to_str() {
             Some("png") => {
                 let output = Command::new("oxipng")
-                    .args(["-s", "--nb", "--nc", "--np", "--ng", "--nx", "--nz"])
-                    .arg(file_str)
+                    .args(["-s", "--nb", "--nc", "--np", "--ng", "--nx", file_str])
                     .output()?;
                 io::stdout().write_all(&output.stdout)?;
                 io::stdout().flush()?

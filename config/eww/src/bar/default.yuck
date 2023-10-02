@@ -1,21 +1,19 @@
-; -*- mode: Lisp;-*-
-
 (include "src/bar/variables.yuck")
 
 (defwidget bar []
-  (centerbox :class "bar"
-             :orientation "v"
-             (bar-left)
-             (bar-center)
-             (bar-right)))
+ (centerbox :class "bar" :orientation "v"
+  (bar-left)
+  (bar-center)
+  (bar-right)))
 
 (defwidget bar-left []
   (box :valign "start"
        :halign "center"
-       :spacing 5
        :orientation "v"
        :space-evenly false
-       (launcher)))
+       (launcher)
+       (cpu)
+       (ram)))
 
 (defwidget bar-center []
   (box :valign "center"
@@ -27,46 +25,31 @@
 (defwidget bar-right []
   (box :valign "end"
        :halign "center"
-       :spacing 5
        :orientation "v"
        :space-evenly false
        (keyboardLayout)
-       (network)
-       (battery)
+       (net)
+       (power)
        (time)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defwidget launcher []
- (box :spacing 0
-  :orientation "v"
-  :space-evenly false
-  (button :class "button-launch"
-   :onclick "~/.config/eww/scripts/dashboard.bash &"
+ (box :spacing 0 :orientation "v" :space-evenly false
+  (button :class "button-launch" :onclick "~/.config/eww/scripts/dashboard.bash &"
    (label :text "󰺔"))))
-  ;; (eventbox :onhover "${EWW_CMD} update isLauncherUnderHover=true"
-  ;;  :onhoverlost "${EWW_CMD} update isLauncherUnderHover=false"
-  ;;  (revealer :transition "slidedown"
-  ;;   :reveal isLauncherUnderHover
-  ;;   :duration "350ms"
-  ;;   (box :spacing 1
-  ;;    :orientation "v"
-  ;;    ;; :space-evenly false
-  ;;    (button :class "button-launch-1"
-  ;;     :onclick "fork.bash /usr/bin/librewolf"
-  ;;     (label :text "󰖟"))
-  ;;    (button :class "button-launch-2"
-  ;;     :onclick "fork.bash /usr/bin/keepassxc"
-  ;;     (label :text "󰌆"))
-  ;;    (button :class "button-launch-3"
-  ;;     :onclick "fork.bash /usr/bin/freetube"
-  ;;     (label :text "󰕧"))
-  ;;    (button :class "button-launch-4"
-  ;;     :onclick "fork.bash /usr/bin/steam"
-  ;;     (label :text "󰊴"))
-  ;;    (button :class "button-launch-5"
-  ;;     :onclick "fork.bash /usr/bin/qbittorrent"
-  ;;     (label :text "󰳛")))))))
+
+(defwidget cpu []
+ (box :class "cpu-icon" :spacing 1 :orientation "v" :space-evenly false
+  (label :text "CPU")
+  (box :class "cpu-result" :orientation "v" :space-evenly false
+   (label :text "${round(EWW_CPU.avg, 0)}"))))
+
+(defwidget ram []
+  (box :class "ram-icon" :spacing 1 :orientation "v" :space-evenly false
+   (label :text "RAM")
+   (box :class "ram-result" :orientation "v" :space-evenly false
+    (label :text "${round(EWW_RAM.used_mem_perc, 0)}"))))
 
 (defwidget workspaces []
   (for entry in {workspaces-list["list"]}
@@ -79,52 +62,37 @@
                    :text {entry["active"] ? "󰜋" : "󰜌"}))))
 
 (defwidget keyboardLayout []
-  (button :class "button-keyboard"
-          ;; :onclick "~/bin/misc/keyboard-layout.bash"
-          (label :text keyboardLayout)))
+ (button :class "button-keyboardLayout" ;; :onclick "~/bin/misc/keyboard-layout.bash"
+  (label :text keyboardLayout)))
 
-(defwidget network []
-  (eventbox :onhover "${EWW_CMD} update isNetworkUnderHover=true"
-            :onhoverlost "${EWW_CMD} update isNetworkUnderHover=false"
-            (box :orientation "v"
-                 :space-evenly false
-                 (revealer :transition "slidedown"
-                           :reveal isNetworkUnderHover
-                           :duration "350ms"
-                           (box :orientation "v"
-                                :space-evenly false
-                                (label :text {eth-speed[0]})
-                                (label :text "󰯎 ")
-                                (label :text {eth-speed[1]})))
-                 (button :class "button-net"
-                         :onclick "fork.bash /usr/bin/nm-connection-editor"
-                         (label :text {connection == -1 ? "󰈁" : connection == 0 ? "󰤮" : connection < 25 ? "󰤟" : connection < 50 ? "󰤢" : connection < 75 ? "󰤥" : "󰤨"})))))
+(defwidget net []
+ (eventbox 
+  :onhover "${EWW_CMD} update isNetworkUnderHover=true"
+  :onhoverlost "${EWW_CMD} update isNetworkUnderHover=false"
+  (box :class "net-icon" :spacing 1 :orientation "v" :space-evenly false
+   (revealer :transition "slideup" :reveal isNetworkUnderHover :duration "350ms"
+    (box :class "net-result" :orientation "v" :space-evenly false
+     (label :text {eth-speed[0]})
+     (label :text "󰯎")
+     (label :text {eth-speed[1]})))
+   (label :text {connection == -1 ? "󰈁" : connection == 0 ? "󰤮" : connection < 25 ? "󰤟" : connection < 50 ? "󰤢" : connection < 75 ? "󰤥" : "󰤨"}))))
 
-(defwidget battery []
-  (eventbox :onhover "${EWW_CMD} update isBatteryUnderHover=true"
-            :onhoverlost "${EWW_CMD} update isBatteryUnderHover=false"
-            (box :orientation "v"
-                 :space-evenly false
-                 (revealer :transition "slidedown"
-                           :reveal isBatteryUnderHover
-                           :duration "350ms"
-                           (label :text "${battery} %"))
-                 (button :class "button-net"
-                         (box :valign "center"
-                              :halign "center"
-                              :orientation "v"
-                              :space-evenly false
-                              (label :text battery-icon))))))
+(defwidget power []
+ (eventbox 
+  :onhover "${EWW_CMD} update isBatteryUnderHover=true"
+  :onhoverlost "${EWW_CMD} update isBatteryUnderHover=false"
+  (box :class "power-icon" :spacing 1 :orientation "v" :space-evenly false
+   (revealer :transition "slideup" :reveal isBatteryUnderHover :duration "350ms"
+     (box :class "power-result" :orientation "v" :space-evenly false
+      (label :text "${battery} %")))
+   (label :text battery-icon))))
 
 (defwidget time []
-  (button :class "button-time"
-          :onclick "bash -c 'if [ $(${EWW_CMD} get isCalendarOpen) == true ]; then ${EWW_CMD} close calendar; ${EWW_CMD} update isCalendarOpen=false; else ${EWW_CMD} open calendar; ${EWW_CMD} update isCalendarOpen=true; fi;'"
-          (box :valign "center"
-               :halign "center"
-               :orientation "v"
-               :space-evenly false
-               (label :text hours)
-               (label :text minutes))))
+ (button :class "button-time"
+  :onclick "bash -c 'if [ $(${EWW_CMD} get isCalendarOpen) == true ]; then ${EWW_CMD} close calendar; ${EWW_CMD} update isCalendarOpen=false; else ${EWW_CMD} open calendar; ${EWW_CMD} update isCalendarOpen=true; fi;'"
+  (box :orientation "v" :space-evenly false
+   (label :text hours)
+   (label :text minutes))))
 
 (defwidget calendar-custom []
   (box :class "window-calendar-box"
