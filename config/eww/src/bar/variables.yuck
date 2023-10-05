@@ -1,15 +1,26 @@
-(defvar isWIFIOpen false)
 (defvar isCalendarOpen false)
 
-(defvar isLauncherUnderHover false)
-(defvar isNetworkUnderHover false)
-(defvar isBatteryUnderHover false)
-(defvar is_CPU_underHover false)
-(defvar is_RAM_underHover false)
-(defvar keyboardLayout "US")
+(defvar is_muted false)
+(defvar is_music_playing false)
+(defvar volume 100)
+(defvar music_progress 0)
+(defvar is_music_player_hovered false)
+(defvar is_volume_hovered false)
+
+(defvar is_net_hovered false)
+(defvar is_power_hovered false)
+(defvar is_cpu_hovered false)
+(defvar is_ram_hovered false)
+(defvar keyboard_layout "US")
 
 (defvar workspaces-list "[]")
-(defvar wifi-list "[]")
+
+(defvar is_brightness_hovered false)
+(defvar brightness_max 0)
+(defpoll brightness
+  :interval "1s"
+  :initial 0
+  "~/.config/eww/scripts/brightness.bash get")
 
 (deflisten wm-tags
   :initial ""
@@ -29,9 +40,19 @@
 
 (defpoll date
   :interval "1s"
-  "date '+%A, %d/%m'")
+  "date +%d/%m")
 
 (defpoll time-long
   :interval "1s"
   :initial 0
   "date +%H:%M:%S")
+
+(defpoll day_of_week
+  :interval "1s"
+  "date +%a")
+
+(defvar is_storage_hovered false)
+(defpoll storage-usage
+  :interval "1h"
+  :initial 0
+  "df --output=pcent /dev/nvme0n1p2 | awk 'FNR == 2 {print substr($1, 1, length($1)-1)}'")

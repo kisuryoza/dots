@@ -5,10 +5,10 @@ source ~/bin/daemons/init
 function switch_eww {
     case "$1" in
     "us" | *"English"*)
-        eww update keyboardLayout="US"
+        eww update keyboard_layout="US"
         ;;
     "ru" | *"Russian"*)
-        eww update keyboardLayout="RU"
+        eww update keyboard_layout="RU"
         ;;
     esac
 }

@@ -1,108 +1,105 @@
 @use "src/colors";
 
+@mixin title($color: colors.$red) {
+  background-color: $color;
+  color: colors.$background-primary;
+  font-size: 1.2em;
+}
+
+@mixin result($color: colors.$red) {
+  background-color: colors.$background-primary;
+  color: $color;
+  // padding: 0.5em 0em 0.5em 0em;
+}
+
 .bar {
-    background-color: colors.$background-primary;
+  background-color: colors.$background-primary;
 }
 
 .workspace-tag-mine {
-    color: colors.$yellow;
+  color: colors.$yellow;
 }
 .workspace-tag-visible {
-    color: colors.$red;
+  color: colors.$red;
 }
 .workspace-tag-busy {
-    color: colors.$red;
+  color: colors.$red;
 }
 .workspace-tag {
-    color: colors.$background-secondary;
+  color: colors.$background-secondary;
 }
 
-.cpu-icon {
-    background-color: colors.$green;
-    color: colors.$background-primary;
+.bar-slider scale trough {
+  background-color: colors.$background-secondary;
+  border-radius: 10px;
+  min-height: 10em;
+  min-width: 1em;
 }
 
-.cpu-result {
-    background-color: colors.$background-primary;
-    color: colors.$green;
-    padding: 0.5em 0em 0.5em 0em;
+.bar-slider scale trough highlight {
+  background-color: colors.$yellow;
+  border-radius: 10px;
 }
 
-.ram-icon {
-    background-color: colors.$yellow;
-    color: colors.$background-primary;
-}
+.cpu-title { @include title($color: colors.$pink); }
+.cpu-result { @include result($color: colors.$pink); }
 
-.ram-result {
-    background-color: colors.$background-primary;
-    color: colors.$yellow;
-    padding: 0.5em 0em 0.5em 0em;
-}
+.ram-title { @include title($color: colors.$mauve); }
+.ram-result { @include result($color: colors.$mauve); }
 
-.net-icon {
-    background-color: colors.$cyan;
-    color: colors.$background-primary;
-}
+.storage-title { @include title($color: colors.$red); }
+.storage-result { @include result($color: colors.$red); }
 
-.net-result {
-    background-color: colors.$background-primary;
-    color: colors.$cyan;
-    padding: 0.5em 0em 0.5em 0em;
-}
+.music_player-title { @include title($color: colors.$maroon); }
+.music_player-slider scale trough highlight { background-color: colors.$maroon; }
 
-.power-icon {
-    background-color: colors.$white;
-    color: colors.$background-primary;
-}
+.volume-title { @include title($color: colors.$peach); }
+.volume-slider scale trough highlight { background-color: colors.$peach; }
 
-.power-result {
-    background-color: colors.$background-primary;
-    color: colors.$white;
-    padding: 0.5em 0em 0.5em 0em;
-}
+.brightness-title { @include title($color: colors.$yellow); }
+.brightness-slider scale trough highlight { background-color: colors.$yellow; }
 
-.button-keyboardLayout {
-    font-size: 1.2em;
-    font-weight: bold;
-    padding: 0.5em 0em 0.5em 0em;
-}
+.net-title { @include title($color: colors.$green); }
+.net-result { @include result($color: colors.$green); }
 
-.button-time {
-    font-size: 1.2em;
-    font-weight: bold;
-    padding: 0.5em 0em 0.5em 0em;
-}
+.power-title { @include title($color: colors.$teal); }
+.power-result { @include result($color: colors.$teal); }
+
+.keyboard_layout-title { @include title($color: colors.$sapphire); }
+
+.time-title { @include title($color: colors.$blue); }
+.time-result { @include result($color: colors.$blue); }
 
 calendar {
-    background-color: colors.$background-primary;
-    border-radius: 15px;
-    padding: 0.5em;
+  background-color: colors.$background-primary;
+  border-radius: 15px;
+  padding: 0.5em;
 
-    &:selected {
-        color: colors.$yellow;
-    }
+  &:selected {
+    color: colors.$yellow;
+  }
 
-    &:indeterminate {
-        color: colors.$background-secondary;
-    }
+  &:indeterminate {
+    color: colors.$background-secondary;
+  }
 }
 
 calendar.button {
-    color: colors.$background-secondary;
+  color: colors.$background-secondary;
 }
 
 calendar.highlight {
-    color: colors.$foreground-secondary;
+  color: colors.$foreground-secondary;
 }
 
 .window-calendar-box {
-    background-color: colors.$background-primary;
-    border-right: 3px solid colors.$black;
-    border-bottom: 3px solid colors.$black;
-    border-radius: 15px;
-    padding: 1em;
+  background-color: colors.$background-primary;
+  border-right: 3px solid colors.$black;
+  border-bottom: 3px solid colors.$black;
+  border-radius: 15px;
+  padding: 1em;
 }
 
 .calendar-title {
-    font-size: 2em;
+  font-size: 2em;
 }

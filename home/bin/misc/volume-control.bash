@@ -6,12 +6,12 @@ $DEBUG && set -Eeuxo pipefail
 function toggleMute {
     if eval "$(pamixer --get-mute)"; then
         pamixer --unmute
-        eww update isMuted=false
+        eww update is_muted=false
         pamixer --set-volume 100
         eww update volume=100
     else
         pamixer --mute
-        eww update isMuted=true
+        eww update is_muted=true
     fi
 }
 
