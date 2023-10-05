@@ -11,7 +11,6 @@
        :halign "center"
        :orientation "v"
        :space-evenly false
-       (launcher)
        (cpu)
        (ram)))
 
@@ -33,11 +32,6 @@
        (time)))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defwidget launcher []
- (box :spacing 0 :orientation "v" :space-evenly false
-  (button :class "button-launch" :onclick "~/.config/eww/scripts/dashboard.bash &"
-   (label :text "󰺔"))))
 
 (defwidget cpu []
  (box :class "cpu-icon" :spacing 1 :orientation "v" :space-evenly false

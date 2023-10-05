@@ -1,6 +1,5 @@
 (defvar isWIFIOpen false)
 (defvar isCalendarOpen false)
-(defvar isDashboardOpen false)
 
 (defvar isLauncherUnderHover false)
 (defvar isNetworkUnderHover false)
@@ -32,3 +31,7 @@
   :interval "1s"
   "date '+%A, %d/%m'")
 
+(defpoll time-long
+  :interval "1s"
+  :initial 0
+  "date +%H:%M:%S")

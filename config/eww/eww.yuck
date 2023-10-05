@@ -14,4 +14,3 @@
   "~/.config/eww/scripts/battery.bash icon")
 
 (include "src/bar/default.yuck")
-(include "src/dashboard/default.yuck")
