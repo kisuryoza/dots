@@ -1,16 +1,6 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
-if [[ -z "$ZELLIJ" ]]; then
-    sleep 0.1
-    if [[ "$ZELLIJ_AUTO_ATTACH" == "true" ]]; then
-        zellij attach -c
-    else
-        zellij
-    fi
-    exit
-fi
-
 HISTFILE=$XDG_CACHE_HOME/zhistory
 HISTSIZE=50000
 SAVEHIST=50000

@@ -185,7 +185,6 @@ where
             _ => (),
         };
     }
-    info!("Compressed {}", file.display());
 
     Ok(())
 }

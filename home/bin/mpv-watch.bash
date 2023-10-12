@@ -30,7 +30,7 @@ function find_vid {
         OPTIONS+=(--audio-file="$dub")
     done
 
-    if [[ ! -d "fonts" ]]; then
+    if [[ ! -d "fonts" && $(fd -1 -e ttf -e otf) != "" ]]; then
         mkdir "fonts"
         (cd fonts && fd -e ttf -e otf . .. -x ln -sf "{}" .)
     fi
