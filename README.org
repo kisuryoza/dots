@@ -1,6 +1,7 @@
 My dot files
 
-#+html: <p align="center"><img src="https://user-images.githubusercontent.com/53265642/214617356-50583b00-770d-4e37-9245-0ba8a55e2f61.png" /></p>
+#+html: <p align="center"><img src="https://user-images.githubusercontent.com/53265642/287467243-649152fd-79c3-4cf9-a03c-2cf32d2f78d4.png" /></p>
+
 
 - Terminal: [[https://github.com/alacritty/alacritty][alacritty]]
 - Shell: [[https://www.zsh.org/][Zsh]]

@@ -6,7 +6,6 @@ Configs are in [[https://fennel-lang.org/][Fennel]].
 
 Featured by [[https://github.com/udayvir-singh/tangerine.nvim][tangerine]] and wouldn't happen without [[https://github.com/eraserhd/parinfer-rust][parinfer]] for Lisps.
 
-#+html: <p align="center"><img src="https://user-images.githubusercontent.com/53265642/221431714-9638a829-8cba-46c5-b43c-f6e8cd76c9b2.png" /></p>
 
 Features:
 - Feline as a status line
