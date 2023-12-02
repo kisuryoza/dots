@@ -17,7 +17,7 @@ else
             ;;
         "audio" | "video")
             echo "$MIME"
-            mediainfo "$word" | bat --plain --language=help --color=always
+            mediainfo "$word" | bat --color=always -plhelp
             ;;
         esac
 

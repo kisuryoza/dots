@@ -121,7 +121,7 @@ keybinds clear-defaults=true {
         bind "Enter" "Esc" { SwitchToMode "Normal"; }
     }
     shared_except "tmux" "locked" {
-        bind "Ctrl x" { SwitchToMode "Tmux"; }
+        bind "Ctrl a" { SwitchToMode "Tmux"; }
     }
 }
 

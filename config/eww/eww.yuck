@@ -6,11 +6,11 @@
 (defpoll battery
   :interval "1m"
   :initial 0
-  "~/.config/eww/scripts/battery.bash get")
+  "~/bin/tmux/battery.bash get")
 
 (defpoll battery-icon
   :interval "5s"
   :initial 0
-  "~/.config/eww/scripts/battery.bash icon")
+  "~/bin/tmux/battery.bash icon")
 
 (include "src/bar/default.yuck")

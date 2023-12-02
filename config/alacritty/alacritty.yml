@@ -23,21 +23,22 @@ scrolling:
 font:
   size: 9.0
   normal:
-    # family: Iosevka Term SS14
-    # family: JetBrains Mono
-    family: Comic Code
+    family: JetBrains Mono
+    # family: Comic Code
+    # family: Monaspace Radon
+    # family: Monaspace Neon
     style: Regular
 
   bold:
-    family: Comic Code
+    family: JetBrains Mono
     style: Bold
 
   italic:
-    family: Comic Code
+    family: JetBrains Mono
     style: Italic
 
   bold_italic:
-    family: Comic Code
+    family: JetBrains Mono
     style: Bold Italic
 
 colors:

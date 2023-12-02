@@ -110,27 +110,45 @@ vmrss() {
 
 source "$ZDOTDIR/aliases.zsh"
 
+autoload -Uz compinit && compinit
+
 local ZSH_PUGINS="$HOME/.local/share/zsh"
 if [[ -r "$ZSH_PUGINS"/fzf-tab-completion/zsh/fzf-zsh-completion.sh && -n $(whence -p fzf) ]]; then
     source "$ZSH_PUGINS"/fzf-tab-completion/zsh/fzf-zsh-completion.sh
     bindkey '^I' fzf_completion
     zstyle ':completion:*' fzf-search-display true
 
-    # zstyle ':completion::*:*::*' fzf-completion-opts --preview='~/.config/zsh/fzf-preview.sh path $(eval echo {1})'
+    zstyle ':completion::*:*::*' fzf-completion-opts --preview='~/.config/zsh/fzf-preview.sh path $(eval echo {1})'
     zstyle ':completion::*:systemctl::systemctl,status,*' fzf-completion-opts --preview='SYSTEMD_COLORS=1 systemctl status -- $(eval echo {1})'
-    zstyle ':completion::*:make::*' fzf-completion-opts --preview='make -n $(eval echo {1}) | bat --plain --language=sh --color=always'
-    zstyle ':completion::*:btrfs::*' fzf-completion-opts --preview='btrfs $(eval echo {1}) --help | bat --plain --language=help --color=always'
+    zstyle ':completion::*:make::*' fzf-completion-opts --preview='make -n $(eval echo {1}) | bat --color=always -plsh'
 
     zstyle ':completion::*:git::git,diff,*' fzf-completion-opts --preview='git diff --color=always $(eval echo {1}) | delta'
     zstyle ':completion::*:git::git,show,*' fzf-completion-opts --preview='git show --color=always $(eval echo {1}) | delta'
     zstyle ':completion::*:git::git,checkout,*' fzf-completion-opts --preview='git show --color=always $(eval echo {1}) | delta'
     zstyle ':completion::*:git::git,log,*' fzf-completion-opts --preview='git log --color=always $(eval echo {1})'
-    zstyle ':completion::*:git::git,help,*' fzf-completion-opts --preview='git help $(eval echo {1}) | bat --plain --language=man --color=always'
+    zstyle ':completion::*:git::git,help,*' fzf-completion-opts --preview='git help $(eval echo {1}) | bat --color=always -plhelp'
 
-    zstyle ':completion::*:nix::*' fzf-completion-opts --preview='nix $(eval echo {1}) --help | bat --plain --language=help --color=always'
-    zstyle ':completion::*:nix::nix,flake,*' fzf-completion-opts --preview='nix flake $(eval echo {1}) --help | bat --plain --language=help --color=always'
-    zstyle ':completion::*:nix::nix,profile,*' fzf-completion-opts --preview='nix profile $(eval echo {1}) --help | bat --plain --language=help --color=always'
+    zstyle ':completion::*:nix::*' fzf-completion-opts --preview='nix $(eval echo {1}) --help | bat --color=always -plhelp'
+    zstyle ':completion::*:nix::nix,flake,*' fzf-completion-opts --preview='nix flake $(eval echo {1}) --help | bat --color=always -plhelp'
+    zstyle ':completion::*:nix::nix,profile,*' fzf-completion-opts --preview='nix profile $(eval echo {1}) --help | bat --color=always -plhelp'
+
+    zstyle ':completion::*:docker::*' fzf-completion-opts --preview='docker help $(eval echo {1}) | bat --color=always -plhelp'
+    zstyle ':completion::*:docker::docker,run,*' fzf-completion-opts --preview='docker images "$(eval echo {1})"'
+    zstyle ':completion::*:docker::docker,image,*' fzf-completion-opts --preview='docker image "$(eval echo {1})" --help | bat --color=always -plhelp'
 fi
+
+# if [[ -r "$ZSH_PUGINS"/fzf-tab/fzf-tab.plugin.zsh && -n $(whence -p fzf) ]]; then
+#     source "$ZSH_PUGINS"/fzf-tab/fzf-tab.plugin.zsh
+#
+#     # zstyle ':fzf-tab:complete:docker:argument-1' fzf-preview 'docker help $word | bat --color=always -plhelp'
+#     zstyle ':fzf-tab:complete:docker-(run|images):*' fzf-preview 'docker images $word'
+#     zstyle ':fzf-tab:complete:docker-inspect:' fzf-preview 'docker inspect $word | bat --color=always -pljson'
+#     zstyle ':fzf-tab:complete:docker-image:argument-1' fzf-preview 'docker image $word --help | bat --color=always -plhelp'
+#     zstyle ':fzf-tab:complete:docker-container:argument-1' fzf-preview 'docker container $word --help | bat --color=always -plhelp'
+#     # zstyle '' fzf-preview ''
+#
+#     # zstyle ':fzf-tab:complete:(\\|*/|)jq:argument-rest' fzf-preview '[[ -f $realpath ]] && jq -Cr . $realpath 2>/dev/null || less $realpath'
+# fi
 
 if [[ -r "$ZSH_PUGINS"/zsh-autosuggestions/zsh-autosuggestions.zsh ]]; then
     source "$ZSH_PUGINS"/zsh-autosuggestions/zsh-autosuggestions.zsh
@@ -144,7 +162,6 @@ if [[ -r "$ZSH_PUGINS"/nix-zsh-completions/nix-zsh-completions.plugin.zsh ]]; th
 fi
 
 # fpath+="/nix/var/nix/profiles/default/share/zsh/site-functions"
-autoload -Uz compinit && compinit
 
 if [[ $(id -u) -ne 0 ]]; then
     # Auto starting ssh-agent

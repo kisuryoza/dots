@@ -11,7 +11,7 @@ use serde_json::Value;
 use sha2::{Digest, Sha512};
 
 const MOD_LOADER: &str = "forge";
-const VERSION: &str = "1.19.2";
+const VERSION: &str = "1.20.1";
 
 struct Collector(Vec<u8>);
 
