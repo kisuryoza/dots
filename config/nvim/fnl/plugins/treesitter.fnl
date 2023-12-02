@@ -10,7 +10,7 @@
 (fn M.config []
   (local treesitter (require :nvim-treesitter.configs))
   (var t {})
-  (set t {:ensure_installed [:rust :c :cpp :bash :lua :fennel :markdown :nix]
+  (set t {:ensure_installed [:rust :c :cpp :bash :lua :fennel :markdown]
           :auto_install true
           :highlight {:enable true}
           :incremental_selection {:enable true

@@ -33,14 +33,13 @@
 (require :configs.key_maps)
 
 ;; Deletes trailing spaces and replaces tabs w/ spaces on save
-(vim.api.nvim_create_autocmd :FileWritePre
+(vim.api.nvim_create_autocmd :BufWritePre    
                              {:pattern ["*"]
-                              :callback (fn []
-                                          (if (not vim.o.binary)
-                                              (let [winview vim.fn.winsaveview]
-                                                (vim.cmd "keeppatterns %s/\\s\\+$//e")
-                                                (vim.cmd :retab)
-                                                (vim.fn.winrestview (winview)))))})
+                              :callback #(when (not vim.o.binary)
+                                           (let [winview vim.fn.winsaveview]
+                                             (vim.cmd "keeppatterns %s/\\s\\+$//e")
+                                             (vim.cmd :retab)
+                                             (vim.fn.winrestview (winview))))})
 
 ;; Reload file for changes
 (vim.api.nvim_create_autocmd [:FocusGained :BufEnter]

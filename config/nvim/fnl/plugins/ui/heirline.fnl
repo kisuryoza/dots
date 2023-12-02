@@ -203,7 +203,7 @@
   (local inactive-statusline
          {:condition conditions.is_not_active :hl {:bg colors.bg_dim}})
   (local inactive-statusline
-         (utils.insert inactive-statusline git file align file-encoding
+         (utils.insert inactive-statusline git file align lsp-status file-encoding
                        file-format file-type))
   (local active-statusline [vim-mode
                             git
