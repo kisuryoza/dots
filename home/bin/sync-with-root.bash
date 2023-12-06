@@ -5,11 +5,8 @@ SCRIPT_PATH=$(realpath -s "${BASH_SOURCE[0]}")
 function run_root {
     local home="$1"
     declare -a FILES_TO_SYNC
-    FILES_TO_SYNC+=("$home/.config/zsh/.zshenv")
     FILES_TO_SYNC+=("$home/.config/zsh/.zshrc")
-    FILES_TO_SYNC+=("$home/.config/zsh/aliases.zsh")
-    FILES_TO_SYNC+=("$home/.config/zsh/functions.zsh")
-    FILES_TO_SYNC+=("$home/.config/zsh/fzf-preview.sh")
+    FILES_TO_SYNC+=("$home/.config/zsh/.zprofile")
     FILES_TO_SYNC+=("$home/.config/starship.toml")
 
     for i in "${FILES_TO_SYNC[@]}"; do
