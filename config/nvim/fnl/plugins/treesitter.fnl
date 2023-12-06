@@ -5,7 +5,7 @@
                                :nvim-treesitter/nvim-treesitter-refactor
                                :nvim-treesitter/nvim-treesitter-context]
                 :build ":TSUpdate"
-                :event :BufRead}))
+                :event :VeryLazy}))
 
 (fn M.config []
   (local treesitter (require :nvim-treesitter.configs))

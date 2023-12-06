@@ -24,7 +24,6 @@
                  :performance {:cache {:enabled true}
                                :rtp {:disabled_plugins [:gzip
                                                         :matchit
-                                                        :netrwPlugin
                                                         :tarPlugin
                                                         :tohtml
                                                         :tutor]}}})
@@ -33,7 +32,7 @@
 (require :configs.key_maps)
 
 ;; Deletes trailing spaces and replaces tabs w/ spaces on save
-(vim.api.nvim_create_autocmd :BufWritePre    
+(vim.api.nvim_create_autocmd :BufWritePre
                              {:pattern ["*"]
                               :callback #(when (not vim.o.binary)
                                            (let [winview vim.fn.winsaveview]

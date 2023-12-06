@@ -12,8 +12,8 @@
 (nmap! :<C-t> (cmd! :tabnew))
 (nmap! :<C-Left> (cmd! :tabprevious))
 (nmap! :<C-Right> (cmd! :tabnext))
-(nmap! :<Tab> "<Plug>(leap-forward)" "Leap forward")
-(nmap! :<S-Tab> "<Plug>(leap-backward)" "Leap backward")
+(nmapp! :<Tab> "<Plug>(leap-forward)" "Leap forward")
+(nmapp! :<S-Tab> "<Plug>(leap-backward)" "Leap backward")
 
 (vmap! :y :ygv<esc> "Yank sel text w/out moving cursor back")
 (vmap! :J ":m '>+1<CR>gv=gv" "Move selected Down")
@@ -37,7 +37,7 @@
 (nmapp! :oc #(toggle-opt :colorcolumn :80 :0) "Color column")
 (nmapp! :ol #(toggle-opt :cursorline true false) "Cursor line")
 
-(nmapp! :z (cmd! :ZenMode) :ZenMode)
+; (nmapp! :z (cmd! :ZenMode) :ZenMode)
 (nmapp! :e vim.diagnostic.open_float "Diagnostic menu")
 (nmapp! :sc (cmd! "e $MYVIMRC | :cd %:p:h") "Edit Neovm config")
 
@@ -49,18 +49,15 @@
 ;; Files managment
 (nmapp! :ff (cmd! "Telescope find_files") "Find Files")
 (nmapp! :fr (cmd! "Telescope oldfiles") :Recent)
-(nmapp! :fF (cmd! "DrexDrawerToggle") "File Manager")
 (nmapp! :fg (cmd! "Telescope live_grep") "Live Grep")
 (nmapp! :fx (cmd! "!chmod +x %") "Make curr file executable")
-(nmapp! :fR (cmd! "lua require('spectre').open()") "Regex replace")
 
-;; Code related 
+;; Code related
 (nmapp! :ca vim.lsp.buf.code_action "Code actions")
 (nmapp! :cf #(vim.lsp.buf.format {:async true}) "Format buffer")
 (nmapp! :cx (cmd! :TroubleToggle) "List of errors")
 (nmapp! :ct (cmd! :TodoTrouble) "List of TODOs")
 (nmapp! :cu #((. (require :undotree) :toggle)) :Undotree)
-; (nmapp! :csr #((. (require :ssr) :open)) :SSR)
 
 ;; Git
 (nmapp! :gn (cmd! :Neogit) "Open Neogit")
@@ -72,20 +69,16 @@
 (nmapp! :ghn (cmd! "Gitsigns next_hunk") "Next hunk")
 (nmapp! :ghs (cmd! "Gitsigns select_hunk") "Select hunk")
 
-(let [mark (require "harpoon.mark")
-      ui (require "harpoon.ui")]
-  (nmapp! :a mark.add_file "Add file")
-  (nmapp! :H ui.toggle_quick_menu "Harpoon open")
-  (nmap! :<C-k> #(ui.nav_prev) "Navig prev")
-  (nmap! :<C-j> #(ui.nav_next) "Navig next")
+(let [harpoon (require :harpoon)]
+  (nmapp! :a #(: (harpoon:list) :append) "Add file")
+  (nmapp! :H #(harpoon.ui:toggle_quick_menu (harpoon:list)) "Harpoon open")
+  (nmap! :<C-k> #(: (harpoon:list) :prev) "Navig prev")
+  (nmap! :<C-j> #(: (harpoon:list) :next) "Navig next")
   (nmapp! :ht (cmd! "Telescope harpoon marks") "Harpoon telescope")
-  (nmapp! :hq #(ui.nav_file 1) "Navig 1")
-  (nmapp! :hw #(ui.nav_file 2) "Navig 2")
-  (nmapp! :he #(ui.nav_file 3) "Navig 3")
-  (nmapp! :hr #(ui.nav_file 4) "Navig 4"))
-
-; (let [arena (require "arena")]
-;   (nmapp! :a #(arena.toggle) "Arena toggle"))
+  (nmapp! :hq #(: (harpoon:list) :select 1) "Navig 1")
+  (nmapp! :hw #(: (harpoon:list) :select 2) "Navig 2")
+  (nmapp! :he #(: (harpoon:list) :select 3) "Navig 3")
+  (nmapp! :hr #(: (harpoon:list) :select 4) "Navig 4"))
 
 (fn crates-mapping [args]
     (let [buff args.buf

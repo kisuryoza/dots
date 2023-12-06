@@ -8,24 +8,7 @@ Featured by [[https://github.com/udayvir-singh/tangerine.nvim][tangerine]] and w
 
 
 Features:
-- Feline as a status line
 - Lazy loading of plugins with [[https://github.com/folke/lazy.nvim][lazy.nvim]]
 - Dashboard greeter with [[https://github.com/goolord/alpha-nvim][alpha-nvim]]
 - LSP integration (rust, c/cpp, bash, fennel)
 - DAP integration (rust, c/cpp)
-
-* Structure
-#+BEGIN_EXAMPLE
-.
-├── init.lua            # Minimal bootstrap. On a fresh install autoinstalls plugin manager and tangerine, then the rest plugins
-└── fnl
-   ├── init.fnl         # The startup point to load the fennel configs
-   ├── opts.fnl         # Sets vim options
-   ├── macros.fnl       # Varios fennel macros
-   └── plugins          # Plugin specific configurations
-       └── ...
-#+END_EXAMPLE
-
-------
-
-_{endless WIP}

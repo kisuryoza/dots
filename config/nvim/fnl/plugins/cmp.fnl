@@ -8,7 +8,7 @@
                                :L3MON4D3/LuaSnip
                                :saadparwaiz1/cmp_luasnip
                                :rafamadriz/friendly-snippets]
-                :event :BufRead}))
+                :event :VeryLazy}))
 
 (fn M.config []
   (local cmp (require :cmp))
@@ -67,8 +67,8 @@
                                             (fallback)))
                                       [:i :s])})
   (set t.sources (cmp.config.sources [{:name :nvim_lsp} {:name :luasnip}]
-                                     [{:name :async_path}
-                                      {:name :buffer}
+                                     [{:name :async_path}]
+                                     [{:name :buffer}
                                       {:name :crates}]))
   (set t.window {:completion {:col_offset -3}})
   (set t.formatting {:format (fn [_entry vim-item]
