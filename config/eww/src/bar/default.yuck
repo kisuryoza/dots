@@ -30,7 +30,7 @@
 (defwidget workspaces []
  (for entry in {workspaces-list["list"]}
   (box :valign "center" :halign "center" :spacing 10 :orientation "v" :space-evenly true
-   (label 
+   (label
     :class {entry["busy"] ? "workspace-tag-mine" : "workspace-tag-visible"}
     :text {entry["active"] ? "󰜋" : "󰜌"}))))
 
@@ -45,7 +45,7 @@
   (label :class "ram-title" :text "RAM")))
 
 (defwidget storage []
- (eventbox 
+ (eventbox
   :onhover "${EWW_CMD} update is_storage_hovered=true"
   :onhoverlost "${EWW_CMD} update is_storage_hovered=false"
   (box :orientation "v" :space-evenly false
@@ -54,10 +54,10 @@
    (label :class "storage-title" :text "󰋊"))))
 
 (defwidget music_player []
- (eventbox 
+ (eventbox
   :onhover "${EWW_CMD} update is_music_player_hovered=true; ~/bin/misc/media-player.bash &"
   :onhoverlost "${EWW_CMD} update is_music_player_hovered=false"
-  (box :orientation "v" :space-evenly false 
+  (box :orientation "v" :space-evenly false
    (revealer :class "bar-slider music_player-slider" :transition "slideup" :reveal is_music_player_hovered :duration "350ms"
     (box :orientation "v" :space-evenly false
      (scale :active false :flipped true :round-digits 0 :value music_progress :min 0 :max 100 :orientation "v")
@@ -67,7 +67,7 @@
    (button (label :class "music_player-title" :text "󰝚")))))
 
 (defwidget volume []
- (eventbox 
+ (eventbox
   :onhover "${EWW_CMD} update is_volume_hovered=true"
   :onhoverlost "${EWW_CMD} update is_volume_hovered=false"
   (box :orientation "v" :space-evenly false
@@ -76,7 +76,7 @@
    (button :onclick "~/bin/misc/volume-control.bash toggleMute" (label :class "volume-title" :text {is_muted ? "󰖁" : "󰕾"})))))
 
 (defwidget brightness []
- (eventbox 
+ (eventbox
   :onhover "${EWW_CMD} update is_brightness_hovered=true; ${EWW_CMD} update brightness_max=\"$(~/.config/eww/scripts/brightness.bash get-max)\""
   :onhoverlost "${EWW_CMD} update is_brightness_hovered=false"
   (box :orientation "v" :space-evenly false
@@ -85,7 +85,7 @@
    (button :onclick "~/.config/eww/scripts/brightness.bash set-max" (label :class "brightness-title" :text "󰃠")))))
 
 (defwidget net []
- (eventbox 
+ (eventbox
   :onhover "${EWW_CMD} update is_net_hovered=true"
   :onhoverlost "${EWW_CMD} update is_net_hovered=false"
   (box :orientation "v" :space-evenly false
@@ -97,7 +97,7 @@
    (label :class "net-title" :text {connection == -1 ? "󰈁" : connection == 0 ? "󰤮" : connection < 25 ? "󰤟" : connection < 50 ? "󰤢" : connection < 75 ? "󰤥" : "󰤨"}))))
 
 (defwidget power []
- (eventbox 
+ (eventbox
   :onhover "${EWW_CMD} update is_power_hovered=true"
   :onhoverlost "${EWW_CMD} update is_power_hovered=false"
   (box :orientation "v" :space-evenly false

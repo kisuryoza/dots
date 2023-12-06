@@ -10,6 +10,7 @@ RESOURCES="$HOME/$REPO_NAME/post-install/deploy-cfg"
 $DEBUG && set -Eeuxo pipefail
 
 source "$HOME"/"$REPO_NAME"/home/bin/helper-func.sh
+source "$HOME"/"$REPO_NAME"/home/.profile
 
 function post_user {
     declare -a AUR_PKG
@@ -28,14 +29,6 @@ function post_user {
     fi
 
     sudo pacman -S --needed base-devel cmake unzip ninja tree-sitter curl clang
-
-    export XDG_CONFIG_HOME="$HOME/.config"
-    export XDG_CACHE_HOME="$HOME/.cache"
-    export XDG_DATA_HOME="$HOME/.local/share"
-    export XDG_STATE_HOME="$HOME/.local/state"
-    export RUSTUP_HOME="$XDG_DATA_HOME"/rustup
-    export CARGO_HOME="$XDG_DATA_HOME"/cargo
-    export RUSTC_WRAPPER=sccache
 
     declare -a DIRS
     DIRS+=("$XDG_CONFIG_HOME" "$XDG_CACHE_HOME" "$XDG_DATA_HOME" "$XDG_STATE_HOME")
@@ -56,6 +49,9 @@ function post_user {
 
     log "Installing Rust"
     curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -o /tmp/rustup.sh &&
+        less -M /tmp/rustup.sh &&
+        log "Are we good?" warn &&
+        read -r &&
         chmod +x /tmp/rustup.sh &&
         /tmp/rustup.sh --no-modify-path
 
@@ -78,17 +74,7 @@ function post_user {
     log "Installing packages from git..."
     ~/bin/pkg-from-git.bash all
 
-    (
-        log "Installing zsh plugins"
-        ZSH_PUGINS="$HOME/.local/share/zsh"
-        mkdir -p "$ZSH_PUGINS" && cd "$ZSH_PUGINS"
-        git clone --depth 1 https://github.com/lincheney/fzf-tab-completion
-        git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions
-        git clone --depth 1 https://github.com/zdharma-continuum/fast-syntax-highlighting
-        git clone --depth 1 https://github.com/nix-community/nix-zsh-completions
-    )
-
-    if is_in_path mpv; then
+    if [[ -n $(command -v mpv) ]]; then
         log "Installing mpv additional features"
         git clone --depth 1 https://github.com/occivink/mpv-scripts.git /tmp/mpv-scripts &&
             rm /tmp/mpv-scripts/scripts/blur-edges.lua &&
@@ -119,29 +105,18 @@ function post_user {
         } >~/.config/gtk-3.0/settings.ini
     )
 
-    if is_in_path zathura; then
+    if [[ -n $(command -v zathura) ]]; then
         log "Installing zathura themes"
         git clone --depth 1 https://github.com/catppuccin/zathura /tmp/zathura &&
             install -vDm 644 /tmp/zathura/src/* -t ~/.config/zathura/
     fi
 
-    if is_in_path kvantummanager; then
+    if [[ -n $(command -v kvantummanager) ]]; then
         log "Installing Kvantum themes"
         git clone --depth 1 https://github.com/catppuccin/Kvantum /tmp/Kvantum &&
             mkdir -p ~/.config/Kvantum &&
             mv /tmp/Kvantum/src/* ~/.config/Kvantum &&
             kvantummanager --set Catppuccin-Macchiato-Maroon
-    fi
-
-    if is_in_path handlr; then
-        handlr set 'inode/directory' thunar.desktop
-        handlr set 'text/*' nvim.desktop
-        handlr set 'text/plain' nvim.desktop
-        handlr set 'application/x-shellscript' nvim.desktop
-        handlr set 'audio/*' mpv.desktop
-        handlr set 'image/*' imv-dir.desktop
-        handlr set 'image/jpeg' imv-dir.desktop
-        handlr set 'image/png' imv-dir.desktop
     fi
 
     mkdir -p "$HOME/.local/share/applications/"
@@ -152,10 +127,33 @@ Exec=alacritty --command=nvim --command=%F
 Type=Application
 EOF
 
+    if [[ -n $(command -v handlr) ]]; then
+        handlr set 'inode/directory' thunar.desktop
+        handlr set 'text/*' nvim.desktop
+        handlr set 'text/plain' nvim.desktop
+        handlr set 'application/x-shellscript' nvim.desktop
+        handlr set 'audio/*' mpv.desktop
+        handlr set 'image/*' imv-dir.desktop
+        handlr set 'image/jpeg' imv-dir.desktop
+        handlr set 'image/png' imv-dir.desktop
+    fi
+
+    log "Setting crontab"
+    cat <<'EOF' >/tmp/crontab
+* * * * * for i in {1..30}; do sar -u 2 1 | awk 'ENDFILE {usage=100-$NF; printf("\%3u\n", usage)}' >> /tmp/cpu-load & sleep 2; done
+* * * * * for i in {1..30}; do free | awk '$1 ~ /Mem/ {printf("\%3u\n", 100*$3/$2)}' >> /tmp/ram-load; sleep 2; done
+0 * * * * tail -n1 /tmp/cpu-load > /tmp/cpu-load; tail -n1 /tmp/ram-load > /tmp/ram-load
+*/5 * * * * ~/bin/misc/battery.bash
+*/30 * * * * [ -r "/tmp/.dbus-address" ] && source /tmp/.dbus-address && pgrep --exact dunst && notify-send -i " " "$USER" "fix the poisture"
+EOF
+    crontab /tmp/crontab
+
     git clone --depth 1 https://github.com/kisuryoza/arch-deploy ~/.local/bin/arch-deploy
 }
 
 function post_root {
+    echo 'export ZDOTDIR=$HOME/.config/zsh' > /etc/zsh/zshenv
+
     log "Configuring pacman"
     # sed -Ei 's|^#?MAKEFLAGS=.*|MAKEFLAGS="-j4"|' /etc/makepkg.conf
     install -vDm 644 "$RESOURCES"/hooks/* -t /etc/pacman.d/hooks
@@ -201,6 +199,8 @@ function post_root {
     #     echo "[General]"
     #     echo "EnableNetworkConfiguration=True"
     # } >/etc/iwd/main.conf
+
+    systemctl enable cronie.service
 }
 
 if [[ $(id -u) -eq 0 ]]; then

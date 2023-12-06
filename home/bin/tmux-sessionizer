@@ -6,6 +6,11 @@ LIST+=(~/dots ~/Coding ~/Downloads ~/Anime)
 SELECTED=$(printf "%s\n" "${LIST[@]}" | fzf)
 SELECTED_NAME=$(basename "$SELECTED" | tr . _)
 
+if [[ -z $TMUX ]] && [[ -z $tmux_running ]]; then
+    tmux new-session -s "$SELECTED_NAME" -c "$SELECTED"
+    exit 0
+fi
+
 if ! tmux has-session -t="$SELECTED_NAME" 2> /dev/null; then
     tmux new-session -ds "$SELECTED_NAME" -c "$SELECTED"
 fi

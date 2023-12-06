@@ -1,7 +1,4 @@
-#!/usr/bin/env zsh
-
-[[ -z "$DEBUG" ]] && DEBUG=false
-$DEBUG && set -Eeuxo pipefail
+#!/usr/bin/env bash
 
 function isWayland {
     [[ $(loginctl show-session self -p Type | awk -F "=" '/Type/ {print $NF}') == "wayland" ]]

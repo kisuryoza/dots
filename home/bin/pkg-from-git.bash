@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-[[ -z "$DEBUG" ]] && DEBUG=false
-$DEBUG && set -Eeuxo pipefail
-
 SCRIPT="$(realpath -s "${BASH_SOURCE[0]}")"
 SCRIPT_DIR=$(dirname "$SCRIPT")
 source "$SCRIPT_DIR"/helper-func.sh

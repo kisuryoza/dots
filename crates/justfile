@@ -5,8 +5,8 @@ wp := "wp"
 
 reset-wp-db:
   sqlx db drop
-  sqlx db create 
-  sqlx migrate run --source {{wp}}/migrations 
+  sqlx db create
+  sqlx migrate run --source {{wp}}/migrations
 
 install-all:
 	RUSTFLAGS="-C target-cpu=native" cargo build --release --bins

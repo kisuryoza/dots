@@ -11,14 +11,14 @@ layout {
     pane_template name="cargo" {
         command "cargo"
         start_suspended true
-    } 
+    }
 
     //one_child focus=true name="Main" {
     //    pane name="Editor" edit="src/main.rs"
     //}
 
     tab name="Main" focus=true
-    tab name="Secondary" 
+    tab name="Secondary"
     tab name="Cargo" {
         pane split_direction="vertical" {
             cargo close_on_exit=false { args "run"; }

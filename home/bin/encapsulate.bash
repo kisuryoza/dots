@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-[[ -z "$DEBUG" ]] && DEBUG=false
-$DEBUG && set -Eeuxo pipefail
-
 (exec bwrap \
     --ro-bind /usr /usr \
     --dir /tmp \

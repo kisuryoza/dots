@@ -1,14 +1,11 @@
 #!/usr/bin/env bash
 
-[[ -z "$DEBUG" ]] && DEBUG=false
-$DEBUG && set -Eeuxo pipefail
-
 function eww_update {
     [[ -x $(which eww) ]] && eww ping && eww update "$1"="$2"
 }
 
 function is_music_playing {
-    [[ $(mpc status %state% 2> /dev/null) == "playing" ]] && echo "true" || echo "false" 
+    [[ $(mpc status %state% 2> /dev/null) == "playing" ]] && echo "true" || echo "false"
 }
 
 function update_artist {
@@ -78,7 +75,7 @@ function update_currenttime {
 }
 
 function update_progress {
-    local progress 
+    local progress
     progress=$(mpc status %percenttime% 2> /dev/null || echo 0)
     eww_update music_progress ${progress:0:3}
 }
@@ -96,7 +93,7 @@ case $1 in
         exit 0
         ;;
     "prev")
-        mpc prev 
+        mpc prev
         exit 0
         ;;
     "play")

@@ -22,14 +22,3 @@ log() {
         exit "$3"
     fi
 }
-
-is_in_path() {
-    case $(ps --format=cmd --no-headers -p $$) in
-        *bash) builtin type -P "$1" &>/dev/null
-        ;;
-        *zsh) builtin whence -p "$1" &>/dev/null
-        ;;
-        *) [[ -x "/usr/bin/$1" ]]
-        ;;
-    esac
-}

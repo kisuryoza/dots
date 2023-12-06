@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash
 
 # For the general use
 function start {
@@ -13,8 +13,10 @@ function start {
     # Notification daemon
     pgrep --exact dunst || dunst &>/dev/null &
 
-    # Custom daemons
-    pgrep --full daemons/ || fd -tx . ~/bin/daemons/ -x {}
+    DBUS_ADDRESS_FILE="/tmp/.dbus-address"
+    touch "$DBUS_ADDRESS_FILE"
+    chmod 600 "$DBUS_ADDRESS_FILE"
+    echo "export DBUS_SESSION_BUS_ADDRESS=$DBUS_SESSION_BUS_ADDRESS" >> "$DBUS_ADDRESS_FILE"
 
     if ! rg -q "AddKeysToAgent" ~/.ssh/config; then
         mkdir -p ~/.ssh

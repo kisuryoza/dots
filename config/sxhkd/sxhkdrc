@@ -30,6 +30,9 @@ XF86Audio{Lower,Raise}Volume
 XF86MonBrightness{Down,Up}
     ~/.config/eww/scripts/brightness.bash set {-10,+10}
 
+super + backslash
+    if pkill wp; then feh --no-fehbg --bg-fill ~/Arts/Scenery/default.jpg; else wp ~/Arts start -d -i 30; fi
+
 # make sxhkd reload its configuration files
 super + Escape
     pkill -USR1 -x sxhkd

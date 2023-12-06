@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-[[ -z "$DEBUG" ]] && DEBUG=false
-$DEBUG && set -Eeuxo pipefail
-
 # The script does not support external monitors
 if [[ -z $(fd -1 . /sys/class/backlight/) ]]; then
     echo 100

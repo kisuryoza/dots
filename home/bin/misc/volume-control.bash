@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-[[ -z "$DEBUG" ]] && DEBUG=false
-$DEBUG && set -Eeuxo pipefail
-
 function toggleMute {
     if eval "$(pamixer --get-mute)"; then
         pamixer --unmute

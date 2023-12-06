@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-[[ -z "$DEBUG" ]] && DEBUG=false
-$DEBUG && set -Eeuxo pipefail
-
 function day {
     sed -Ei 's|BAT_THEME=.*|BAT_THEME="gruvbox-light"|' ~/.config/zsh/.zshenv
     sed -Ei 's|colors:.*|colors: \*tokyo-light|' ~/.config/alacritty/themes.yml
