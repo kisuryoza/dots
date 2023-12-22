@@ -16,7 +16,8 @@
         :opts {:transparent_background true
                :dim_inactive {:enabled true}
                :compile_path (.. (vim.fn.stdpath :cache) :/catppuccin)
-               :integrations {:leap true
+               :integrations {:harpoon true
+                              :leap true
                               :neogit true
                               :noice true
                               :treesitter_context true
@@ -55,14 +56,18 @@
  (pack :nvim-telescope/telescope.nvim
        {:dependencies [:nvim-lua/plenary.nvim
                        :nvim-tree/nvim-web-devicons
+                       :nvim-telescope/telescope-fzy-native.nvim
                        :nvim-telescope/telescope-ui-select.nvim]
         :cmd :Telescope
-        :config #(let [telescope (require :telescope)
-                       trouble (require :trouble.providers.telescope)]
+        :config #(let [telescope (require :telescope)]
+                       ; trouble (require :trouble.providers.telescope)]
+                   (telescope.setup {:extensions {:fzy_native {:override_generic_sorter false
+                                                               :override_file_sorter true}}})
+                   (telescope.load_extension :fzy_native)
                    (telescope.load_extension :harpoon)
-                   (telescope.load_extension :ui-select)
-                   (telescope.setup {:defaults {:mappings {:i {:<c-t> trouble.open_with_trouble}
-                                                           :n {:<c-t> trouble.open_with_trouble}}}}))})
+                   (telescope.load_extension :ui-select))})
+                   ; (telescope.setup {:defaults {:mappings {:i {:<c-t> trouble.open_with_trouble}
+                   ;                                         :n {:<c-t> trouble.open_with_trouble}}}}))})
  ;; Getting you where you want with the fewest keystrokes
  (pack :ThePrimeagen/harpoon
        {:dependencies [:nvim-lua/plenary.nvim]
@@ -96,21 +101,18 @@
  ;                       :filter_options {}
  ;                       :win_options {:winhighlight "NormalFloat:NormalFloat,FloatBorder:FloatBorder"}}
  ;               :routes [{:view :notify :filter {:event :msg_showmode}}]}})
-                          ; Hide written messages
-                          ; {:filter {:event :msg_show :kind "" :find :written}}]}})
-                          ;  :opts {:skip true}}]})
  ;; A pretty list for showing diagnostics, references, telescope results, quickfix and location lists
- (pack :folke/trouble.nvim {:dependencies [:nvim-tree/nvim-web-devicons]
-                            :event :VeryLazy
-                            :config true})
+ ; (pack :folke/trouble.nvim {:dependencies [:nvim-tree/nvim-web-devicons]
+ ;                            :event :VeryLazy
+ ;                            :config true})
  ;; highlight and search for todo comments
  (pack :folke/todo-comments.nvim
        {:dependencies [:nvim-lua/plenary.nvim] :event :VeryLazy :config true})
  ;; Distraction-free coding
- ; (pack :folke/zen-mode.nvim
- ;       {:dependencies :folke/twilight.nvim
- ;        :cmd :ZenMode
- ;        :opts {:window {:options {:signcolumn :no :number false}}}})
+ (pack :folke/zen-mode.nvim
+       {;:dependencies [:folke/twilight.nvim]
+        :cmd :ZenMode
+        :config true})
  ;; Smart and powerful comment plugin for neovim
  (pack :numToStr/Comment.nvim {:event :VeryLazy :config true})
  ;; autopairs
@@ -120,6 +122,11 @@
  (pack :kylechui/nvim-surround {:dependencies [:nvim-treesitter/nvim-treesitter]
                                 :event :VeryLazy
                                 :config true})
+                                ; :opts {:surrounds {"c" {:add ["/* " " */"]
+                                ;                         :find (fn []
+                                ;                                 (let [config (require "nvim-surround.config")]
+                                ;                                   (config.get_selection {:pattern "/%*.*%*/"})))
+                                ;                         :delete "^(. ?)().-( ?.)()$"}}}})
  ;; manage undos as a tree
  (pack :jiaoshijie/undotree {:dependencies [:nvim-lua/plenary.nvim]
                              :lazy true

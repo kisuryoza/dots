@@ -21,7 +21,8 @@
   (map! :i :<C-K> #(luasnip.expand))
   (map! [:i :s] :<C-L> #(when (luasnip.locally_jumpable 1) (luasnip.jump 1)))
   (map! [:i :s] :<C-J> #(when (luasnip.locally_jumpable -1) (luasnip.jump -1)))
-  (map! [:i :s] :<C-E> #(when (luasnip.choice_active) (luasnip.change_choice 1)))
+  (map! [:i :s] :<C-E>
+        #(when (luasnip.choice_active) (luasnip.change_choice 1)))
   (set vim.opt.completeopt "menu,menuone,noselect")
   (local kind-icons {:Text ""
                      :Method "󰆧"
@@ -65,11 +66,11 @@
                                             (luasnip.expand_or_locally_jumpable)
                                             (luasnip.expand_or_jump)
                                             (fallback)))
-                                      [:i :s])})
-  (set t.sources (cmp.config.sources [{:name :nvim_lsp} {:name :luasnip}]
-                                     [{:name :async_path}]
-                                     [{:name :buffer}
-                                      {:name :crates}]))
+                                      [:i :s :c])})
+  (set t.sources
+       (cmp.config.sources [{:name :nvim_lsp} {:name :luasnip}]
+                           [{:name :async_path}]
+                           [{:name :buffer} {:name :crates}]))
   (set t.window {:completion {:col_offset -3}})
   (set t.formatting {:format (fn [_entry vim-item]
                                ; (when (not= vim-item.menu nil)

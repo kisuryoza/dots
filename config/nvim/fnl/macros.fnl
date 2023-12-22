@@ -17,7 +17,7 @@
 (fn tset-if-not-nill [table property value]
   "In table assigns value to property if value is not nill"
   (if (not= nil value)
-    (tset table property value))
+      (tset table property value))
   table)
 
 (fn map! [mode key func desc buffer]
@@ -44,5 +44,14 @@
 (lambda get_hl_bg! [name]
   (get_hl! name :bg))
 
-{: pack : setup! : set! : cmd! : map! : nmap! : vmap! : nmapp! : get_hl_fg! : get_hl_bg!}
+{: pack
+ : setup!
+ : set!
+ : cmd!
+ : map!
+ : nmap!
+ : vmap!
+ : nmapp!
+ : get_hl_fg!
+ : get_hl_bg!}
 

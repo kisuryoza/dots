@@ -19,6 +19,8 @@
 (vmap! :J ":m '>+1<CR>gv=gv" "Move selected Down")
 (vmap! :K ":m '<-2<CR>gv=gv" "Move selected Up")
 
+(nmapp! :z (cmd! :ZenMode) :ZenMode)
+
 (fn toggle-opt [option on off]
   (var curr_value (: (. vim.opt option) :get))
   (if (= (type curr_value) :table)
@@ -37,9 +39,16 @@
 (nmapp! :oc #(toggle-opt :colorcolumn :80 :0) "Color column")
 (nmapp! :ol #(toggle-opt :cursorline true false) "Cursor line")
 
-; (nmapp! :z (cmd! :ZenMode) :ZenMode)
+;; Diagnostic, QuickFixList, LocList
 (nmapp! :e vim.diagnostic.open_float "Diagnostic menu")
-(nmapp! :sc (cmd! "e $MYVIMRC | :cd %:p:h") "Edit Neovm config")
+(nmap! "[d" vim.diagnostic.goto_prev "Goto prev diag message")
+(nmap! "]d" vim.diagnostic.goto_next "Goto next diag message")
+(nmapp! :bq vim.diagnostic.setqflist "Add all diags to qflist")
+(nmap! "[q" :<cmd>cprev<CR>zz "qflist prev")
+(nmap! "]q" :<cmd>cnext<CR>zz "qflist next")
+(nmapp! :bl vim.diagnostic.setloclist "Add buf diags to loclist")
+(nmap! "[l" :<cmd>lprev<CR>zz "loclist prev")
+(nmap! "]l" :<cmd>lnext<CR>zz "loclist next")
 
 ;; Buffers managment
 (nmapp! :bd (cmd! "lcd %:p:h") "Set local working dir")
@@ -47,16 +56,18 @@
 (nmapp! :bb (cmd! "Telescope buffers") :Buffers)
 
 ;; Files managment
+(nmapp! :fc (cmd! "e $MYVIMRC | :cd %:p:h") "Edit neovm config")
 (nmapp! :ff (cmd! "Telescope find_files") "Find Files")
 (nmapp! :fr (cmd! "Telescope oldfiles") :Recent)
-(nmapp! :fg (cmd! "Telescope live_grep") "Live Grep")
+(nmapp! :fg (cmd! "Telescope live_grep") "Live grep")
+(nmapp! :fw (cmd! "Telescope grep_string") "Grep curr word")
 (nmapp! :fx (cmd! "!chmod +x %") "Make curr file executable")
 
 ;; Code related
 (nmapp! :ca vim.lsp.buf.code_action "Code actions")
 (nmapp! :cf #(vim.lsp.buf.format {:async true}) "Format buffer")
-(nmapp! :cx (cmd! :TroubleToggle) "List of errors")
-(nmapp! :ct (cmd! :TodoTrouble) "List of TODOs")
+; (nmapp! :cx (cmd! :TroubleToggle) "List of errors")
+(nmapp! :ct (cmd! :TodoQuickFix) "List of TODOs")
 (nmapp! :cu #((. (require :undotree) :toggle)) :Undotree)
 
 ;; Git
@@ -70,10 +81,10 @@
 (nmapp! :ghs (cmd! "Gitsigns select_hunk") "Select hunk")
 
 (let [harpoon (require :harpoon)]
-  (nmapp! :a #(: (harpoon:list) :append) "Add file")
+  (nmapp! :a #(: (harpoon:list) :append) "Add file to Harpoon")
   (nmapp! :H #(harpoon.ui:toggle_quick_menu (harpoon:list)) "Harpoon open")
-  (nmap! :<C-k> #(: (harpoon:list) :prev) "Navig prev")
-  (nmap! :<C-j> #(: (harpoon:list) :next) "Navig next")
+  (nmap! :<C-k> #(: (harpoon:list) :prev) "Harpoon prev")
+  (nmap! :<C-j> #(: (harpoon:list) :next) "Harpoon next")
   (nmapp! :ht (cmd! "Telescope harpoon marks") "Harpoon telescope")
   (nmapp! :hq #(: (harpoon:list) :select 1) "Navig 1")
   (nmapp! :hw #(: (harpoon:list) :select 2) "Navig 2")
@@ -81,12 +92,13 @@
   (nmapp! :hr #(: (harpoon:list) :select 4) "Navig 4"))
 
 (fn crates-mapping [args]
-    (let [buff args.buf
-          crates (require :crates)]
-      (nmapp! :Cp crates.show_popup "Crates: Show popup" buff)
-      (nmapp! :Cf crates.show_features_popup "Crates: Features" buff)
-      (nmapp! :Cd crates.show_dependencies_popup "Crates: Dependencies" buff)))
-(vim.api.nvim_create_autocmd "BufEnter"
+  (let [buff args.buf
+        crates (require :crates)]
+    (nmapp! :Cp crates.show_popup "Crates: Show popup" buff)
+    (nmapp! :Cf crates.show_features_popup "Crates: Features" buff)
+    (nmapp! :Cd crates.show_dependencies_popup "Crates: Dependencies" buff)))
+
+(vim.api.nvim_create_autocmd :BufEnter
                              {:pattern :Cargo.toml
                               :callback (fn [args] (crates-mapping args))})
 

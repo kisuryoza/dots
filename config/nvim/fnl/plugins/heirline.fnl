@@ -132,24 +132,23 @@
          [{:hl {:fg colors.diag_error}
            :provider (fn []
                        (if vim.g.myvarLspCodeAction "💡" ""))}])
-  (local lsp-status
-         [{:hl {:fg colors.diag_error}
-           :provider (fn [self]
-                       (let [bufnr (or self.bufnr 0)]
-                         (diag-count diag.severity.ERROR bufnr "")))}
-          {:hl {:fg colors.diag_warn}
-           :provider (fn [self]
-                       (let [bufnr (or self.bufnr 0)]
-                         (diag-count diag.severity.WARN bufnr "")))}
-          {:hl {:fg colors.diag_info}
-           :provider (fn [self]
-                       (let [bufnr (or self.bufnr 0)]
-                         (diag-count diag.severity.INFO bufnr "")))}
-          {:hl {:fg colors.diag_hint}
-           :provider (fn [self]
-                       (let [bufnr (or self.bufnr 0)]
-                         (diag-count diag.severity.HINT bufnr "")))}
-          space])
+  (local lsp-status [{:hl {:fg colors.diag_error}
+                      :provider (fn [self]
+                                  (let [bufnr (or self.bufnr 0)]
+                                    (diag-count diag.severity.ERROR bufnr "")))}
+                     {:hl {:fg colors.diag_warn}
+                      :provider (fn [self]
+                                  (let [bufnr (or self.bufnr 0)]
+                                    (diag-count diag.severity.WARN bufnr "")))}
+                     {:hl {:fg colors.diag_info}
+                      :provider (fn [self]
+                                  (let [bufnr (or self.bufnr 0)]
+                                    (diag-count diag.severity.INFO bufnr "")))}
+                     {:hl {:fg colors.diag_hint}
+                      :provider (fn [self]
+                                  (let [bufnr (or self.bufnr 0)]
+                                    (diag-count diag.severity.HINT bufnr "")))}
+                     space])
   (local file-encoding
          {:hl {:bg colors.cyan}
           :provider (fn []
@@ -203,8 +202,8 @@
   (local inactive-statusline
          {:condition conditions.is_not_active :hl {:bg colors.bg_dim}})
   (local inactive-statusline
-         (utils.insert inactive-statusline git file align lsp-status file-encoding
-                       file-format file-type))
+         (utils.insert inactive-statusline git file align lsp-status
+                       file-encoding file-format file-type))
   (local active-statusline [vim-mode
                             git
                             file
@@ -228,7 +227,7 @@
           :provider (fn [self]
                       (let [file self.file]
                         (.. (if (= file "") "[No Name]"
-                              (vim.fn.fnamemodify file ":t"))
+                                (vim.fn.fnamemodify file ":t"))
                             " ")))})
   ;; this is the parent for tabs
   (local bufferline

@@ -1,6 +1,6 @@
 (import-macros {: set!} :macros)
 
-(set! :clipboard "unnamedplus")
+(set! :clipboard :unnamedplus)
 (set! :termguicolors true)
 
 (set! :expandtab true)
@@ -12,12 +12,12 @@
 
 (set! :number true)
 (set! :relativenumber true)
-(set! :foldmethod "marker")
+(set! :foldmethod :marker)
 (set! :hlsearch true)
 (set! :showmode false)
 (set! :cursorline true)
 (set! :scrolloff 2)
-(set! :virtualedit "block")
+(set! :virtualedit :block)
 (set! :wrap false)
 (set! :timeoutlen 300)
 (set! :ignorecase true)
@@ -25,11 +25,14 @@
 (set! :updatetime 300)
 (set! :splitbelow true)
 (set! :splitright true)
+(set! :mousemodel :extend)
 
 (set! :swapfile false)
 (set! :undofile true)
-(set! :undodir (.. (os.getenv "HOME") "/.cache/nvim/undo//"))
+(set! :undodir (.. (os.getenv :HOME) :/.cache/nvim/undo//))
 (set! :history 100)
+
+(set! :grepprg "rg --color=never --vimgrep --smart-case")
 
 (vim.opt.fillchars:append {:horiz "━"
                            :horizup "┻"
