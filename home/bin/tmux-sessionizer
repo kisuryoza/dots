@@ -3,7 +3,7 @@
 declare -a LIST
 mapfile -t LIST < <(fd -td --max-depth=1 . ~/dots ~/Coding ~/Downloads ~/Anime)
 LIST+=(~/dots ~/Coding ~/Downloads ~/Anime)
-SELECTED=$(printf "%s\n" "${LIST[@]}" | fzf)
+SELECTED=$(printf "%s\n" "${LIST[@]}" | fzy --lines=50)
 SELECTED_NAME=$(basename "$SELECTED" | tr . _)
 
 if [[ -z $TMUX ]] && [[ -z $tmux_running ]]; then

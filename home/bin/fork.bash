@@ -2,6 +2,6 @@
 
 SCRIPT="$(realpath -s "${BASH_SOURCE[0]}")"
 SCRIPT_DIR=$(dirname "$SCRIPT")
-source "$SCRIPT_DIR"/daemons/init
+source "$SCRIPT_DIR"/misc/daemon-init
 
 "$@"

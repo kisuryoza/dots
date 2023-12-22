@@ -251,6 +251,14 @@ cx_repl() {
     fi
 }
 
+vimq() {
+    vim -q <($(fc -nl -1))
+}
+
+nvimq() {
+    nvim -q <($(fc -nl -1))
+}
+
 if [[ $(id -u) -ne 0 ]]; then
     # Auto starting ssh-agent
     if ! pgrep -u "$USER" ssh-agent >/dev/null; then

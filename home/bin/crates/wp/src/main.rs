@@ -82,6 +82,7 @@ fn setup() -> Result<cli::Cli> {
     }
 
     tracing_subscriber::fmt()
+        .without_time()
         .with_env_filter(tracing_subscriber::filter::EnvFilter::from_default_env())
         .init();
 

@@ -15,9 +15,14 @@ export GIT_EXTERNAL_DIFF=difft
 GPG_TTY=$(tty)
 export GPG_TTY
 
+# xdg-ninja
 export ANDROID_HOME=$XDG_DATA_HOME/android
 export CUDA_CACHE_PATH=$XDG_CACHE_HOME/nv
 export LESSHISTFILE=$XDG_CACHE_HOME/less/history
+export DOCKER_CONFIG="$XDG_CONFIG_HOME"/docker
+export NPM_CONFIG_USERCONFIG="$XDG_CONFIG_HOME"/npm/npmrc
+export SQLITE_HISTORY="$XDG_CACHE_HOME"/sqlite_history
+# export XAUTHORITY="$XDG_RUNTIME_DIR"/Xauthority
 
 # Rust
 export RUSTUP_HOME=$XDG_DATA_HOME/rustup

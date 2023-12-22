@@ -3,9 +3,6 @@
 super + Return
     alacritty
 
-super + z
-    thunar
-
 super + grave
     ~/bin/misc/launcher.zsh launcher
 

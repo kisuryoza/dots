@@ -148,6 +148,11 @@ EOF
 EOF
     crontab /tmp/crontab
 
+    cat <<EOF >"$HOME/.xinitrc"
+#!/usr/bin/bash
+exec bspwm
+EOF
+
     git clone --depth 1 https://github.com/kisuryoza/arch-deploy ~/.local/bin/arch-deploy
 }
 
@@ -177,18 +182,19 @@ function post_root {
         echo "wifi.scan-rand-mac-address=no"
     } >/etc/NetworkManager/NetworkManager.conf
 
-    log "NetworkManager-dispatcher"
-    install -vDm 744 "$RESOURCES"/10-update-NextDNS-IP.sh /etc/NetworkManager/dispatcher.d/10-update-NextDNS-IP.sh
-    systemctl enable NetworkManager-dispatcher.service
+    # log "NetworkManager-dispatcher"
+    # install -vDm 744 "$RESOURCES"/10-update-NextDNS-IP.sh /etc/NetworkManager/dispatcher.d/10-update-NextDNS-IP.sh
+    # systemctl enable NetworkManager-dispatcher.service
 
-    # log "Configuring openresolv"
-    # {
-    #     echo "name_servers=\"127.0.0.1\""
-    #     echo "name_servers_append=\"::1\""
-    #     echo "resolv_conf_options=\"edns0\""
-    # } >>/etc/resolvconf.conf
-    # systemctl enable dnscrypt-proxy.service
-    # resolvconf -u
+    log "Configuring openresolv and dnscrypt-proxy"
+    {
+        echo "name_servers=\"127.0.0.1\""
+        echo "name_servers_append=\"::1\""
+        echo "resolv_conf_options=\"edns0\""
+    } >>/etc/resolvconf.conf
+    systemctl enable dnscrypt-proxy.service
+    resolvconf -u
+
     # {
     #     echo "[main]"
     #     echo "rc-manager=resolvconf"

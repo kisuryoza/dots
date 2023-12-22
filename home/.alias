@@ -1,4 +1,5 @@
 alias pac="sudo pacman -S --disable-download-timeout"
+alias pacd="sudo pacman -Rns"
 alias ssc="sudo systemctl"
 alias emergency-update="sudo pacman -Sy archlinux-keyring && sudo pacman -Syu"
 alias clean="paru -c && paru -Sc"
@@ -13,8 +14,8 @@ alias ua-update-all='export TMPFILE="$(mktemp)"; \
 
 alias ip="ip -color=always"
 alias yt-dlp-audio="yt-dlp --extract-audio --audio-format mp3 --audio-quality 0"
-alias fcd='cd "$(fd -td -L --max-depth=5 | fzf)"'
+alias fcd='cd "$(fd -td -L --max-depth=5 | fzy)"'
 alias eza="eza --all --long --group-directories-first --color=always"
 alias gitc="git clone --depth 1"
 alias tsc="tsc -t esnext"
-alias zellijk='zellij k $(zellij ls | fzf | cut -f1 -d" ")'
+alias zellijk='zellij k $(zellij ls | fzy | cut -f1 -d" ")'

@@ -46,7 +46,7 @@ colors:
 
 cursor:
   style:
-    shape: Beam
+    shape: Underline
     blinking: On
   vi_mode_style: Block
 
