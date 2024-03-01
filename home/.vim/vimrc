@@ -26,6 +26,13 @@ set smartcase
 set wrap
 set linebreak
 
+" gvim
+set guioptions-=m  "menu bar
+set guioptions-=T  "toolbar
+set guioptions-=r  "scrollbar
+
+colorscheme habamax
+
 filetype plugin on
 syntax enable
 

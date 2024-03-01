@@ -1,17 +1,25 @@
 #!/usr/bin/env bash
 
-declare -a LIST
-mapfile -t LIST < <(fd -td --max-depth=1 . ~/dots ~/Coding ~/Downloads ~/Anime)
-LIST+=(~/dots ~/Coding ~/Downloads ~/Anime)
-SELECTED=$(printf "%s\n" "${LIST[@]}" | fzy --lines=50)
-SELECTED_NAME=$(basename "$SELECTED" | tr . _)
+declare -a LIST tmp
+LIST=(~/dots ~/Coding ~/Downloads ~/gitclones ~/Anime)
+mapfile -t tmp < <(fd -td --max-depth=1 . ~/dots ~/Coding ~/Downloads ~/gitclones)
+LIST+=("${tmp[@]}")
+mapfile -t tmp < <(fd -td --max-depth=3 . ~/CodingExternal ~/Anime)
+LIST+=("${tmp[@]}")
 
-if [[ -z $TMUX ]] && [[ -z $tmux_running ]]; then
+SELECTED=$(printf "%s\n" "${LIST[@]}" | fzy --lines=50)
+if [[ -z $SELECTED ]]; then
+    exit 1
+fi
+
+SELECTED_NAME=$(basename "$SELECTED" | tr . _)
+TMUX_RUNNING=$(pgrep tmux)
+if [[ -z $TMUX ]] && [[ -z $TMUX_RUNNING ]]; then
     tmux new-session -s "$SELECTED_NAME" -c "$SELECTED"
     exit 0
 fi
 
-if ! tmux has-session -t="$SELECTED_NAME" 2> /dev/null; then
+if ! tmux has-session -t "$SELECTED_NAME" 2> /dev/null; then
     tmux new-session -ds "$SELECTED_NAME" -c "$SELECTED"
 fi
 

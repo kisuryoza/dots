@@ -4,19 +4,19 @@ super + Return
     alacritty
 
 super + grave
-    ~/bin/misc/launcher.zsh launcher
+    ~/bin/misc/launcher.bash launcher
 
 super + shift + z
-    ~/bin/misc/launcher.zsh lock
+    ~/bin/misc/launcher.bash lock
 
 super + Print
-    ~/bin/misc/launcher.zsh screenshot-area
+    ~/bin/misc/launcher.bash screenshot-area
 
 Print
-    ~/bin/misc/launcher.zsh screenshot
+    ~/bin/misc/launcher.bash screenshot
 
 XF86Audio{Prev,Play,Next}
-    ~/bin/misc/media-player.bash {prev,play,next}
+    mpc {prev,toggle,next}
 
 XF86AudioMute
     ~/bin/misc/volume-control.bash toggle-mute
@@ -28,18 +28,13 @@ XF86MonBrightness{Down,Up}
     ~/.config/eww/scripts/brightness.bash set {-10,+10}
 
 super + backslash
-    if pkill wp; then feh --no-fehbg --bg-fill ~/Arts/Scenery/default.jpg; else wp ~/Arts start -d -i 30; fi
-
-# make sxhkd reload its configuration files
-super + Escape
-    pkill -USR1 -x sxhkd
+    if pkill wp; then feh --no-fehbg --bg-fill ~/wallpaper.jpg; else wp ~/Arts start -d -i 30; fi
 
 ############################################################
 # bspwm hotkeys
 
 # quit/restart bspwm
 super + ctrl + {q,r}
-    {~/bin/autostart.zsh stop;, _} \
     bspc {quit,wm -r}
 
 # close and kill

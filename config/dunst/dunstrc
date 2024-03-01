@@ -1,101 +1,83 @@
 [global]
     ### Display ###
-    monitor = 0
-    follow = none
+    # monitor = 0
+    # follow = none
 
     ### Geometry ###
     width = (200, 500)
-    #width = 300
     height = 300
     origin = bottom-right
     offset = 20x80
-    scale = 0
+    # scale = 0
     notification_limit = 0
 
     ### Progress bar ###
-    progress_bar = true
-    progress_bar_height = 10
-    progress_bar_frame_width = 1
-    progress_bar_min_width = 150
-    progress_bar_max_width = 300
-
-    indicate_hidden = yes
-    transparency = 0
-    separator_height = 2
-    padding = 8
-    horizontal_padding = 8
-    text_icon_padding = 10
+    # progress_bar = true
+    # progress_bar_height = 10
+    # progress_bar_frame_width = 1
+    # progress_bar_min_width = 150
+    # progress_bar_max_width = 300
+    # progress_bar_corner_radius = 0
+    # icon_corner_radius = 0
+    # indicate_hidden = yes
+    # transparency = 0
+    # separator_height = 2
+    # padding = 8
+    # horizontal_padding = 8
+    # text_icon_padding = 0
     frame_width = 1
     # frame_color = "#0f0f14"
-    # background = "#d5d6db" # #1a1b26 #24283b
-    # foreground = "#343b58" # #c0caf5
-    gap_size = 0
-    separator_color = frame
-    sort = yes
+    # gap_size = 0
+    # separator_color = frame
+    # sort = yes
     idle_threshold = 60
 
     ### Text ###
     font = DejaVu 12
-    line_height = 0
-    markup = full
-    format = "<b>%s</b>\n%b"
-    #format = "<b>%s</b>\n%b\n - %a"
+    # line_height = 0
+    # markup = full
+    # format = "<b>%s</b>\n%b"
     alignment = center
-    vertical_alignment = center
-    show_age_threshold = 60
-    ellipsize = middle
-    ignore_newline = no
-    stack_duplicates = true
-    hide_duplicate_count = false
-    show_indicators = yes
+    # vertical_alignment = center
+    # show_age_threshold = 60
+    # ellipsize = middle
+    # ignore_newline = no
+    # stack_duplicates = true
+    # hide_duplicate_count = false
+    # show_indicators = yes
 
     ### Icons ###
-    enable_recursive_icon_lookup = true
+    # enable_recursive_icon_lookup = true
     icon_theme = breeze-dark
-    icon_position = left
+    # icon_position = left
     min_icon_size = 16
     max_icon_size = 32
     icon_path = /usr/share/icons/breeze-dark/status/16/:/usr/share/icons/breeze-dark/devices/16/
 
     ### History ###
-    sticky_history = yes
-    history_length = 20
+    # sticky_history = yes
+    # history_length = 20
 
     ### Misc/Advanced ###
     dmenu = /usr/bin/bemenu -p dunst:
-    browser = /usr/bin/xdg-open
-    always_run_script = true
-    title = Dunst
-    class = Dunst
+    # browser = /usr/bin/xdg-open
+    # always_run_script = true
+    # title = Dunst
+    # class = Dunst
     corner_radius = 10
-    ignore_dbusclose = false
+    # ignore_dbusclose = false
 
     ### Wayland ###
-    # These settings are Wayland-specific. They have no effect when using X11
-
-    # Uncomment this if you want to let notications appear under fullscreen
-    # applications (default: overlay)
     # layer = top
-
-    # Set this to true to use X11 output on Wayland.
     force_xwayland = false
 
+    ### Legacy
     force_xinerama = false
 
     ### mouse
     mouse_left_click = do_action
     mouse_middle_click = context
     mouse_right_click = close_current
-
-# Experimental features that may or may not work correctly. Do not expect them
-# to have a consistent behaviour across releases.
-[experimental]
-    # Calculate the dpi to use on a per-monitor basis.
-    # If this setting is enabled the Xft.dpi value will be ignored and instead
-    # dunst will attempt to calculate an appropriate dpi value for each monitor
-    # using the resolution and physical size. This might be useful in setups
-    # where there are multiple screens with very different dpi values.
-    per_monitor_dpi = false
 
 [global]
 frame_color = "#1E66F5"

@@ -1,7 +1,6 @@
 (defvar isCalendarOpen false)
 
 (defvar is_muted false)
-(defvar is_music_playing false)
 (defvar volume 100)
 (defvar music_progress 0)
 (defvar is_music_player_hovered false)
@@ -12,8 +11,6 @@
 (defvar is_cpu_hovered false)
 (defvar is_ram_hovered false)
 (defvar keyboard_layout "US")
-
-(defvar workspaces-list "[]")
 
 (defvar is_brightness_hovered false)
 (defvar brightness_max 0)

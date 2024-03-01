@@ -17,7 +17,6 @@
   (cpu)
   (ram)
   (storage)
-  (music_player)
   (volume)
   (brightness)
   (net)
@@ -27,12 +26,13 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defwidget workspaces []
- (for entry in {workspaces-list["list"]}
-  (box :valign "center" :halign "center" :spacing 10 :orientation "v" :space-evenly true
-   (label
-    :class {entry["busy"] ? "workspace-tag-mine" : "workspace-tag-visible"}
-    :text {entry["active"] ? "󰜋" : "󰜌"}))))
+;; (defwidget workspaces []
+;;  (box :orientation "v" :space-evenly false
+;;   (for entry in wm-tags
+;;    (box :orientation "v" :space-evenly false :spacing 10 :valign "center" :halign "center"
+;;     (label
+;;      :class {entry["busy"] ? "workspace-tag-mine" : "workspace-tag-visible"}
+;;      :text {entry["windows"] ? "󰜋" : "󰜌"})))))
 
 (defwidget cpu []
  (box :orientation "v" :space-evenly false
@@ -53,19 +53,6 @@
     (label :class "storage-result" :text "${storage-usage} %"))
    (label :class "storage-title" :text "󰋊"))))
 
-(defwidget music_player []
- (eventbox
-  :onhover "${EWW_CMD} update is_music_player_hovered=true; ~/bin/misc/media-player.bash &"
-  :onhoverlost "${EWW_CMD} update is_music_player_hovered=false"
-  (box :orientation "v" :space-evenly false
-   (revealer :class "bar-slider music_player-slider" :transition "slideup" :reveal is_music_player_hovered :duration "350ms"
-    (box :orientation "v" :space-evenly false
-     (scale :active false :flipped true :round-digits 0 :value music_progress :min 0 :max 100 :orientation "v")
-     (button :onclick "~/bin/misc/media-player.bash prev" (label :text "󰒮"))
-     (button :onclick "~/bin/misc/media-player.bash play" (label :text {is_music_playing ? "󰏤" : "󰐊"}))
-     (button :onclick "~/bin/misc/media-player.bash next" (label :text "󰒭"))))
-   (button (label :class "music_player-title" :text "󰝚")))))
-
 (defwidget volume []
  (eventbox
   :onhover "${EWW_CMD} update is_volume_hovered=true"
@@ -73,7 +60,7 @@
   (box :orientation "v" :space-evenly false
    (revealer :class "bar-slider volume-slider" :transition "slideup" :reveal is_volume_hovered :duration "350ms"
     (scale :flipped true :round-digits 0 :value volume :min 0 :max 150 :onchange "~/bin/misc/volume-control.bash set {}" :orientation "v"))
-   (button :onclick "~/bin/misc/volume-control.bash toggleMute" (label :class "volume-title" :text {is_muted ? "󰖁" : "󰕾"})))))
+   (button :onclick "~/bin/misc/volume-control.bash toggle-mute" (label :class "volume-title" :text {is_muted ? "󰖁" : "󰕾"})))))
 
 (defwidget brightness []
  (eventbox

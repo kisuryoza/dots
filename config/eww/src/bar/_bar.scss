@@ -41,14 +41,14 @@
   border-radius: 10px;
 }
 
-.cpu-title { @include title($color: colors.$pink); }
-.cpu-result { @include result($color: colors.$pink); }
+.cpu-title { @include title($color: colors.$mauve); }
+.cpu-result { @include result($color: colors.$mauve); }
 
-.ram-title { @include title($color: colors.$mauve); }
-.ram-result { @include result($color: colors.$mauve); }
+.ram-title { @include title($color: colors.$red); }
+.ram-result { @include result($color: colors.$red); }
 
-.storage-title { @include title($color: colors.$red); }
-.storage-result { @include result($color: colors.$red); }
+.storage-title { @include title($color: colors.$maroon); }
+.storage-result { @include result($color: colors.$maroon); }
 
 .music_player-title { @include title($color: colors.$maroon); }
 .music_player-slider scale trough highlight { background-color: colors.$maroon; }

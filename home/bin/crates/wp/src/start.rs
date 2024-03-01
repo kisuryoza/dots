@@ -38,7 +38,7 @@ pub fn start(destination: PathBuf, interval: u64, db: redb::Database) -> Result<
     files.shuffle(&mut rng);
 
     if std::env::var("WAYLAND_DISPLAY").is_ok() {
-        Command::new("swww").arg("init").status()?;
+        let _ = Command::new("swww").arg("init").status();
     }
     set_wallpaper(interval, files)
 }

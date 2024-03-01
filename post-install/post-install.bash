@@ -20,13 +20,19 @@ function post_user {
     AUR_PKG+=(freetube-bin) # An open source desktop YouTube player built with privacy in mind.
     AUR_PKG+=(catppuccin-gtk-theme-mocha ttf-material-design-icons-desktop-git ttf-comic-neue ttf-comic-mono-git)
     AUR_PKG+=(downgrade rate-mirrors-bin)
-    # AUR_PKG+=(xkb-switch-git) # Program that allows to query and change the XKB layout state
-    # AUR_PKG+=(greetd greetd-tuigreet-bin)
-    # AUR_PKG+=(pince-git bottles)
-
+    # AUR_PKG+=(pince-git)
     if pacman -Q wlroots &>/dev/null; then
         AUR_PKG+=(swww) # Efficient animated wallpaper daemon for wayland, controlled at runtime.
     fi
+
+    mkdir ~/.ssh
+    echo "AddKeysToAgent yes" > ~/.ssh/config
+
+    mkdir ~/.gnupg
+    echo "default-cache-ttl 3600" > ~/.gnupg/gpg-agent.conf
+    gpg-connect-agent reloadagent /bye
+
+    localectl set-x11-keymap us,ru pc104 qwerty grp:win_space_toggle,caps:escape
 
     sudo pacman -S --needed base-devel cmake unzip ninja tree-sitter curl clang
 
@@ -44,7 +50,7 @@ function post_user {
     stow -vt ~/.config config
     stow -v home
 
-    log "Syncing some $REPO_NAME with root"
+    log "Syncing some dots $REPO_NAME with root"
     ~/bin/sync-with-root.bash
 
     log "Installing Rust"
@@ -107,8 +113,10 @@ function post_user {
 
     if [[ -n $(command -v zathura) ]]; then
         log "Installing zathura themes"
-        git clone --depth 1 https://github.com/catppuccin/zathura /tmp/zathura &&
-            install -vDm 644 /tmp/zathura/src/* -t ~/.config/zathura/
+        # git clone --depth 1 https://github.com/catppuccin/zathura /tmp/zathura &&
+        #     install -vDm 644 /tmp/zathura/src/* -t ~/.config/zathura/
+        git clone --depth 1 https://github.com/lighthaus-theme/zathura /tmp/zathura &&
+            install -vDm 644 /tmp/zathura/src/zathurarc ~/.config/zathura/lighthaus
     fi
 
     if [[ -n $(command -v kvantummanager) ]]; then
@@ -144,13 +152,26 @@ EOF
 * * * * * for i in {1..30}; do free | awk '$1 ~ /Mem/ {printf("\%3u\n", 100*$3/$2)}' >> /tmp/ram-load; sleep 2; done
 0 * * * * tail -n1 /tmp/cpu-load > /tmp/cpu-load; tail -n1 /tmp/ram-load > /tmp/ram-load
 */5 * * * * ~/bin/misc/battery.bash
-*/30 * * * * [ -r "/tmp/.dbus-address" ] && source /tmp/.dbus-address && pgrep --exact dunst && notify-send -i " " "$USER" "fix the poisture"
+*/30 * * * * [ -r "/tmp/.dbus-address" ] && source /tmp/.dbus-address && pgrep --exact dunst && notify-send "$USER" "fix the poisture"
 EOF
     crontab /tmp/crontab
 
     cat <<EOF >"$HOME/.xinitrc"
 #!/usr/bin/bash
 exec bspwm
+EOF
+
+    mkdir "$HOME/.config/git"
+    cat <<EOF >"$HOME/.config/git/config"
+[alias]
+    lg = lg1
+    lg1 = lg1-specific --all
+    lg2 = lg2-specific --all
+    lg3 = lg3-specific --all
+
+    lg1-specific = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)'
+    lg2-specific = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(auto)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'
+    lg3-specific = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset) %C(bold cyan)(committed: %cD)%C(reset) %C(auto)%d%C(reset)%n''          %C(white)%s%C(reset)%n''          %C(dim white)- %an <%ae> %C(reset) %C(dim white)(committer: %cn <%ce>)%C(reset)'
 EOF
 
     git clone --depth 1 https://github.com/kisuryoza/arch-deploy ~/.local/bin/arch-deploy
@@ -207,6 +228,7 @@ function post_root {
     # } >/etc/iwd/main.conf
 
     systemctl enable cronie.service
+    systemctl enable earlyoom.service
 }
 
 if [[ $(id -u) -eq 0 ]]; then

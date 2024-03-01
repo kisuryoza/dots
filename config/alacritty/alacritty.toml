@@ -47,8 +47,8 @@ history = 10000
 multiplier = 8
 
 [shell]
-program = "/usr/bin/zsh"
+program = "/usr/bin/fish"
 
 [window]
 decorations = "none"
-opacity = 0.9
+opacity = 0.8

@@ -1,4 +1,4 @@
-#!/usr/bin/env zsh
+#!/usr/bin/env bash
 
 bspc monitor -d 1 2 3 4 5 6 7 8 9
 
@@ -13,10 +13,10 @@ bspc config           pointer_action1 move
 
 
 bspc rule -a steam state=floating desktop=7
+bspc rule -a Screenkey manage=off
 
 xsetroot -cursor_name left_ptr
 systemctl --user import-environment DISPLAY
 
 pgrep --full eww_fullscreen_fix.bash || ~/.config/bspwm/eww_fullscreen_fix.bash &> /dev/null &
-
-~/bin/autostart.zsh x
+pgrep --full autostart.bash || ~/bin/autostart.bash x

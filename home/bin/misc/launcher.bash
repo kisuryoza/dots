@@ -1,11 +1,7 @@
 #!/usr/bin/env bash
 
-function isWayland {
-    [[ $(loginctl show-session self -p Type | awk -F "=" '/Type/ {print $NF}') == "wayland" ]]
-}
-
 function lock {
-    if isWayland; then
+    if [[ -n "$WAYLAND_DISPLAY" ]]; then
         swaylock -f -c 1a1b26 --ring-color 24283b --key-hl-color bb9af7 --inside-color 1a1b26
     else
         i3lock -c 1a1b26
@@ -29,7 +25,7 @@ function launcher {
 }
 
 function screenshot_area {
-    if isWayland; then
+    if [[ -n "$WAYLAND_DISPLAY" ]]; then
         grim -g "$(slurp)"
     else
         flameshot gui
@@ -37,7 +33,7 @@ function screenshot_area {
 }
 
 function screenshot {
-    if isWayland; then
+    if [[ -n "$WAYLAND_DISPLAY" ]]; then
         grim
     else
         flameshot full --clipboard

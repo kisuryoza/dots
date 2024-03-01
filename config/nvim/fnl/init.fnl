@@ -31,21 +31,26 @@
 (require :configs.opts)
 (require :configs.key_maps)
 
-;; Deletes trailing spaces and replaces tabs w/ spaces on save
 (vim.api.nvim_create_autocmd :BufWritePre
                              {:pattern ["*"]
+                              :desc "Deletes trailing spaces and replaces tabs w/ spaces on save"
                               :callback #(when (not vim.o.binary)
                                            (let [winview vim.fn.winsaveview]
                                              (vim.cmd "keeppatterns %s/\\s\\+$//e")
                                              (vim.cmd :retab)
                                              (vim.fn.winrestview (winview))))})
 
-;; Reload file for changes
 (vim.api.nvim_create_autocmd [:FocusGained :BufEnter]
-                             {:pattern ["*"] :command :checktime})
+                             {:pattern ["*"]
+                              :desc "Reload file for changes"
+                              :command :checktime})
 
-;; Formats rust files on save
 (vim.api.nvim_create_autocmd :BufWritePre
                              {:pattern :*.rs
+                              :desc "Formats rust files before save"
                               :callback #(vim.lsp.buf.format {:timeout_ms 200})})
 
+(vim.api.nvim_create_autocmd :BufReadPost
+                             {:pattern "*"
+                              :desc "Open file at the last position it was edited earlier"
+                              :command "silent! normal! g`\"zv"})

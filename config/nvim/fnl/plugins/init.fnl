@@ -4,7 +4,8 @@
  (pack :eraserhd/parinfer-rust {:build "cargo build --release"})
  ; (pack :rebelot/kanagawa.nvim
  ;       {:priority 1000
- ;        ; :init #(vim.cmd "colorscheme kanagawa-wave")
+ ;        :init #(if (not= (os.getenv :TERM) "linux")
+ ;                   (vim.cmd "colorscheme kanagawa-wave"))
  ;        :opts {:compile true
  ;               :transparent true
  ;               :dimInactive true
@@ -12,7 +13,8 @@
  (pack :catppuccin/nvim
        {:priority 1000
         :name :catppuccin
-        :init #(vim.cmd "colorscheme catppuccin-mocha")
+        :init #(if (not= (os.getenv :TERM) "linux")
+                   (vim.cmd "colorscheme catppuccin-mocha"))
         :opts {:transparent_background true
                :dim_inactive {:enabled true}
                :compile_path (.. (vim.fn.stdpath :cache) :/catppuccin)

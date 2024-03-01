@@ -41,7 +41,7 @@ function setVolume {
 case $1 in
 "get") getVolume ;;
 "set") setVolume "$@" ;;
-"toggleMute") toggleMute ;;
+"toggle-mute") toggleMute ;;
 
 *) exit 1 ;;
 esac

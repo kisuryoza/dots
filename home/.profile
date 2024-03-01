@@ -3,7 +3,6 @@ export XDG_CACHE_HOME=$HOME/.cache
 export XDG_DATA_HOME=$HOME/.local/share
 export XDG_STATE_HOME=$HOME/.local/state
 
-# export MOZ_ENABLE_WAYLAND=1
 export QT_STYLE_OVERRIDE=kvantum
 export MANPAGER="sh -c 'col -bx | bat -l man -p'"
 export MANROFFOPT="-c"
@@ -11,7 +10,6 @@ export BROWSER=librewolf
 export EDITOR=nvim
 export VISUAL=nvim
 export BAT_THEME=gruvbox-dark
-export GIT_EXTERNAL_DIFF=difft
 GPG_TTY=$(tty)
 export GPG_TTY
 

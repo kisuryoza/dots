@@ -21,11 +21,14 @@ setopt HIST_FIND_NO_DUPS         # Do not display a previously found event.
 setopt HIST_IGNORE_SPACE         # Do not record an event starting with a space.
 setopt HIST_SAVE_NO_DUPS         # Do not write a duplicate event to the history file.
 setopt HIST_VERIFY               # Do not execute immediately upon history expansion.
+setopt INC_APPEND_HISTORY        # New history lines are added as soon as they are entered, rather than waiting until the shell exits.
 
 eval "$(dircolors -b)"
 [[ -r ~/.alias ]] && source ~/.alias
 
 ###############################################################################
+bindkey -s '^F' "tmux-sessionizer\n"
+
 # Vi to zsh
 bindkey -v
 export KEYTIMEOUT=1
@@ -35,59 +38,23 @@ autoload -Uz edit-command-line
 zle -N edit-command-line
 bindkey -M vicmd '^v' edit-command-line
 
-# Add Vi text-objects for brackets and quotes
-autoload -Uz select-bracketed select-quoted
-zle -N select-quoted
-zle -N select-bracketed
-for km in viopp visual; do
-    bindkey -M $km -- '-' vi-up-line-or-history
-    for c in {a,i}${(s..)^:-\'\"\`\|,./:;=+@}; do
-        bindkey -M $km $c select-quoted
-    done
-    for c in {a,i}${(s..)^:-'()[]{}<>bB'}; do
-        bindkey -M $km $c select-bracketed
-    done
-done
-
-# Emulation of vim-surround
-autoload -Uz surround
-zle -N delete-surround surround
-zle -N add-surround surround
-zle -N change-surround surround
-bindkey -M vicmd cs change-surround
-bindkey -M vicmd ds delete-surround
-bindkey -M vicmd ys add-surround
-bindkey -M visual S add-surround
-
 zmodload zsh/complist
 bindkey -M menuselect 'h' vi-backward-char
 bindkey -M menuselect 'k' vi-up-line-or-history
 bindkey -M menuselect 'l' vi-forward-char
 bindkey -M menuselect 'j' vi-down-line-or-history
 
-
-# create a zkbd compatible hash;
-# to add other keys to this hash, see: man 5 terminfo
-typeset -g -A key
-key[Up]="${terminfo[kcuu1]}"
-key[Down]="${terminfo[kcud1]}"
+bindkey '^?' backward-delete-char # backspace
+bindkey '^[[3~' delete-char # delete
 
 autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
 zle -N up-line-or-beginning-search
 zle -N down-line-or-beginning-search
+bindkey "^[[A" up-line-or-beginning-search # arrow up
+bindkey "^[[B" down-line-or-beginning-search # arrow down
 
-[[ -n "${key[Up]}"   ]] && bindkey -- "${key[Up]}"   up-line-or-beginning-search
-[[ -n "${key[Down]}" ]] && bindkey -- "${key[Down]}" down-line-or-beginning-search
-
-# Finally, make sure the terminal is in application mode, when zle is
-# active. Only then are the values from $terminfo valid.
-if (( ${+terminfo[smkx]} && ${+terminfo[rmkx]} )); then
-    autoload -Uz add-zle-hook-widget
-    function zle_application_mode_start { echoti smkx }
-    function zle_application_mode_stop { echoti rmkx }
-    add-zle-hook-widget -Uz zle-line-init zle_application_mode_start
-    add-zle-hook-widget -Uz zle-line-finish zle_application_mode_stop
-fi
+bindkey "^[[1;5D" backward-word # ctrl left
+bindkey "^[[1;5C" forward-word # ctrl right
 
 ###############################################################################
 # Plugins
@@ -166,12 +133,16 @@ fi
 
 ###############################################################################
 # Completion
-autoload -U compinit; compinit
-_comp_options+=(globdots) # With hidden files
+autoload -Uz compinit
+for dump in ~/.zcompdump(N.mh+24); do
+    compinit
+done
+compinit -C
 
-setopt MENU_COMPLETE        # Automatically highlight first element of completion menu
+# setopt MENU_COMPLETE        # Automatically highlight first element of completion menu
 setopt AUTO_LIST            # Automatically list choices on ambiguous completion.
 setopt COMPLETE_IN_WORD     # Complete from both ends of a word.
+setopt ALWAYS_TO_END        # If a completion is performed with the cursor within a word, and a full completion is inserted, the cursor is moved to the end of the word.
 
 # Ztyle pattern
 # :completion:<function>:<completer>:<command>:<argument>:<tag>
@@ -234,12 +205,6 @@ fi
 ###############################################################################
 chpwd () command exa -a --group-directories-first
 
-# sort_history() {
-#     local temp=$(mktemp)
-#     cp "$HISTFILE" $temp
-#     cat -n "$temp" | sort -uk2 | sort -nk1 | cut -f2- > "$HISTFILE"
-# }
-
 cx_repl() {
     [[ -r $1 ]] || { printf "File %s does not exist or is not readable" "$1" >&2; return 1; }
     local ext=$(awk -F. '{print $NF}' <<<"$1")
@@ -251,25 +216,56 @@ cx_repl() {
     fi
 }
 
-vimq() {
-    vim -q <($(fc -nl -1))
-}
-
 nvimq() {
     nvim -q <($(fc -nl -1))
 }
 
-if [[ $(id -u) -ne 0 ]]; then
-    # Auto starting ssh-agent
-    if ! pgrep -u "$USER" ssh-agent >/dev/null; then
-        ssh-agent > "$HOME/.ssh/ssh-agent.env"
+rustup_doc_force_dark_theme() {
+    sd '\("preferred-light-theme"\)\|\|"light"' '("preferred-light-theme")||"ayu"' \
+        ~/.local/share/rustup/toolchains/stable-x86_64-unknown-linux-gnu/share/doc/rust/html/static.files/storage-*.js
+}
+
+transfer() {
+    if [ $# -eq 0 ]; then
+        echo "No arguments specified.\nUsage:\n  transfer <file|directory>\n  ... | transfer <file_name>" >&2
+        return 1
     fi
-    if [[ ! -f "$SSH_AUTH_SOCK" ]]; then
-        source "$HOME/.ssh/ssh-agent.env" >/dev/null
+
+    if ! tty -s; then
+        curl --upload-file "-" "https://transfer.sh/$1"
+        return
     fi
-fi
+
+    local file="$1"
+    local file_name=$(basename "$file")
+    if [ ! -e "$file" ]; then
+        echo "$file: No such file or directory" >&2
+        return 1
+    fi
+
+    if [ -d "$file" ]; then
+        local output="/tmp/$file_name.7z"
+        if [ -r "$output" ]; then
+            rm "$output"
+        fi
+        7z a -mx9 "$output" "$file"
+        curl --upload-file "$output" "https://transfer.sh/$file_name.7z"
+        rm "$output"
+    else
+        curl --upload-file "$file" "https://transfer.sh/$file_name"
+    fi
+}
+
+# if [[ $(id -u) -ne 0 ]]; then
+#     # Auto starting ssh-agent
+#     if ! pgrep -u "$USER" ssh-agent >/dev/null; then
+#         ssh-agent > "$HOME/.ssh/ssh-agent.env"
+#     fi
+#     if [[ ! -f "$SSH_AUTH_SOCK" ]]; then
+#         source "$HOME/.ssh/ssh-agent.env" >/dev/null
+#     fi
+# fi
 
 eval "$(starship init zsh)"
-eval "$(atuin init zsh)"
-
-[[ $(id -u) -ne 0 ]] && task
+eval "$(atuin init zsh --disable-up-arrow)"
+task

@@ -88,17 +88,12 @@ function update_volume {
 }
 
 case $1 in
-    "is_music_playing")
-        is_music_playing
-        exit 0
-        ;;
     "prev")
         mpc prev
         exit 0
         ;;
     "play")
         mpc toggle
-        eww_update is_music_playing "$(is_music_playing)"
         exit 0
         ;;
     "next")
@@ -129,6 +124,5 @@ esac
 
 while eval "$(eww get is_music_player_hovered)"; do
     update_progress
-    eww_update is_music_playing "$(is_music_playing)"
     sleep 1
 done
