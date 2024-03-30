@@ -30,7 +30,6 @@ function run_root {
     {
         echo "ALL_config=\"/etc/mkinitcpio.conf\""
         echo "ALL_kver=\"/boot/vmlinuz-linux\""
-        echo "ALL_microcode=(/boot/*-ucode.img)"
 
         echo "PRESETS=('default')"
         # echo "PRESETS=('default' 'fallback')"

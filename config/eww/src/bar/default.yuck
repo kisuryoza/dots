@@ -54,13 +54,10 @@
    (label :class "storage-title" :text "󰋊"))))
 
 (defwidget volume []
- (eventbox
-  :onhover "${EWW_CMD} update is_volume_hovered=true"
-  :onhoverlost "${EWW_CMD} update is_volume_hovered=false"
-  (box :orientation "v" :space-evenly false
-   (revealer :class "bar-slider volume-slider" :transition "slideup" :reveal is_volume_hovered :duration "350ms"
-    (scale :flipped true :round-digits 0 :value volume :min 0 :max 150 :onchange "~/bin/misc/volume-control.bash set {}" :orientation "v"))
-   (button :onclick "~/bin/misc/volume-control.bash toggle-mute" (label :class "volume-title" :text {is_muted ? "󰖁" : "󰕾"})))))
+ (box :orientation "v" :space-evenly false
+  (box :class "bar-slider volume-slider" :orientation "v" :space-evenly false
+   (scale :flipped true :round-digits 0 :value volume :min 0 :max 150 :onchange "~/bin/misc/volume-control.bash set {}" :orientation "v"))
+  (button :onclick "~/bin/misc/volume-control.bash toggle-mute" (label :class "volume-title" :text {is_muted ? "󰖁" : "󰕾"}))))
 
 (defwidget brightness []
  (eventbox

@@ -205,17 +205,6 @@ fi
 ###############################################################################
 chpwd () command exa -a --group-directories-first
 
-cx_repl() {
-    [[ -r $1 ]] || { printf "File %s does not exist or is not readable" "$1" >&2; return 1; }
-    local ext=$(awk -F. '{print $NF}' <<<"$1")
-    local output=/tmp/$(basename $1)
-    if [[ "$ext" -eq "c" ]]; then
-        clang "$1" -o "$output" && "$output"
-    elif [[ "$ext" -eq "cpp" ]]; then
-        g++ "$1" -o "$output" && "$output"
-    fi
-}
-
 nvimq() {
     nvim -q <($(fc -nl -1))
 }

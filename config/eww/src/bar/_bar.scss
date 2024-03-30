@@ -33,7 +33,8 @@
   background-color: colors.$background-secondary;
   border-radius: 10px;
   min-height: 10em;
-  min-width: 1em;
+  min-width: 10px;
+  margin: 0.5em;
 }
 
 .bar-slider scale trough highlight {
