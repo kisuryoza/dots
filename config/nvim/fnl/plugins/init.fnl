@@ -1,4 +1,4 @@
-(import-macros {: pack} :macros)
+(import-macros {: pack : nmapp!} :macros)
 
 [(pack :udayvir-singh/tangerine.nvim)
  (pack :eraserhd/parinfer-rust {:build "cargo build --release"})
@@ -24,7 +24,8 @@
                               :noice true
                               :treesitter_context true
                               :lsp_trouble true
-                              :which_key true}}})
+                              :which_key true
+                              :fidget true}}})
  (require :plugins.lspconfig)
  (require :plugins.dap)
  ;; greeter

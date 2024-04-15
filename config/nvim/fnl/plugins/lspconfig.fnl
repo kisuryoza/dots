@@ -2,7 +2,8 @@
 
 (local M
        (pack :neovim/nvim-lspconfig
-             {:dependencies [(pack :lvimuser/lsp-inlayhints.nvim
+             {:dependencies [(pack :j-hui/fidget.nvim {:opts {:notification {:window {:winblend 0}}}})
+                             (pack :lvimuser/lsp-inlayhints.nvim
                                    {:opts {:inlay_hints {:type_hints {:prefix "=> "
                                                                       :remove_colon_start true}
                                                          :highlight :Comment}}})]}))

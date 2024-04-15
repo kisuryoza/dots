@@ -34,11 +34,11 @@ icon() {
     fi
 }
 
-if [[ $CHARGE == "Full" ]]; then
-    CHARGE="Charging"
-    icon
-elif [[ $CHARGE == "PlugedIn" ]]; then
+if [[ $CHARGE == "PlugedIn" ]]; then
     ICON="󰚥"
+else
+    # CHARGE="Charging"
+    icon
 fi
 
 printf '%s\n%s' "$BATTERY" "$ICON" > /tmp/battery-charge

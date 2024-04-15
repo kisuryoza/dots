@@ -1,7 +1,8 @@
 (import-macros {: pack : nmapp!} :macros)
 
 (local M (pack :mfussenegger/nvim-dap
-               {:dependencies [(pack :rcarriga/nvim-dap-ui
+               {:dependencies [(pack :nvim-neotest/nvim-nio)
+                               (pack :rcarriga/nvim-dap-ui
                                      {:config #(let [dap (require :dap)
                                                      dapui (require :dapui)]
                                                  (dapui.setup)

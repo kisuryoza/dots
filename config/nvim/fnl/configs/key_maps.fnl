@@ -53,14 +53,25 @@
 ;; Buffers managment
 (nmapp! :bd (cmd! "lcd %:p:h") "Set local working dir")
 (nmapp! :bD (cmd! "cd %:p:h") "Set global working dir")
-(nmapp! :bb (cmd! "Telescope buffers") :Buffers)
 
 ;; Files managment
 (nmapp! :fc (cmd! "e $MYVIMRC | :cd %:p:h") "Edit neovm config")
-(nmapp! :ff (cmd! "Telescope find_files") "Find Files")
-(nmapp! :fr (cmd! "Telescope oldfiles") :Recent)
-(nmapp! :fg (cmd! "Telescope live_grep") "Live grep")
-(nmapp! :fw (cmd! "Telescope grep_string") "Grep curr word")
+
+(let [builtin (require :telescope.builtin)]
+  (nmapp! :bb #(builtin.buffers) :Buffers)
+  (nmapp! :ff #(builtin.find_files) "Find Files")
+  (nmapp! :fr #(builtin.oldfiles) :Recent)
+  (nmapp! :fl #(builtin.live_grep) "Live grep")
+  (nmapp! :fg #(let [word (vim.fn.input "Grep > ")]
+                 (builtin.grep_string {:search word}))
+          "Grep word")
+  (nmapp! :fw #(let [word (vim.fn.expand :<cword>)]
+                 (builtin.grep_string {:search word}))
+          "Grep curr word")
+  (nmapp! :fW #(let [word (vim.fn.expand :<cWORD>)]
+                 (builtin.grep_string {:search word}))
+          "Grep curr WORD"))
+
 (nmapp! :fx (cmd! "!chmod +x %") "Make curr file executable")
 
 ;; Code related

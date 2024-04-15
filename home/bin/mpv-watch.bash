@@ -1,23 +1,22 @@
 #!/usr/bin/env bash
 
-declare -a SUBS
-
 function find_vid {
     declare -a subs
     local counting pattern
     counting="$1"
 
+    mapfile -t vids < <(fd --max-depth=1 -e mkv -e mp4)
+    VID="${vids[$counting - 1]}"
+    if [[ "$VID" == "" ]]; then
+        echo "Couldn't find any video"
+        exit 1
+    fi
+
     if [[ -n "$counting" ]]; then
         if [[ ${#counting} -eq 1 ]]; then
             counting="0$1"
         fi
-        pattern="( $counting.?.? )|((_)$counting(_))|([Ee]p?\.?$counting )|(\[$counting\])|($counting\.)"
-    fi
-
-    VID="$(fd --max-results=1 -e mkv -e mp4 "$pattern")"
-    if [[ "$VID" == "" ]]; then
-        echo "Couldn't find any video"
-        exit 1
+        pattern="(S..E$counting)|( $counting )|((_)$counting(_))|([Ee]p?\.?$counting )|(\[$counting\])|($counting\.)"
     fi
 
     mapfile -t subs < <(fd -e ass -e srt "$pattern")
@@ -31,14 +30,18 @@ function find_vid {
     done
 
     if [[ ! -d "fonts" && $(fd -1 -e ttf -e otf) != "" ]]; then
-        mkdir "fonts"
-        (cd fonts && fd -e ttf -e otf . .. -x ln -sf "{}" .)
+        mkdir "fonts" && cd "fonts" || exit 1
+        mapfile -t fonts < <(fd -e ttf -e otf . ..)
+        for font in "${fonts[@]}"; do
+            ln -sf "$font" .
+        done
+        cd ..
     fi
 }
 
 function launch {
     echo "$VID"
-    mpv "$VID" "${OPTIONS[@]}"
+    mpv "${OPTIONS[@]}" "$@" "$VID"
 }
 
 function history {
@@ -67,7 +70,7 @@ function play {
             "next")
                 counting=$((counting + 1))
                 ;;
-            *) exit 2 ;;
+            *) ;;
             esac
         fi
         find_vid "$counting"
@@ -77,27 +80,32 @@ function play {
         echo "1" >"$HIST_FILE"
     fi
 
-    launch
+    shift
+    launch "$@"
 }
 
 shopt -s extglob
 case "$1" in
 +([0-9]))
     find_vid "$1"
-    launch
+    shift
+    launch "$@"
     ;;
 "movie")
     find_vid
-    launch
+    shift
+    launch "$@"
     ;;
 "prev")
-    play prev
+    shift
+    play prev "$@"
     ;;
 "play")
-    play
+    play "$@"
     ;;
 "next")
-    play next
+    shift
+    play next "$@"
     ;;
 "set")
     history

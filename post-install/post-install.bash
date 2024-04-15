@@ -14,6 +14,7 @@ source "$HOME"/"$REPO_NAME"/home/.profile
 
 function post_user {
     declare -a AUR_PKG
+    AUR_PKG+=(7-zip)
     AUR_PKG+=(shellcheck-bin)
     AUR_PKG+=(codelldb-bin) # A native debugger extension for VSCode based on LLDB.
     AUR_PKG+=(librewolf-bin)
@@ -178,7 +179,7 @@ EOF
 }
 
 function post_root {
-    echo 'export ZDOTDIR=$HOME/.config/zsh' > /etc/zsh/zshenv
+    echo 'export ZDOTDIR=$HOME/.config/zsh' >> /etc/zsh/zshenv
 
     log "Configuring pacman"
     # sed -Ei 's|^#?MAKEFLAGS=.*|MAKEFLAGS="-j4"|' /etc/makepkg.conf
@@ -197,36 +198,28 @@ function post_root {
         mkinitcpio -p linux-zen || mkinitcpio -p linux
     fi
 
-    log "WiFi fixes"
-    {
-        echo "[device]"
-        echo "wifi.scan-rand-mac-address=no"
-    } >/etc/NetworkManager/NetworkManager.conf
-
-    # log "NetworkManager-dispatcher"
-    # install -vDm 744 "$RESOURCES"/10-update-NextDNS-IP.sh /etc/NetworkManager/dispatcher.d/10-update-NextDNS-IP.sh
-    # systemctl enable NetworkManager-dispatcher.service
-
     log "Configuring openresolv and dnscrypt-proxy"
     {
         echo "name_servers=\"127.0.0.1\""
         echo "name_servers_append=\"::1\""
         echo "resolv_conf_options=\"edns0\""
     } >>/etc/resolvconf.conf
-    systemctl enable dnscrypt-proxy.service
     resolvconf -u
 
-    # {
-    #     echo "[main]"
-    #     echo "rc-manager=resolvconf"
-    # } >/etc/NetworkManager/conf.d/rc-manager.conf
-    # printf "\nnohook resolv.conf" >/etc/dhcpcd.conf
-    # mkdir /etc/iwd
-    # {
-    #     echo "[General]"
-    #     echo "EnableNetworkConfiguration=True"
-    # } >/etc/iwd/main.conf
+    {
+        echo "[main]"
+        echo "rc-manager=resolvconf"
+    } >/etc/NetworkManager/conf.d/rc-manager.conf
 
+    printf "\nnohook resolv.conf" >/etc/dhcpcd.conf
+
+    mkdir /etc/iwd
+    {
+        echo "[General]"
+        echo "EnableNetworkConfiguration=True"
+    } >/etc/iwd/main.conf
+
+    systemctl enable dnscrypt-proxy.service
     systemctl enable cronie.service
     systemctl enable earlyoom.service
 }

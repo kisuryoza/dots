@@ -54,3 +54,4 @@
                              {:pattern "*"
                               :desc "Open file at the last position it was edited earlier"
                               :command "silent! normal! g`\"zv"})
+
