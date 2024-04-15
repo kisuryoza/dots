@@ -54,19 +54,10 @@ function post_user {
     log "Syncing some dots $REPO_NAME with root"
     ~/bin/sync-with-root.bash
 
-    log "Installing Rust"
-    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs -o /tmp/rustup.sh &&
-        less -M /tmp/rustup.sh &&
-        log "Are we good?" warn &&
-        read -r &&
-        chmod +x /tmp/rustup.sh &&
-        /tmp/rustup.sh --no-modify-path
-
-    RUSTUP="$CARGO_HOME/bin/rustup"
-    $RUSTUP component add rust-analyzer
+    rustup component add rust-analyzer
     mkdir ~/.config/zsh/zfunc
-    $RUSTUP completions zsh cargo >~/.config/zsh/zfunc/_cargo
-    $RUSTUP completions zsh rustup >~/.config/zsh/zfunc/_rustup
+    rustup completions zsh cargo >~/.config/zsh/zfunc/_cargo
+    rustup completions zsh rustup >~/.config/zsh/zfunc/_rustup
 
     (
         log "Installing paru"
