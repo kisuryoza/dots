@@ -1,4 +1,4 @@
-(import-macros {: set!} :macros)
+(require-macros :macros)
 
 (set! :clipboard :unnamedplus)
 (set! :termguicolors true)

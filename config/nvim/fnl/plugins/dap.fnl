@@ -1,4 +1,4 @@
-(import-macros {: pack : nmapp!} :macros)
+(require-macros :macros)
 
 (local M (pack :mfussenegger/nvim-dap
                {:dependencies [(pack :nvim-neotest/nvim-nio)

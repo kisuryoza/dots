@@ -1,4 +1,4 @@
-(import-macros {: setup!} :macros)
+(require-macros :macros)
 
 ; (fn change-alacritty-font [font]
 ;   (let [font (if (= nil font)
@@ -19,6 +19,9 @@
 ;; Change terminal font back on nvim exit
 ; (vim.api.nvim_create_autocmd :VimLeavePre {:callback #(change-alacritty-font)})
 
+(set vim.g.mapleader " ")
+(set vim.g.maplocalleader "\\")
+
 ((setup! :lazy) (require :plugins)
                 {:lockfile (.. (vim.fn.stdpath :data) :/lazy-lock.json)
                  :performance {:cache {:enabled true}
@@ -37,7 +40,8 @@
                               :callback #(when (not vim.o.binary)
                                            (let [winview vim.fn.winsaveview]
                                              (vim.cmd "keeppatterns %s/\\s\\+$//e")
-                                             (vim.cmd :retab)
+                                             (if (not= (vim.fn.tolower (vim.fn.expand "%:t")) "makefile")
+                                               (vim.cmd :retab))
                                              (vim.fn.winrestview (winview))))})
 
 (vim.api.nvim_create_autocmd [:FocusGained :BufEnter]

@@ -1,4 +1,4 @@
-(import-macros {: pack : cmd! : nmapp!} :macros)
+(require-macros :macros)
 
 (local M
        (pack :neovim/nvim-lspconfig
@@ -6,7 +6,8 @@
                              (pack :lvimuser/lsp-inlayhints.nvim
                                    {:opts {:inlay_hints {:type_hints {:prefix "=> "
                                                                       :remove_colon_start true}
-                                                         :highlight :Comment}}})]}))
+                                                         :highlight :Comment}}})]
+              :event :VeryLazy}))
 
 (fn M.config []
   (vim.fn.sign_define :DiagnosticSignError
@@ -18,35 +19,27 @@
   (vim.fn.sign_define :DiagnosticSignHint
                       {:text "" :texthl :DiagnosticSignHint})
 
-  (fn code-action-listener []
-    "Used by lsp-CodeAction (heirline's widget)"
-    (local context {:diagnostics (vim.lsp.diagnostic.get_line_diagnostics)})
-    (local params (vim.lsp.util.make_range_params))
-    (set params.context context)
-    (vim.lsp.buf_request_all 0 :textDocument/codeAction params
-                             (fn [result] ; (print (vim.inspect result))
-                               (var has_actions false)
-                               (each [_k v (pairs result)]
-                                 (local result (. v :result))
-                                 (when (and result
-                                            (not (vim.tbl_isempty result)))
-                                   (set has_actions true)))
-                               (if has_actions
-                                   (set vim.g.myvarLspCodeAction true)
-                                   (set vim.g.myvarLspCodeAction false)))))
-
-  (vim.api.nvim_create_autocmd [:CursorHold :CursorHoldI]
-                               {:pattern ["*"]
-                                :callback #(code-action-listener)})
+  ; (fn code-action-listener []
+  ;   "Used by lsp-CodeAction (heirline's widget)"
+  ;   (local context {:diagnostics (vim.lsp.diagnostic.get_line_diagnostics)})
+  ;   (local params (vim.lsp.util.make_range_params))
+  ;   (set params.context context)
+  ;   (vim.lsp.buf_request_all 0 :textDocument/codeAction params
+  ;                            (fn [result] ; (print (vim.inspect result))
+  ;                              (var has_actions false)
+  ;                              (each [_k v (pairs result)]
+  ;                                (local result (. v :result))
+  ;                                (when (and result
+  ;                                           (not (vim.tbl_isempty result)))
+  ;                                  (set has_actions true)))
+  ;                              (if has_actions
+  ;                                  (set vim.g.myvarLspCodeAction true)
+  ;                                  (set vim.g.myvarLspCodeAction false)))))
+  ;
+  ; (vim.api.nvim_create_autocmd [:CursorHold :CursorHoldI]
+  ;                              {:pattern ["*"]
+  ;                               :callback #(code-action-listener)})
   (local lspconfig (require :lspconfig))
-  (tset (require :lspconfig.configs) :fennel_language_server
-        {:default_config {:cmd [(.. (vim.fn.expand "~")
-                                    :/.local/bin/fennel-language-server)]
-                          :filetypes [:fennel]
-                          :single_file_support true
-                          :root_dir (lspconfig.util.root_pattern :fnl)
-                          :settings {:fennel {:workspace {:library (vim.api.nvim_list_runtime_paths)}
-                                              :diagnostics {:globals [:vim]}}}}})
 
   (fn lsp-on-attach [ev]
     (when (and ev.data ev.data.client_id)
@@ -80,7 +73,6 @@
     (lspconfig.rust_analyzer.setup {: capabilities
                                     :settings {:rust-analyzer {:check {:command :clippy}}}
                                     :cmd [:rustup :run :stable :rust-analyzer]})
-    (lspconfig.fennel_language_server.setup {: capabilities})
     (lspconfig.bashls.setup {: capabilities})
     (lspconfig.tsserver.setup {: capabilities})
     (lspconfig.nil_ls.setup {: capabilities})))

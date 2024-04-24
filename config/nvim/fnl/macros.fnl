@@ -1,3 +1,4 @@
+;; fennel-ls: macro-file
 (lambda pack [package ?options]
   (let [options (or ?options {})
         array (collect [k v (pairs options)]

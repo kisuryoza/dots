@@ -1,4 +1,4 @@
-(import-macros {: pack} :macros)
+(require-macros :macros)
 
 (local M (pack :goolord/alpha-nvim))
 

@@ -1,4 +1,4 @@
-(import-macros {: pack : map!} :macros)
+(require-macros :macros)
 
 (local M (pack :hrsh7th/nvim-cmp
                {:dependencies [:hrsh7th/cmp-nvim-lsp

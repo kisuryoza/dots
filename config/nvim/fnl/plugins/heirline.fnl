@@ -1,4 +1,4 @@
-(import-macros {: pack : get_hl_fg! : get_hl_bg!} :macros)
+(require-macros :macros)
 
 (local M (pack :rebelot/heirline.nvim))
 
@@ -128,10 +128,10 @@
       (when (and count (> count 0))
         (.. icon " " count))))
 
-  (local lsp-CodeAction
-         [{:hl {:fg colors.diag_error}
-           :provider (fn []
-                       (if vim.g.myvarLspCodeAction "💡" ""))}])
+  ; (local lsp-CodeAction
+  ;        [{:hl {:fg colors.diag_error}
+  ;          :provider (fn []
+  ;                      (if vim.g.myvarLspCodeAction "💡" ""))}])
   (local lsp-status [{:hl {:fg colors.diag_error}
                       :provider (fn [self]
                                   (let [bufnr (or self.bufnr 0)]
@@ -207,7 +207,7 @@
   (local active-statusline [vim-mode
                             git
                             file
-                            lsp-CodeAction
+                            ; lsp-CodeAction
                             align
                             lsp-status
                             file-encoding

@@ -1,4 +1,4 @@
-(import-macros {: pack} :macros)
+(require-macros :macros)
 
 (local M (pack :nvim-treesitter/nvim-treesitter
                {:dependencies [:nvim-treesitter/nvim-treesitter-textobjects
