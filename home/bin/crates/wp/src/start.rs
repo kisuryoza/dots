@@ -37,35 +37,16 @@ pub fn start(destination: PathBuf, interval: u64, db: redb::Database) -> Result<
     let mut rng = rand::thread_rng();
     files.shuffle(&mut rng);
 
-    if std::env::var("WAYLAND_DISPLAY").is_ok() {
-        let _ = Command::new("swww").arg("init").status();
-    }
-    set_wallpaper(interval, files)
+    iterate(interval, files)
 }
 
-fn command() -> Command {
-    if std::env::var("WAYLAND_DISPLAY").is_ok() {
-        let mut p = Command::new("swww");
-        p.arg("img");
-        p
-    } else {
-        let mut p = Command::new("feh");
-        p.args(["--no-fehbg", "--bg-fill"]);
-        p
-    }
-}
-
-fn set_wallpaper(interval: u64, files: Vec<File>) -> ! {
+fn iterate(interval: u64, files: Vec<File>) -> ! {
     let mut iterator = files.iter().cycle();
     loop {
-        if let Some(file) = iterator.next() {
-            let path = file.path.as_ref();
+        if let Some(next_file) = iterator.next() {
+            let path = next_file.path.as_ref();
             info!("Setting wallpaper: {}", path);
-            let mut command = command();
-            command
-                .arg(path)
-                .status()
-                .expect("failed to execute process");
+            set_it(path, &prev_file.path);
 
             let _ = std::fs::remove_file("/tmp/wallpaper");
             let _ = std::os::unix::fs::symlink(path, "/tmp/wallpaper");
@@ -73,4 +54,20 @@ fn set_wallpaper(interval: u64, files: Vec<File>) -> ! {
 
         sleep(Duration::from_secs(interval));
     }
+}
+
+fn set_it(next_path: &str) {
+    if std::env::var("WAYLAND_DISPLAY").is_ok() {
+        Command::new("swww")
+            .args(["img", "-t", "none", next_path])
+            .status()
+            .expect("failed to execute process");
+
+        return;
+    }
+
+    Command::new("feh")
+        .args(["--no-fehbg", "--bg-fill", next_path])
+        .status()
+        .expect("failed to execute process");
 }

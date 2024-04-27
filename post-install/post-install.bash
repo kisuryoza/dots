@@ -61,7 +61,7 @@ function post_user {
 
     (
         log "Installing paru"
-        git clone --depth 1 https://aur.archlinux.org/paru-git.git /tmp/paru &&
+        git clone https://aur.archlinux.org/paru-git.git /tmp/paru &&
             cd /tmp/paru &&
             makepkg -si
     )
@@ -69,23 +69,31 @@ function post_user {
     log "Installing packages from AUR"
     paru -S --skipreview "${AUR_PKG[@]}" || log "AUR failed" err
 
-    log "Installing packages from git..."
-    ~/bin/pkg-from-git.bash all
+    log "Installing eww"
+    git clone https://github.com/elkowar/eww ~/gitclones/eww &&
+    (
+        cd ~/gitclones/eww
+        if pacman -Q gtk-layer-shell &>/dev/null; then
+            cargo build --release --no-default-features --features=wayland
+            install -vsDm 744 target/release/eww ~/.local/bin/eww-wayland
+        else
+            cargo build --release --no-default-features --features=x11
+            install -vsDm 744 target/release/eww ~/.local/bin/eww-x
+        fi
+    )
+
+    cargo clean
 
     if [[ -n $(command -v mpv) ]]; then
         log "Installing mpv additional features"
-        git clone --depth 1 https://github.com/occivink/mpv-scripts.git /tmp/mpv-scripts &&
+        git clone https://github.com/occivink/mpv-scripts.git /tmp/mpv-scripts &&
             rm /tmp/mpv-scripts/scripts/blur-edges.lua &&
             mv --target-directory="$HOME/.config/mpv/" /tmp/mpv-scripts/script-opts/ /tmp/mpv-scripts/scripts/
-
-        git clone --depth 1 https://github.com/bloc97/Anime4K.git /tmp/Anime4K &&
-            mkdir -p ~/.config/mpv/shaders &&
-            fd --extension="glsl" . /tmp/Anime4K -x mv {} ~/.config/mpv/shaders
     fi
 
     (
         log "Installing a cursor"
-        wget -O /tmp/cursor.tar.gz "$(curl -s https://api.github.com/repos/ful1e5/Bibata_Cursor/releases/latest | grep 'browser_' | cut -d\" -f4 | grep -E "Bibata-Original-Classic.tar.gz")" &&
+        wget -nv -O /tmp/cursor.tar.gz "$(curl -s https://api.github.com/repos/ful1e5/Bibata_Cursor/releases/latest | grep 'browser_' | cut -d\" -f4 | grep -E "Bibata-Original-Classic.tar.gz")" &&
             cd ~/.icons &&
             tar -xvf /tmp/cursor.tar.gz
 
@@ -105,15 +113,13 @@ function post_user {
 
     if [[ -n $(command -v zathura) ]]; then
         log "Installing zathura themes"
-        # git clone --depth 1 https://github.com/catppuccin/zathura /tmp/zathura &&
-        #     install -vDm 644 /tmp/zathura/src/* -t ~/.config/zathura/
-        git clone --depth 1 https://github.com/lighthaus-theme/zathura /tmp/zathura &&
-            install -vDm 644 /tmp/zathura/src/zathurarc ~/.config/zathura/lighthaus
+        wget -nv -O - https://github.com/catppuccin/zathura/raw/main/src/catppuccin-mocha > ~/.config/zathura/catppuccin-mocha
+        wget -nv -O - https://github.com/lighthaus-theme/zathura/raw/master/src/zathurarc > ~/.config/zathura/lighthaus
     fi
 
     if [[ -n $(command -v kvantummanager) ]]; then
         log "Installing Kvantum themes"
-        git clone --depth 1 https://github.com/catppuccin/Kvantum /tmp/Kvantum &&
+        git clone https://github.com/catppuccin/Kvantum /tmp/Kvantum &&
             mkdir -p ~/.config/Kvantum &&
             mv /tmp/Kvantum/src/* ~/.config/Kvantum &&
             kvantummanager --set Catppuccin-Macchiato-Maroon
@@ -166,7 +172,7 @@ EOF
     lg3-specific = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset) %C(bold cyan)(committed: %cD)%C(reset) %C(auto)%d%C(reset)%n''          %C(white)%s%C(reset)%n''          %C(dim white)- %an <%ae> %C(reset) %C(dim white)(committer: %cn <%ce>)%C(reset)'
 EOF
 
-    git clone --depth 1 https://github.com/kisuryoza/arch-deploy ~/.local/bin/arch-deploy
+    git clone https://github.com/kisuryoza/arch-deploy ~/.local/bin/arch-deploy
 }
 
 function post_root {

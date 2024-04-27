@@ -4,64 +4,68 @@
 # https://github.com/valoq/bwscripts
 # https://github.com/flatpak/flatpak/blob/4c6136ab2146234bff37925b218026de846d584e/common/flatpak-run.c#L1791
 
-if [[ -n "$WAYLAND_DISPLAY" ]]; then
-    (exec bwrap \
-        --ro-bind /usr/bin/sh /usr/bin/sh \
-        --ro-bind /usr/share /usr/share/ \
-        --ro-bind /usr/lib /usr/lib \
-        --ro-bind /usr/lib64 /usr/lib64 \
-        --symlink /usr/lib64 /lib64 \
-        --symlink /usr/lib /lib \
-        --symlink /usr/bin /bin \
-        --symlink /usr/bin /sbin \
-        --proc /proc \
-        --dev /dev \
-        --dev-bind-try /dev/hidraw0 /dev/hidraw0 \
-        --dev-bind-try /dev/hidraw1 /dev/hidraw1 \
-        --dev-bind-try /dev/hidraw2 /dev/hidraw2 \
-        --dev-bind-try /dev/hidraw3 /dev/hidraw3 \
-        --dev-bind-try /dev/hidraw4 /dev/hidraw4 \
-        --dev-bind-try /dev/hidraw5 /dev/hidraw5 \
-        --dev-bind-try /dev/hidraw6 /dev/hidraw6 \
-        --dev-bind-try /dev/hidraw7 /dev/hidraw7 \
-        --dev-bind-try /dev/hidraw8 /dev/hidraw8 \
-        --dev-bind-try /dev/hidraw9 /dev/hidraw9 \
-        --dev-bind-try /dev/char /dev/char \
-        --dev-bind-try /dev/usb /dev/usb \
-        --ro-bind-try /sys/bus/usb /sys/bus/usb \
-        --ro-bind-try /sys/class/hidraw /sys/class/hidraw \
-        --ro-bind-try /sys/devices/pci0000:00 /sys/devices/pci0000:00 \
-        --ro-bind /etc/passwd /etc/passwd \
-        --ro-bind /etc/group /etc/group \
-        --ro-bind /etc/hostname /etc/hostname \
-        --ro-bind /etc/hosts /etc/hosts \
-        --ro-bind /etc/localtime /etc/localtime \
-        --ro-bind /etc/nsswitch.conf /etc/nsswitch.conf \
-        --ro-bind-try /etc/resolv.conf /etc/resolv.conf \
-        --ro-bind-try /etc/xdg /etc/xdg \
-        --ro-bind-try /etc/gtk-2.0 /etc/gtk-2.0 \
-        --ro-bind-try /etc/gtk-3.0 /etc/gtk-3.0 \
-        --ro-bind-try /etc/fonts /etc/fonts \
-        --ro-bind-try /etc/mime.types /etc/mime.types \
-        --ro-bind-try /etc/alsa /etc/alsa \
-        --ro-bind-try /etc/pulse /etc/pulse \
-        --ro-bind-try /etc/pipewire /etc/pipewire \
-        --tmpfs /run \
-        --ro-bind /run/user/"$(id -u)"/"$WAYLAND_DISPLAY" /run/user/"$(id -u)"/"$WAYLAND_DISPLAY" \
-        --ro-bind-try /run/user/"$(id -u)"/pipewire-0 /run/user/"$(id -u)"/pipewire-0 \
-        --bind ~/.librewolf ~/.librewolf \
-        --bind-try ~/.cache/librewolf ~/.cache/librewolf \
-        --bind ~/Downloads ~/Downloads \
-        --unsetenv DBUS_SESSION_BUS_ADDRESS \
-        --setenv MOZ_ENABLE_WAYLAND 1 \
-        --unshare-all \
-        --share-net \
-        --hostname hehe \
-        --new-session \
-        --seccomp 10 \
-        10< /usr/local/bin/seccomp_filter.bpf \
-        /usr/lib/librewolf/librewolf)
-
-else
-    /usr/lib/librewolf/librewolf
+if [[ -z "$WAYLAND_DISPLAY" ]]; then
+    /usr/bin/librewolf
+    exit
 fi
+
+(exec bwrap \
+    --ro-bind /usr/bin/librewolf /usr/bin/librewolf \
+    --ro-bind /usr/bin/sh /usr/bin/sh \
+    --ro-bind /usr/share /usr/share/ \
+    --ro-bind /usr/lib /usr/lib \
+    --ro-bind /usr/lib64 /usr/lib64 \
+    --symlink /usr/lib64 /lib64 \
+    --symlink /usr/lib /lib \
+    --symlink /usr/bin /bin \
+    --symlink /usr/bin /sbin \
+    --proc /proc \
+    --dev /dev \
+    --dev-bind-try /dev/hidraw0 /dev/hidraw0 \
+    --dev-bind-try /dev/hidraw1 /dev/hidraw1 \
+    --dev-bind-try /dev/hidraw2 /dev/hidraw2 \
+    --dev-bind-try /dev/hidraw3 /dev/hidraw3 \
+    --dev-bind-try /dev/hidraw4 /dev/hidraw4 \
+    --dev-bind-try /dev/hidraw5 /dev/hidraw5 \
+    --dev-bind-try /dev/hidraw6 /dev/hidraw6 \
+    --dev-bind-try /dev/hidraw7 /dev/hidraw7 \
+    --dev-bind-try /dev/hidraw8 /dev/hidraw8 \
+    --dev-bind-try /dev/hidraw9 /dev/hidraw9 \
+    --dev-bind-try /dev/char /dev/char \
+    --dev-bind-try /dev/usb /dev/usb \
+    --dev-bind-try /dev/dri /dev/dri \
+    --ro-bind-try /sys/bus/usb /sys/bus/usb \
+    --ro-bind-try /sys/class/hidraw /sys/class/hidraw \
+    --ro-bind-try /sys/dev /sys/dev \
+    --ro-bind-try /sys/devices /sys/devices \
+    --ro-bind /etc/passwd /etc/passwd \
+    --ro-bind /etc/group /etc/group \
+    --ro-bind /etc/hostname /etc/hostname \
+    --ro-bind /etc/hosts /etc/hosts \
+    --ro-bind /etc/localtime /etc/localtime \
+    --ro-bind /etc/nsswitch.conf /etc/nsswitch.conf \
+    --ro-bind-try /etc/resolv.conf /etc/resolv.conf \
+    --ro-bind-try /etc/xdg /etc/xdg \
+    --ro-bind-try /etc/gtk-2.0 /etc/gtk-2.0 \
+    --ro-bind-try /etc/gtk-3.0 /etc/gtk-3.0 \
+    --ro-bind-try /etc/fonts /etc/fonts \
+    --ro-bind-try /etc/mime.types /etc/mime.types \
+    --ro-bind-try /etc/alsa /etc/alsa \
+    --ro-bind-try /etc/pulse /etc/pulse \
+    --ro-bind-try /etc/pipewire /etc/pipewire \
+    --tmpfs /run \
+    --tmpfs /tmp \
+    --ro-bind /run/user/"$(id -u)"/"$WAYLAND_DISPLAY" /run/user/"$(id -u)"/"$WAYLAND_DISPLAY" \
+    --ro-bind-try /run/user/"$(id -u)"/pipewire-0 /run/user/"$(id -u)"/pipewire-0 \
+    --ro-bind-try /run/user/"$(id -u)"/pulse /run/user/"$(id -u)"/pulse \
+    --bind-try ~/Downloads ~/Downloads \
+    --bind-try ~/.librewolf ~/.librewolf \
+    --bind-try ~/.cache/librewolf ~/.cache/librewolf \
+    --unsetenv DBUS_SESSION_BUS_ADDRESS \
+    --unshare-all \
+    --share-net \
+    --hostname hehe \
+    --new-session \
+    --seccomp 10 \
+    10< /usr/local/bin/seccomp_default_filter.bpf \
+    /usr/bin/librewolf)

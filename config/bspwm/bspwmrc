@@ -18,5 +18,23 @@ bspc rule -a Screenkey manage=off
 xsetroot -cursor_name left_ptr
 systemctl --user import-environment DISPLAY
 
+# Hotkey daemon
+pgrep --exact sxhkd || sxhkd &> /dev/null &
+
+# Display Power Management Signaling
+xset s 170 170
+xset dpms 180 180 180
+
+# Screen locker
+pgrep --exact xss-lock || xss-lock --transfer-sleep-lock -- i3lock -c 1a1b26 --nofork &>/dev/null &
+
+# Compositor
+pgrep --exact picom || picom &>/dev/null &
+
+# Screenshoter
+pgrep --exact flameshot || flameshot &>/dev/null &
+
+# Bar and widgets
+ln -sf ~/.local/bin/eww-x ~/.local/bin/eww && eww open bar &>/dev/null
 pgrep --full eww_fullscreen_fix.bash || ~/.config/bspwm/eww_fullscreen_fix.bash &> /dev/null &
-pgrep --full autostart.bash || ~/bin/autostart.bash x
+pgrep --full keyboard-layout.bash || ~/.config/bspwm/update_eww_status.bash &> /dev/null &

@@ -7,8 +7,6 @@
 (nmap! :<C-u> :<C-u>zz)
 (nmap! :<Esc> (cmd! :noh) "Turn off highlighting")
 (nmap! :<C-t> (cmd! :tabnew))
-(nmap! :<C-Left> (cmd! :tabprevious))
-(nmap! :<C-Right> (cmd! :tabnext))
 
 (vmap! :y :ygv<esc> "Yank sel text w/out moving cursor back")
 (vmap! :J ":m '>+1<CR>gv=gv" "Move selected Down")
