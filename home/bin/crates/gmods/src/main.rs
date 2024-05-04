@@ -1,4 +1,3 @@
-mod minecraft;
 mod stalker;
 
 use clap::{Parser, Subcommand};
@@ -13,7 +12,6 @@ struct Cli {
 #[derive(Subcommand)]
 enum Commands {
     Stalker,
-    Minecraft,
 }
 
 fn main() {
@@ -21,7 +19,6 @@ fn main() {
 
     match &cli.command {
         Commands::Stalker => stalker::main(),
-        Commands::Minecraft => minecraft::main(),
     }
     .unwrap()
 }

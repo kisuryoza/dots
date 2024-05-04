@@ -2,14 +2,14 @@ use clap::{Parser, Subcommand};
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
-pub struct Cli {
-    pub destination: std::path::PathBuf,
+pub(crate) struct Cli {
+    pub(crate) destination: std::path::PathBuf,
     #[command(subcommand)]
-    pub command: Commands,
+    pub(crate) command: Commands,
 }
 
 #[derive(Subcommand)]
-pub enum Commands {
+pub(crate) enum Commands {
     Start {
         /// Time interval
         #[arg(short, long)]
@@ -25,8 +25,4 @@ pub enum Commands {
     },
     PrintDB,
     ResetDB,
-}
-
-pub fn cli() -> Cli {
-    Cli::parse()
 }

@@ -1,4 +1,4 @@
-use std::{path::PathBuf, process::Command, thread::sleep, time::Duration};
+use std::{path::Path, process::Command, thread::sleep, time::Duration};
 
 use color_eyre::Result;
 use rand::seq::SliceRandom;
@@ -9,7 +9,11 @@ use tracing::{debug, error, info, trace, warn};
 
 use crate::{File, TABLE};
 
-pub fn start(destination: PathBuf, interval: u64, db: redb::Database) -> Result<()> {
+pub(crate) fn start<P>(destination: P, interval: u64, db: redb::Database) -> Result<()>
+where
+    P: AsRef<Path>,
+{
+    let destination = destination.as_ref();
     let read_txn = db.begin_read()?;
     let table = read_txn.open_table(TABLE)?;
 
@@ -26,7 +30,7 @@ pub fn start(destination: PathBuf, interval: u64, db: redb::Database) -> Result<
         let path = destination.join(key);
         let path = path.to_str().unwrap();
 
-        files.push(File::new(path, width, height))
+        files.push(File::new(path, width, height));
     }
 
     // Drop database and free fs
@@ -37,16 +41,16 @@ pub fn start(destination: PathBuf, interval: u64, db: redb::Database) -> Result<
     let mut rng = rand::thread_rng();
     files.shuffle(&mut rng);
 
-    iterate(interval, files)
+    iterate(interval, &files)
 }
 
-fn iterate(interval: u64, files: Vec<File>) -> ! {
+fn iterate(interval: u64, files: &[File]) -> ! {
     let mut iterator = files.iter().cycle();
     loop {
         if let Some(next_file) = iterator.next() {
             let path = next_file.path.as_ref();
             info!("Setting wallpaper: {}", path);
-            set_it(path, &prev_file.path);
+            set_it(path);
 
             let _ = std::fs::remove_file("/tmp/wallpaper");
             let _ = std::os::unix::fs::symlink(path, "/tmp/wallpaper");

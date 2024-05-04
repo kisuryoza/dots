@@ -1,6 +1,8 @@
+#!/usr/bin/env sh
+
 if [ "$1" = "CHILD" ]; then
     shift
-    $0 DAEMON "$@" &
+    "$0" DAEMON "$@" &
     exit 0
 fi
 
@@ -11,7 +13,8 @@ fi
 
 shift
 cd /
-umask 0
 exec 0<&-
 exec 1>&-
 exec 2>&-
+
+"$@"

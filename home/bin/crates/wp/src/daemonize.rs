@@ -1,12 +1,12 @@
 use std::ffi::CString;
 use std::process::exit;
 
-pub enum Fork {
+pub(crate) enum Fork {
     Parent(libc::pid_t),
     Child,
 }
 
-pub fn daemonize() {
+pub(crate) fn daemonize() {
     match fork() {
         Fork::Parent(_child_pid) => exit(0),
         Fork::Child => {

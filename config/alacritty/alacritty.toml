@@ -1,4 +1,4 @@
-import = ["/home/alex/.config/alacritty/catppuccin-mocha.toml"]
+import = ["~/.config/alacritty/catppuccin-mocha.toml"]
 live_config_reload = false
 
 [colors]
@@ -48,6 +48,7 @@ multiplier = 8
 
 [shell]
 program = "/usr/bin/fish"
+args = ["-l"]
 
 [window]
 decorations = "none"

@@ -1,0 +1,40 @@
+[manager]
+sort_by = "natural"
+sort_dir_first = true
+linemode = "size"
+
+[opener]
+edit = [{ run = 'nvim "$@"', desc = "neovim", block = true }]
+open = [{ run = 'handlr open "$@"', desc = "Open" }]
+img_edit = [{ run = 'krita "$@"', orphan = true, desc = "Open in Krita" }]
+reveal = [{ run = 'handlr open "$(dirname "$0")"', desc = "Reveal" }]
+archive = [{ run = 'ark "$1"', desc = "Open with Ark" }]
+
+[open]
+rules = [
+    { mime = "text/*", use = [ "edit", "reveal" ] },
+
+    { mime = "image/*", use = [ "open", "img_edit", "reveal" ] },
+    { mime = "{audio,video}/*", use = [ "open", "reveal" ] },
+
+    { mime = "application/*zip", use = [ "archive", "reveal" ] },
+    { mime = "application/x-{tar,bzip*,7z-compressed,xz,rar}", use = [ "archive", "reveal" ] },
+
+    { name = "*", use = [ "edit", "open", "reveal" ] },
+]
+
+[plugin]
+preloaders = [
+    { name = "*", cond = "!mime", run = "mime", multi = true, prio = "high" },
+]
+previewers = [
+    { name = "*/", run = "folder", sync = true },
+    { name = "*.md", run = "glow" },
+
+    { mime = "text/*", run = "code" },
+    { mime = "application/json", run = "json" },
+
+    { mime = "image/*", run = "image" },
+    # Fallback
+    { name = "*", run = "file" },
+]

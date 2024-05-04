@@ -1,13 +1,6 @@
-use std::{
-    fs,
-    io::{self, Write},
-    path::{Path, PathBuf},
-    process::Command,
-    rc::Rc,
-};
+use std::{fs, path::Path, rc::Rc};
 
 use color_eyre::Result;
-use image::GenericImageView;
 use redb::{Database, ReadableTable};
 
 #[allow(unused_imports)]
@@ -15,13 +8,17 @@ use tracing::{debug, error, info, trace, warn};
 
 use crate::TABLE;
 
-pub fn update_db(destination: PathBuf, soft: bool, db: Database) -> Result<()> {
-    let files = visit_dirs(&destination)?;
+pub(crate) fn update_db<P>(destination: P, soft: bool, db: &Database) -> Result<()>
+where
+    P: AsRef<Path>,
+{
+    let destination = destination.as_ref();
+    let files = visit_dirs(destination)?;
 
-    init_table(&db)?;
+    init_table(db)?;
 
-    let amount_of_new_entries = set_new_entries(&db, &destination, soft, &files)?;
-    let amount_of_obsolete_entries = remove_obsolete_entries(&db, &files)?;
+    let amount_of_new_entries = set_new_entries(db, destination, soft, &files)?;
+    let amount_of_obsolete_entries = remove_obsolete_entries(db, &files)?;
 
     info!("New entries: {}", amount_of_new_entries);
     info!("Obsolete entries: {}", amount_of_obsolete_entries);
@@ -37,8 +34,9 @@ fn init_table(db: &Database) -> Result<()> {
 }
 
 /// INSERT files into DB that exist in Filesystem but not in DB
-fn set_new_entries<T>(db: &Database, destination: &Path, soft: bool, files: &[T]) -> Result<usize>
+fn set_new_entries<P, T>(db: &Database, destination: P, _soft: bool, files: &[T]) -> Result<usize>
 where
+    P: AsRef<Path>,
     T: AsRef<str>,
 {
     let read_txn = db.begin_read()?;
@@ -52,13 +50,14 @@ where
     let write_txn = db.begin_write()?;
     let mut table = write_txn.open_table(TABLE)?;
 
+    let destination = destination.as_ref();
     let amount_of_new_entries = new_files
         .map(|file| -> Result<()> {
             let file = file.as_ref();
             let path = destination.join(file);
-            if !soft {
+            /* if !soft {
                 compress(&path)?;
-            }
+            } */
             let (width, height) = get_dimensions(path);
             table.insert(file, (width, height))?;
             Ok(())
@@ -82,11 +81,11 @@ where
         let (key, _) = entry.unwrap();
         let key = key.value();
 
-        if !files.iter().any(|p| p.as_ref() == key) {
+        if files.iter().any(|p| p.as_ref() == key) {
+            None
+        } else {
             let rc: Rc<str> = Rc::from(key);
             Some(rc)
-        } else {
-            None
         }
     });
 
@@ -115,7 +114,7 @@ fn visit_dirs(path: &Path) -> Result<Vec<Rc<str>>> {
             }
 
             if path.is_dir() {
-                visit(prefix, &path, buffer)?
+                visit(prefix, &path, buffer)?;
             } else if let Some(ext) = path.extension() {
                 if ext != "png" && ext != "jpg" {
                     continue;
@@ -123,7 +122,7 @@ fn visit_dirs(path: &Path) -> Result<Vec<Rc<str>>> {
 
                 let path = path.strip_prefix(prefix)?.to_str().unwrap();
                 let rc: Rc<str> = Rc::from(path);
-                buffer.push(rc)
+                buffer.push(rc);
             };
         }
         Ok(())
@@ -131,7 +130,6 @@ fn visit_dirs(path: &Path) -> Result<Vec<Rc<str>>> {
 
     let mut list = Vec::new();
     visit(path, path, &mut list)?;
-    list.sort();
     Ok(list)
 
     /* fs::read_dir(path)?
@@ -152,17 +150,21 @@ fn is_file_hidden<P>(path: P) -> bool
 where
     P: AsRef<Path>,
 {
-    if let Some(file_name) = path.as_ref().file_name() {
-        if let Some(first_char) = file_name.to_str().unwrap_or_default().as_bytes().first() {
-            if first_char == &b'.' {
-                return true;
-            }
-        }
+    let first_char = path
+        .as_ref()
+        .file_name()
+        .and_then(|x| x.to_str())
+        .and_then(|x| x.as_bytes().first());
+    let Some(first_char) = first_char else {
+        return false;
+    };
+    if first_char == &b'.' {
+        return true;
     }
     false
 }
 
-fn compress<P>(file: P) -> io::Result<()>
+/* fn compress<P>(file: P) -> io::Result<()>
 where
     P: AsRef<Path>,
 {
@@ -187,17 +189,14 @@ where
     }
 
     Ok(())
-}
+} */
 
 fn get_dimensions<P>(file: P) -> (u32, u32)
 where
     P: AsRef<Path>,
 {
-    let (width, height) = if let Ok(img) = image::open(&file) {
-        img.dimensions()
-    } else {
-        (0, 0)
-    };
+    use image::GenericImageView;
+    let (width, height) = image::open(&file).map_or((0, 0), |img| img.dimensions());
     info!(
         "Dimensions of {} - {width} {height}",
         file.as_ref().display()
@@ -306,7 +305,7 @@ mod tests {
     use super::*;
 
     fn generate_arrays() -> (Vec<String>, Vec<String>) {
-        let more: Vec<_> = (0..10_000).map(|n| format!("file_{}", n)).collect();
+        let more: Vec<_> = (0..10_000).map(|n| format!("file_{n}")).collect();
         let less: Vec<_> = more.iter().take(7_000).cloned().collect();
         (more, less)
     }
@@ -320,16 +319,16 @@ mod tests {
         let write_txn = db.begin_write().unwrap();
         {
             let mut table = write_txn.open_table(TABLE).unwrap();
-            files.iter().for_each(|file| {
+            for file in files {
                 table.insert(file.as_ref(), (0, 0)).unwrap();
-            });
+            }
         }
         write_txn.commit().unwrap();
         db
     }
 
-    fn pre_build(for_db: Vec<String>, as_files: Vec<String>) -> (Database, Vec<Rc<str>>) {
-        let db = create_db(&for_db);
+    fn pre_build(for_db: &[String], as_files: Vec<String>) -> (Database, Vec<Rc<str>>) {
+        let db = create_db(for_db);
         let files: Vec<Rc<str>> = as_files.into_iter().map(Rc::from).collect();
         (db, files)
     }
@@ -337,18 +336,18 @@ mod tests {
     #[test]
     fn new_entries() {
         let (more, less) = generate_arrays();
-        let (db, files) = pre_build(less, more);
+        let (db, files) = pre_build(&less, more);
         let amount_of_new_entries = set_new_entries(&db, Path::new(""), true, &files).unwrap();
 
-        assert_eq!(amount_of_new_entries, 3000)
+        assert_eq!(amount_of_new_entries, 3000);
     }
 
     #[test]
     fn obsolete_entries() {
         let (more, less) = generate_arrays();
-        let (db, files) = pre_build(more, less);
+        let (db, files) = pre_build(&more, less);
         let amount_of_obsolete_entries = remove_obsolete_entries(&db, &files).unwrap();
 
-        assert_eq!(amount_of_obsolete_entries, 3000)
+        assert_eq!(amount_of_obsolete_entries, 3000);
     }
 }

@@ -2,24 +2,22 @@
 
 bspc monitor -d 1 2 3 4 5 6 7 8 9
 
-
-bspc config              border_width 1
-bspc config                window_gap 10
-bspc config               split_ratio 0.52
-bspc config        borderless_monocle true
-bspc config           gapless_monocle true
-bspc config     focus_follows_pointer true
-bspc config           pointer_action1 move
-
+bspc config border_width 1
+bspc config window_gap 10
+bspc config split_ratio 0.52
+bspc config borderless_monocle true
+bspc config gapless_monocle true
+bspc config focus_follows_pointer false
+bspc config pointer_action1 move
 
 bspc rule -a steam state=floating desktop=7
 bspc rule -a Screenkey manage=off
 
-xsetroot -cursor_name left_ptr
 systemctl --user import-environment DISPLAY
+~/bin/autostart.bash
 
 # Hotkey daemon
-pgrep --exact sxhkd || sxhkd &> /dev/null &
+pgrep --exact sxhkd || sxhkd &>/dev/null &
 
 # Display Power Management Signaling
 xset s 170 170
@@ -36,5 +34,8 @@ pgrep --exact flameshot || flameshot &>/dev/null &
 
 # Bar and widgets
 ln -sf ~/.local/bin/eww-x ~/.local/bin/eww && eww open bar &>/dev/null
-pgrep --full eww_fullscreen_fix.bash || ~/.config/bspwm/eww_fullscreen_fix.bash &> /dev/null &
-pgrep --full keyboard-layout.bash || ~/.config/bspwm/update_eww_status.bash &> /dev/null &
+pgrep --full eww_fullscreen_fix.bash || ~/.config/bspwm/eww_fullscreen_fix.bash &>/dev/null &
+pgrep --full keyboard-layout.bash || ~/.config/bspwm/update_eww_status.bash &>/dev/null &
+
+# wallpaper
+[[ -f ~/wallpaper.jpg ]] && feh --no-fehbg --bg-fill ~/wallpaper.jpg

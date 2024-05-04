@@ -40,5 +40,5 @@ workspaces() {
 workspaces
 
 bspc subscribe desktop node_transfer | while read -r _; do
-    bspwm_workspaces
+    workspaces
 done
