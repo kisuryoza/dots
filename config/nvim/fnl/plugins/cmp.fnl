@@ -4,6 +4,8 @@
                {:dependencies [:hrsh7th/cmp-nvim-lsp
                                :hrsh7th/cmp-buffer
                                :hrsh7th/cmp-cmdline
+                               :hrsh7th/cmp-nvim-lsp-document-symbol
+                               :hrsh7th/cmp-nvim-lsp-signature-help
                                :FelipeLema/cmp-async-path
                                :L3MON4D3/LuaSnip
                                :saadparwaiz1/cmp_luasnip
@@ -18,7 +20,7 @@
                   :update_events [:TextChanged :TextChangedI]
                   :region_check_events [:CursorMoved :CursorMovedI]
                   :delete_check_events [:TextChanged :TextChangedI]})
-  (map! :i :<C-K> #(luasnip.expand))
+  (map! :i :<C-K> luasnip.expand)
   (map! [:i :s] :<C-L> #(when (luasnip.locally_jumpable 1) (luasnip.jump 1)))
   (map! [:i :s] :<C-J> #(when (luasnip.locally_jumpable -1) (luasnip.jump -1)))
   (map! [:i :s] :<C-E>
@@ -68,13 +70,12 @@
                                             (fallback)))
                                       [:i :s :c])})
   (set t.sources
-       (cmp.config.sources [{:name :nvim_lsp} {:name :luasnip}]
-                           [{:name :async_path}]
-                           [{:name :buffer} {:name :crates}]))
+       (cmp.config.sources [{:name :nvim_lsp} {:name :nvim_lsp_signature_help} {:name :luasnip}]
+                           [{:name :async_path} {:name :buffer}]))
   (set t.window {:completion {:col_offset -3}})
-  (set t.formatting {:format (fn [_entry vim-item]
-                               ; (when (not= vim-item.menu nil)
-                               ;   (set vim-item.menu
+  (set t.formatting {:format (fn [_entry vim-item] 
+                               ; (when (not= vim-item.menu nil) 
+                               ;   (set vim-item.menu 
                                ;        (string.sub vim-item.menu 1 25)))
                                (let [kind vim-item.kind
                                      icon (. kind-icons kind)]
@@ -84,12 +85,11 @@
                                           "  ")))
                                vim-item)
                      :fields [:kind :abbr :menu]})
-  (let [color (vim.api.nvim_get_hl 0 {:name :CmpItemKind})]
-    (vim.api.nvim_set_hl 0 :CmpItemMenu {:fg color.fg}))
   (cmp.setup t)
   (cmp.setup.cmdline "/"
                      {:mapping (cmp.mapping.preset.cmdline)
-                      :sources (cmp.config.sources [{:name :buffer}])})
+                      :sources (cmp.config.sources [{:name :nvim_lsp_document_symbol}
+                                                    {:name :buffer}])})
   (cmp.setup.cmdline ":"
                      {:mapping (cmp.mapping.preset.cmdline)
                       :sources (cmp.config.sources [{:name :async_path}]

@@ -2,15 +2,15 @@
 
 (local M (pack :ThePrimeagen/harpoon
                {:dependencies [:nvim-lua/plenary.nvim]
-                :branch :harpoon2
-                :event :VeryLazy
-                :config #(let [harpoon (require :harpoon)]
-                           (harpoon:setup))}))
+                :branch :harpoon2}))
+                ; :event :VeryLazy}))
 
 (fn M.config []
   (local harpoon (require :harpoon))
+  (local telescope (require :telescope))
+  (telescope.load_extension :harpoon)
   (harpoon:setup)
-  (nmapp! :a #(: (harpoon:list) :append) "Add file to Harpoon")
+  (nmapp! :a #(: (harpoon:list) :add) "Add file to Harpoon")
   (nmapp! :H #(harpoon.ui:toggle_quick_menu (harpoon:list)) "Harpoon open")
   (nmap! :<C-k> #(: (harpoon:list) :prev) "Harpoon prev")
   (nmap! :<C-j> #(: (harpoon:list) :next) "Harpoon next")

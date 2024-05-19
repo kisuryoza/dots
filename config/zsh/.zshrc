@@ -27,7 +27,7 @@ eval "$(dircolors -b)"
 [[ -r ~/.alias ]] && source ~/.alias
 
 ###############################################################################
-bindkey -s '^F' "tmux-sessionizer\n"
+bindkey -s '^F' "yazi\n"
 
 # Vi to zsh
 bindkey -v
@@ -206,43 +206,12 @@ fi
 chpwd () command exa -a --group-directories-first
 
 nvimq() {
-    nvim -q <($(fc -nl -1))
+    nvim -q <(rg --color=never --vimgrep --smart-case "$1")
 }
 
 rustup_doc_force_dark_theme() {
     sd '\("preferred-light-theme"\)\|\|"light"' '("preferred-light-theme")||"ayu"' \
-        ~/.local/share/rustup/toolchains/stable-x86_64-unknown-linux-gnu/share/doc/rust/html/static.files/storage-*.js
-}
-
-transfer() {
-    if [ $# -eq 0 ]; then
-        echo "No arguments specified.\nUsage:\n  transfer <file|directory>\n  ... | transfer <file_name>" >&2
-        return 1
-    fi
-
-    if ! tty -s; then
-        curl --upload-file "-" "https://transfer.sh/$1"
-        return
-    fi
-
-    local file="$1"
-    local file_name=$(basename "$file")
-    if [ ! -e "$file" ]; then
-        echo "$file: No such file or directory" >&2
-        return 1
-    fi
-
-    if [ -d "$file" ]; then
-        local output="/tmp/$file_name.7z"
-        if [ -r "$output" ]; then
-            rm "$output"
-        fi
-        7z a -mx9 "$output" "$file"
-        curl --upload-file "$output" "https://transfer.sh/$file_name.7z"
-        rm "$output"
-    else
-        curl --upload-file "$file" "https://transfer.sh/$file_name"
-    fi
+        "$RUSTUP_HOME"/toolchains/stable-x86_64-unknown-linux-gnu/share/doc/rust/html/static.files/storage-*.js
 }
 
 # if [[ $(id -u) -ne 0 ]]; then
@@ -257,4 +226,5 @@ transfer() {
 
 eval "$(starship init zsh)"
 eval "$(atuin init zsh --disable-up-arrow)"
+eval "$(zoxide init zsh)"
 task

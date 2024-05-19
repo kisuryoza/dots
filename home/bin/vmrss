@@ -12,5 +12,6 @@ while true; do
         process_name=$(awk -F'\0' '{print $1}' /proc/"$pid"/cmdline)
         awk -v var="$pid" -v name="$process_name" '/VmRSS/ {OFS="\t"; print "pid:", var, "|", "name:", name, "|", "VmRSS:", $2, $3, int($2 / 1024), "mB"}' /proc/"$pid"/status
     done
+    echo
     sleep 1
 done

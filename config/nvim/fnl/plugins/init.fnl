@@ -26,12 +26,11 @@
                               :lsp_trouble true
                               :which_key true
                               :fidget true}}})
- (require :plugins.lspconfig)
+ (require :plugins.lsp)
+ (require :plugins.cmp)
  (require :plugins.dap)
  ;; greeter
  (require :plugins.alpha)
- ;; completion engine
- (require :plugins.cmp)
  ;; syntax highlighting
  (require :plugins.treesitter)
  ;; A minimal, stylish and customizable statusline / winbar / bufferline
@@ -66,8 +65,7 @@
                    (set t.actions
                         {:files {:delete_cmd (and (= (vim.fn.executable :trash)
                                                      1)
-                                                  :trash)}})
-                   ; (set t.on_leave #(vim.cmd :DrexDrawerToggle))
+                                                  :trash)}}) ; (set t.on_leave #(vim.cmd :DrexDrawerToggle))
                    (conf.configure t))})
  ;; magit for neovim
  (pack :NeogitOrg/neogit
@@ -113,8 +111,6 @@
        {:dependencies [:nvim-treesitter/nvim-treesitter]
         :cmd :Neogen
         :opts {:snippet_engine :luasnip}})
- ;; calculator
- (pack :Apeiros-46B/qalc.nvim {:cmd [:Qalc :QalcAttach]})
  ;; Practise typing
  (pack :NStefan002/speedtyper.nvim {:cmd :Speedtyper :config true})]
 

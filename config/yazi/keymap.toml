@@ -9,6 +9,7 @@ prepend_keymap = [
     { on = [ "g", "T" ], run = "cd ~/.local/share/Trash",   desc = "trash" },
 
     { on = [ "-" ], run = '''shell 'ln -s "$0" "$0".l' --confirm''', desc = "Symlink the absolute path of files" },
+    { on = [ "_" ], run = '''shell 'ln -sr "$0" "$0".l' --confirm''', desc = "Symlink the relative path of files" },
 
     { on = [ "<C-s>" ], run  = 'shell "$SHELL" --block --confirm', desc = "Open shell here" },
     { on = [ "<C-n>" ], run = '''shell 'dragon-drop -x -T "$0"' --confirm''', desc = "Open drag-n-drop" },

@@ -51,12 +51,12 @@
                       (vim.notify (.. "Binary name: " target-name)
                                   vim.log.levels.INFO)
                       (.. target-dir :/debug/ target-name)))}])
-  (nmapp! :dt #(dap.terminate) :Terminate)
-  (nmapp! :dc #(dap.continue) :Continue)
-  (nmapp! :dso #(dap.step_over) "Step over")
-  (nmapp! :dsi #(dap.step_into) "Step into")
-  (nmapp! :dsO #(dap.step_out) "Step out")
-  (nmapp! :db #(dap.toggle_breakpoint) "Toggle breakpoint")
+  (nmapp! :dt dap.terminate :Terminate)
+  (nmapp! :dc dap.continue :Continue)
+  (nmapp! :dso dap.step_over "Step over")
+  (nmapp! :dsi dap.step_into "Step into")
+  (nmapp! :dsO dap.step_out "Step out")
+  (nmapp! :db dap.toggle_breakpoint "Toggle breakpoint")
   (nmapp! :dBb #(dap.set_breakpoint nil nil (vim.fn.input "Log msg: "))
           "Set breakpoint")
   (nmapp! :dBs
@@ -64,8 +64,8 @@
                                              (vim.fn.input "Breakpoint hit condition: ")
                                              (vim.fn.input "Log msg: ")))
           "Set breakpoint with conditions")
-  (nmapp! :ddr #(dap.repl.open) "Repl open")
-  (nmapp! :ddl #(dap.run_last) "Run last"))
+  (nmapp! :ddr dap.repl.open "Repl open")
+  (nmapp! :ddl dap.run_last "Run last"))
 
 M
 

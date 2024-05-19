@@ -22,7 +22,7 @@
   table)
 
 (fn map! [mode key func desc buffer]
-  (var opts {:silent true})
+  (var opts {}) ;{:silent true})
   (set opts (tset-if-not-nill opts :desc desc))
   (set opts (tset-if-not-nill opts :buffer buffer))
   `(vim.keymap.set ,mode ,key ,func ,opts))

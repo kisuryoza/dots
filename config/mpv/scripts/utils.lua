@@ -24,17 +24,8 @@ function M.format_timestamp(timestamp)
     return string.format("%02d:%02d:%02d", hours, minutes, seconds)
 end
 
----@return string, string, string
-function M.filename_ext()
-    local cwd = mp.get_property_native("working-directory")
-    local filename = mp.get_property("filename")
-    local name = mp.get_property("filename/no-ext")
-    local ext = filename:sub(name:len() + 2)
-    return cwd, name, ext
-end
-
 ---@class Cmd
----@field args string[]
+---@field arguments string[]
 local Cmd = {}
 M.Cmd = Cmd
 
@@ -42,22 +33,22 @@ M.Cmd = Cmd
 ---@return Cmd
 function Cmd:new(prog)
     local init = {}
-    init.args = { prog }
+    init.arguments = { prog }
     self.__index = self
     return setmetatable(init, self)
 end
 
 ---@param ... string
-function Cmd:add_args(...)
+function Cmd:args(...)
     for _, v in ipairs({ ... }) do
-        self.args[#self.args + 1] = v
+        self.arguments[#self.arguments + 1] = v
     end
     return self
 end
 
 ---@return string
 function Cmd:get_args()
-    return table.concat(self.args, " ")
+    return table.concat(self.arguments, " ")
 end
 
 ---@return table?
@@ -69,7 +60,7 @@ function Cmd:run()
     ---@type Res, string
     local res, err = mp.command_native({
         name = "subprocess",
-        args = self.args,
+        args = self.arguments,
         capture_stdout = true,
         capture_stderr = true,
     })

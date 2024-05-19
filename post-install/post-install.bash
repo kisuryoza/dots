@@ -6,6 +6,16 @@ HOME="/home/$USER"
 REPO_NAME=$(echo "$SCRIPT_PATH" | awk -F '/' '{print $4}')
 RESOURCES="$HOME/$REPO_NAME/post-install/deploy-cfg"
 
+declare -a AUR_PKG
+AUR_PKG+=(7-zip-full ueberzugpp)
+AUR_PKG+=(librewolf-bin freetube-bin)
+AUR_PKG+=(xkb-switch catppuccin-gtk-theme-mocha catppuccin-cursors-mocha ttf-comic-neue)
+AUR_PKG+=(downgrade rate-mirrors-bin)
+# AUR_PKG+=(pince-git)
+if pacman -Q wlroots &>/dev/null; then
+    AUR_PKG+=(swww) # Efficient animated wallpaper daemon for wayland, controlled at runtime.
+fi
+
 [[ -z "$DEBUG" ]] && DEBUG=false
 "$DEBUG" && set -Eeuxo pipefail
 
@@ -23,6 +33,7 @@ download_and_check() {
 }
 
 install_themes() {
+    log "Installing themes"
     download_and_check "https://github.com/catppuccin/yazi/raw/main/themes/mocha.toml" "$XDG_CONFIG_HOME/yazi/theme.toml"
     download_and_check "https://github.com/catppuccin/bat/raw/main/themes/Catppuccin%20Mocha.tmTheme" "$XDG_CONFIG_HOME/yazi/Catppuccin-mocha.tmTheme"
     git clone --depth 1 https://github.com/DreamMaoMao/mime.yazi.git ~/.config/yazi/plugins/mime.yazi
@@ -37,17 +48,28 @@ install_themes() {
         kvantummanager --set Catppuccin-Macchiato-Maroon
 }
 
-post_user() {
-    declare -a AUR_PKG
-    AUR_PKG+=(7-zip-full ueberzugpp)
-    AUR_PKG+=(librewolf-bin freetube-bin)
-    AUR_PKG+=(catppuccin-gtk-theme-mocha ttf-comic-neue)
-    AUR_PKG+=(downgrade rate-mirrors-bin)
-    # AUR_PKG+=(pince-git)
-    if pacman -Q wlroots &>/dev/null; then
-        AUR_PKG+=(swww) # Efficient animated wallpaper daemon for wayland, controlled at runtime.
-    fi
+set_xdg_dirs() {
+    log "Setting XDG directories"
+    DIRS=(
+        "$XDG_CONFIG_HOME" "$XDG_CACHE_HOME" "$XDG_DATA_HOME" "$XDG_STATE_HOME"
+        "$XDG_CONFIG_HOME"/android/ "$XDG_CACHE_HOME"/less/ "$XDG_CONFIG_HOME"/npm
+        "$XDG_CONFIG_HOME"/task/ "$HOME"/.local/bin/
+    )
 
+    for dir in "${DIRS[@]}"; do
+        mkdir -p "$dir"
+    done
+
+    echo 'data.location=$XDG_CONFIG_HOME/task/' >"$XDG_CONFIG_HOME"/task/taskrc
+    cat <<'EOF' >"$XDG_CONFIG_HOME"/npm/npmrc
+prefix=${XDG_DATA_HOME}/npm
+cache=${XDG_CACHE_HOME}/npm
+init-module=${XDG_CONFIG_HOME}/npm/config/npm-init.js
+tmp=${XDG_RUNTIME_DIR}/npm
+EOF
+}
+
+post_user() {
     mkdir ~/.ssh
     echo "AddKeysToAgent yes" >~/.ssh/config
 
@@ -57,13 +79,7 @@ post_user() {
 
     localectl set-x11-keymap us,ru pc104 qwerty grp:win_space_toggle,caps:escape
 
-    declare -a DIRS
-    DIRS+=("$XDG_CONFIG_HOME" "$XDG_CACHE_HOME" "$XDG_DATA_HOME" "$XDG_STATE_HOME")
-    DIRS+=("$XDG_CONFIG_HOME/android/" "$XDG_CACHE_HOME/less/" "$HOME/.local/bin/")
-
-    for DIR in "${DIRS[@]}"; do
-        mkdir -p "$DIR"
-    done
+    set_xdg_dirs
     mkdir ~/gitclones
 
     (
@@ -78,14 +94,20 @@ post_user() {
 
     rustup component add rust-analyzer
     mkdir ~/.config/zsh/zfunc
-    rustup completions zsh cargo >~/.config/zsh/zfunc/_cargo
-    rustup completions zsh rustup >~/.config/zsh/zfunc/_rustup
 
     (
         log "Installing paru"
         git clone https://aur.archlinux.org/paru-git.git /tmp/paru &&
             cd /tmp/paru &&
             makepkg -si
+
+        cat <<EOF >"$HOME/.config/paru/paru.conf"
+[options]
+BottomUp
+PgpFetch
+NewsOnUpgrade
+UpgradeMenu
+EOF
     )
 
     log "Installing packages from AUR"
@@ -112,14 +134,23 @@ Exec=alacritty --command=nvim --command=%F
 Type=Application
 EOF
 
+    gio mime inode/directory yazi.desktop
+    gio mime application/x-shellscript nvim.desktop
+    gio mime image/png imv-dir.desktop
+    gio mime image/jpeg imv-dir.desktop
+    gio mime x-scheme-handler/terminal Alacritty.desktop
+    gio mime application/pdf org.pwmt.zathura.desktop
+    gio mime application/x-bittorrent org.qbittorrent.qBittorrent.desktop
     if [[ -n $(command -v handlr) ]]; then
-        handlr set 'inode/directory' thunar.desktop
+        handlr set 'inode/directory' yazi.desktop
         handlr set 'application/x-shellscript' nvim.desktop
         handlr set 'text/*' nvim.desktop
         handlr set 'audio/*' mpv.desktop
         handlr set 'video/*' mpv.desktop
         handlr set 'image/*' imv-dir.desktop
         handlr set 'x-scheme-handler/terminal' Alacritty.desktop
+        handlr set 'application/pdf' org.pwmt.zathura.desktop
+        handlr set 'application/x-bittorrent' org.qbittorrent.qBittorrent.desktop
     fi
 
     log "Setting crontab"
@@ -150,7 +181,6 @@ EOF
     lg3-specific = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset) %C(bold cyan)(committed: %cD)%C(reset) %C(auto)%d%C(reset)%n''          %C(white)%s%C(reset)%n''          %C(dim white)- %an <%ae> %C(reset) %C(dim white)(committer: %cn <%ce>)%C(reset)'
 EOF
 
-    log "Installing themes"
     install_themes
 
     git clone https://github.com/kisuryoza/arch-deploy ~/.local/bin/arch-deploy
@@ -178,10 +208,11 @@ post_root() {
 
     log "Configuring openresolv and dnscrypt-proxy"
     {
-        echo "name_servers=\"127.0.0.1\""
-        echo "name_servers_append=\"::1\""
-        echo "resolv_conf_options=\"edns0\""
+        echo 'name_servers="127.0.0.1"'
+        echo 'name_servers_append="::1"'
+        echo 'resolv_conf_options="edns0"'
     } >>/etc/resolvconf.conf
+    # sed -Ei "s|^#? server_names .*|server_names = ['quad9-dnscrypt-ip4-filter-ecs-pri']|" /etc/dnscrypt-proxy/dnscrypt-proxy.toml
     resolvconf -u
 
     {

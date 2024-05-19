@@ -1,7 +1,6 @@
 (require-macros :macros)
 
 (set! :clipboard :unnamedplus)
-(set! :termguicolors true)
 
 (set! :expandtab true)
 (set! :tabstop 4)
@@ -27,7 +26,7 @@
 (set! :splitright true)
 (set! :mousemodel :extend)
 
-(set! :swapfile false)
+(set! :swapfile true)
 (set! :undofile true)
 (set! :undodir (.. (os.getenv :HOME) :/.cache/nvim/undo//))
 (set! :history 100)
@@ -41,4 +40,13 @@
                            :vertleft "┨"
                            :vertright "┣"
                            :verthoriz "╋"})
+
+(vim.fn.sign_define :DiagnosticSignError
+                    {:text " " :texthl :DiagnosticSignError})
+(vim.fn.sign_define :DiagnosticSignWarn
+                    {:text " " :texthl :DiagnosticSignWarn})
+(vim.fn.sign_define :DiagnosticSignInfo
+                    {:text " " :texthl :DiagnosticSignInfo})
+(vim.fn.sign_define :DiagnosticSignHint
+                    {:text "" :texthl :DiagnosticSignHint})
 

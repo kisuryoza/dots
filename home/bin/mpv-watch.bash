@@ -24,7 +24,7 @@ function find_vid {
         OPTIONS+=(--sub-file="$sub")
     done
 
-    mapfile -t dubs < <(fd -e mp3 -e mka "$pattern")
+    mapfile -t dubs < <(fd -e mp3 -e ogg -e mka "$pattern")
     for dub in "${dubs[@]}"; do
         OPTIONS+=(--audio-file="$dub")
     done

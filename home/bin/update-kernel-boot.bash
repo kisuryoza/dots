@@ -7,7 +7,7 @@ source "$SCRIPT_DIR"/helper-func.sh
 function run_root {
     DRIVE="/dev/nvme0n1"
     ESP="/boot/efi"
-    KERNEL="linux-zen"
+    KERNEL="linux"
     KERNEL_PARAMS=("lsm=landlock,lockdown,yama,integrity,apparmor,bpf")
     ENABLE_FULL_DRIVE_ENCRYPTION=false
 
@@ -42,9 +42,9 @@ function run_root {
         # echo "fallback_options=\"-S autodetect\""
     } >/etc/mkinitcpio.d/linux.preset
 
-    log "Creating linux-zen preset for mkinitcpio"
-    cp -f /etc/mkinitcpio.d/linux.preset /etc/mkinitcpio.d/linux-zen.preset
-    sed -i "s|linux|linux-zen|" /etc/mkinitcpio.d/linux-zen.preset
+    # log "Creating linux-zen preset for mkinitcpio"
+    # cp -f /etc/mkinitcpio.d/linux.preset /etc/mkinitcpio.d/linux-zen.preset
+    # sed -i "s|linux|linux-zen|" /etc/mkinitcpio.d/linux-zen.preset
 
     local uuid root_params
     uuid=$(blkid -s UUID -o value "$DRIVE$P2")

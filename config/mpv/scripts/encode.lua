@@ -1,4 +1,5 @@
 local mp = require("mp")
+local msg = require("mp.msg")
 package.path = mp.command_native({ "expand-path", "~~/" })
     .. "/scripts/?.lua;"
     .. package.path
@@ -10,6 +11,8 @@ local Cmd = utils.Cmd
 ---| '"vp9"'
 ---| '"copy"'
 
+---| '"auto"'
+
 ---@class Options
 ---@field video_codec VideoCodec
 ---@field hardsub boolean
@@ -20,6 +23,44 @@ local default_options = {
     hardsub = false,
     start_pos = nil,
 }
+
+---@class Ffmpeg_filter
+---@field filter string
+local Ffmpeg_filter = {}
+
+---@param filter string
+---@return Ffmpeg_filter
+function Ffmpeg_filter:new(filter)
+    local init = {}
+    init.filter = filter
+    self.__index = self
+    return setmetatable(init, self)
+end
+
+---@param filter string
+function Ffmpeg_filter:add_ffmpeg_filter(filter)
+    if self.filter:len() == 0 then
+        self.filter = filter
+    else
+        self.filter = self.filter .. "," .. filter
+    end
+end
+
+--[[ ---@return VideoCodec
+local function choose_codec()
+    local track = mp.get_property_native("current-tracks/video")
+    if not track then
+        return "av1"
+    end
+    local codec = track["codec-desc"]
+    if codec == "H.265 / HEVC (High Efficiency Video Coding)" then
+        return "av1"
+    elseif codec == "Alliance for Open Media AV1" or codec == "Google VP9" then
+        return "copy"
+    else
+        return "av1"
+    end
+end ]]
 
 ---@param opts Options
 local function encode(opts)
@@ -36,97 +77,86 @@ local function encode(opts)
         return
     end
 
+    -- Entered this func 2nd time
+    mp.remove_key_binding("remove-encode-timestamp")
     local end_pos = time_pos
-
-    local path = mp.get_property("path")
-    local cwd, filename, ext = utils.filename_ext()
-    local tmp = "/tmp/" .. "encoding_artifact." .. ext
-    local input = path
-    local output = cwd
-        .. "/"
-        .. filename
-        .. "."
+    local input = mp.get_property("path")
+    local path_noext = input:match("(.+)%..*$")
+    local output = path_noext
+        .. " ["
         .. utils.format_timestamp(start_pos)
         .. "-"
         .. utils.format_timestamp(end_pos)
-        .. ".webm"
+        .. "].webm"
 
-    --[[ local track = mp.get_property_native("current-tracks/video")
-    if track and track["codec-desc"] == "H.265 / HEVC (High Efficiency Video Coding)" then
-        opts.video_codec = "av1"
+    --[[ if opts.video_codec == "auto" then
+        opts.video_codec = choose_codec()
     end ]]
-
     utils.info("Encoding the slice using '" .. opts.video_codec .. "' codec.")
 
-    local cmd = Cmd:new("ffmpeg")
-    cmd:add_args("-v", "warning")
-    cmd:add_args("-y")
-    cmd:add_args("-ss", tostring(start_pos))
-    cmd:add_args("-accurate_seek")
-    cmd:add_args("-i", input)
-    cmd:add_args("-t", tostring(end_pos - start_pos))
-    cmd:add_args("-c:v", "copy")
-    cmd:add_args("-c:a", "copy")
-    cmd:add_args("-c:s", "copy")
-    cmd:add_args(
-        "-map",
-        string.format(
-            "v:%s?",
-            mp.get_property_number("current-tracks/video/id", 0) - 1
-        )
-    )
-    cmd:add_args(
-        "-map",
-        string.format(
-            "a:%s?",
-            mp.get_property_number("current-tracks/audio/id", 0) - 1
-        )
-    )
-    cmd:add_args(
-        "-map",
-        string.format(
-            "s:%s?",
-            mp.get_property_number("current-tracks/sub/id", 0) - 1
-        )
-    )
-    cmd:add_args("-avoid_negative_ts", "make_zero")
-    cmd:add_args(tmp)
-    local res = cmd:run()
-    if not (res and res.status == 0) then
-        utils.error("Failed to encode")
-        os.remove(tmp)
-        return
-    end
+    local v = mp.get_property_number("current-tracks/video/id", 0) - 1
+    local v_stream = string.format("0:v:%s", v)
+    local a = mp.get_property_number("current-tracks/audio/id", 0) - 1
+    local a_stream = string.format("0:a:%s", a)
+    local s = mp.get_property_number("current-tracks/sub/id", 0) - 1
+    local s_stream = string.format("0:s:%s", s)
 
-    input = tmp
-    cmd = Cmd:new("ffmpeg")
-    cmd:add_args("-v", "warning")
-    cmd:add_args("-y")
-    cmd:add_args("-i", input)
+    local f = Ffmpeg_filter:new("scale=-2:'min(720,ih)'")
     if opts.hardsub then
-        cmd:add_args("-vf", "subtitles=" .. input)
+        local subs = "/tmp/_subtitles.ass"
+        local cmd = Cmd:new("ffmpeg")
+        cmd:args("-v", "warning", "-y", "-i", input)
+        cmd:args("-map", s_stream)
+        cmd:args(subs):run()
+        f:add_ffmpeg_filter("subtitles=" .. subs)
     end
+
+    local cmd = Cmd:new("ffmpeg")
+    cmd:args("-v", "warning")
+    cmd:args("-y")
+    cmd:args("-ss", tostring(start_pos))
+    cmd:args("-accurate_seek")
+    cmd:args("-i", input)
+    cmd:args("-t", tostring(end_pos - start_pos))
+
+    ---
+    -- Lazy solution to choosing between vobsub and ass hardsubbing
+    --[[ cmd:args(
+        "-filter_complex",
+        "[" .. v_stream .. "][" .. s_stream .. "]overlay[v]"
+    )
+    v_stream = "[v]" ]]
+    -- or
+    cmd:args("-vf", f.filter)
+    ---
+
+    cmd:args("-map", v_stream)
+    cmd:args("-map", a_stream .. "?")
+    cmd:args("-c", "copy")
+    cmd:args("-avoid_negative_ts", "make_zero")
     if opts.video_codec == "av1" then
-        -- cmd:add_args("-c:v", "libsvtav1")
-        -- cmd:add_args("-preset", "8")
-        -- cmd:add_args("-crf", "40")
-        cmd:add_args("-c:v", "librav1e")
-        cmd:add_args("-tile-columns", "2", "-tile-rows", "2")
-        cmd:add_args("-rav1e-params", "quantizer=120:speed=10:low_latency=true")
+        cmd:args("-c:v", "libsvtav1")
+        cmd:args("-preset", "5")
+        cmd:args("-crf", "40")
+        cmd:args("-pix_fmt", "yuv420p10le")
+        cmd:args(
+            "-svtav1-params",
+            "enable-qm=1:qm-min=0:qm-max=15:keyint=240:tune=2:film-grain=4:film-grain-denoise=1"
+        )
     elseif opts.video_codec == "vp9" then
-        cmd:add_args("-c:v", "libvpx-vp9")
-        cmd:add_args("-crf", "40")
-        cmd:add_args("-b:v", "0")
-        cmd:add_args("-cpu-used", "8")
-        cmd:add_args("-tile-columns", "2", "-tile-rows", "2")
+        cmd:args("-c:v", "libvpx-vp9")
+        cmd:args("-crf", "40")
+        cmd:args("-b:v", "0")
+        cmd:args("-cpu-used", "8")
+        cmd:args("-tile-columns", "2", "-tile-rows", "2")
     elseif opts.video_codec == "copy" then
-        cmd:add_args("-c:v", "copy")
+        cmd:args("-c:v", "copy")
     end
-    cmd:add_args(output)
-    res = cmd:run()
+    cmd:args("-c:a", "libopus", "-b:a", "32k")
+    cmd:args(output)
+    msg.info(cmd:get_args())
 
-    os.remove(tmp)
-
+    local res = cmd:run()
     if res and res.status == 0 then
         utils.info("Finished encoding the slice")
     else
@@ -135,11 +165,21 @@ local function encode(opts)
 end
 
 mp.add_key_binding(nil, "slice-encode", function()
+    mp.add_key_binding("ESC", "remove-encode-timestamp", function()
+        default_options.start_pos = nil
+        utils.info("Timestamp reseted")
+        mp.remove_key_binding("remove-encode-timestamp")
+    end)
     local opts = default_options
     encode(opts)
 end)
 
 mp.add_key_binding(nil, "slice-encode-hardsub", function()
+    mp.add_key_binding("ESC", "remove-encode-timestamp", function()
+        default_options.start_pos = nil
+        utils.info("Timestamp reseted")
+        mp.remove_key_binding("remove-encode-timestamp")
+    end)
     local opts = default_options
     opts.hardsub = true
     encode(opts)

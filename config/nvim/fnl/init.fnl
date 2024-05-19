@@ -40,19 +40,15 @@
                               :callback #(when (not vim.o.binary)
                                            (let [winview vim.fn.winsaveview]
                                              (vim.cmd "keeppatterns %s/\\s\\+$//e")
-                                             (if (not= (vim.fn.tolower (vim.fn.expand "%:t")) "makefile")
-                                               (vim.cmd :retab))
+                                             (if (not= (vim.fn.tolower (vim.fn.expand "%:t"))
+                                                       :makefile)
+                                                 (vim.cmd :retab))
                                              (vim.fn.winrestview (winview))))})
 
 (vim.api.nvim_create_autocmd [:FocusGained :BufEnter]
                              {:pattern ["*"]
                               :desc "Reload file for changes"
                               :command :checktime})
-
-(vim.api.nvim_create_autocmd :BufWritePre
-                             {:pattern :*.rs
-                              :desc "Formats rust files before save"
-                              :callback #(vim.lsp.buf.format {:timeout_ms 200})})
 
 (vim.api.nvim_create_autocmd :BufReadPost
                              {:pattern "*"

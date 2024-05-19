@@ -3,8 +3,6 @@
 (defvar is_muted false)
 (defvar volume 100)
 (defvar music_progress 0)
-(defvar is_music_player_hovered false)
-(defvar is_volume_hovered false)
 
 (defvar is_net_hovered false)
 (defvar is_power_hovered false)
@@ -20,6 +18,10 @@
   "~/.config/eww/scripts/brightness.bash get")
 
 (defvar wm-tags "")
+
+(defpoll cpu-temperature
+  :interval "30s"
+  'sensors -j coretemp-isa-0000 | jq \'."coretemp-isa-0000"."Package id 0".temp1_input\'')
 
 (deflisten eth-speed
   :initial "[0, 0]"
@@ -46,8 +48,7 @@
   :interval "1s"
   "date +%a")
 
-(defvar is_storage_hovered false)
 (defpoll storage-usage
-  :interval "1h"
+  :interval "10m"
   :initial 0
-  "df --output=pcent /dev/nvme0n1p2 | awk 'FNR == 2 {print substr($1, 1, length($1)-1)}'")
+  "df -h --output=avail /dev/nvme0n1p2 | awk 'FNR == 2 {print $1}'")
