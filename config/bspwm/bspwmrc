@@ -18,4 +18,10 @@ bspc rule -a steam state=floating desktop=7
 bspc rule -a Screenkey manage=off
 
 systemctl --user import-environment DISPLAY
-pgrep --full autostart.bash || ~/bin/autostart.bash x
+
+# Hotkey daemon
+pgrep --exact sxhkd || sxhkd &>/dev/null &
+
+pgrep --full autostart.bash || ~/bin/autostart.bash x &>/dev/null &
+pgrep --full eww_fullscreen_fix.bash || ~/.config/bspwm/eww_fullscreen_fix.bash &>/dev/null &
+pgrep --full update_eww_status.bash || ~/.config/bspwm/update_eww_status.bash &>/dev/null &

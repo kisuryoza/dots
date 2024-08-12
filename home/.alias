@@ -14,7 +14,7 @@ alias ua-update-all='export TMPFILE="$(mktemp)"; \
 
 alias ip='ip -color=always'
 alias yt-dlp-audio='yt-dlp -x --embed-metadata --parse-metadata ":(?P<meta_synopsis>)" --convert-thumbnails=jpg --embed-thumbnail'
-alias fcd='z "$(fd -td -L --max-depth=5 | fzy --lines=20)"'
+alias fcd='cd "$(fd -td -L --max-depth=5 | fzy --lines=20)"'
 alias eza='eza --all --long --group-directories-first --color=always'
 alias gitc='git clone --depth 1'
 alias tsc='tsc -t esnext'

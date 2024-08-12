@@ -1,11 +1,11 @@
 local M = {
     "nvim-treesitter/nvim-treesitter",
-    build = ":TSUpdate",
     dependencies = {
-        "nvim-treesitter/nvim-treesitter-textobjects",
-        "nvim-treesitter/nvim-treesitter-refactor",
-        "nvim-treesitter/nvim-treesitter-context",
+        { "nvim-treesitter/nvim-treesitter-textobjects", lazy = true },
+        { "nvim-treesitter/nvim-treesitter-refactor", lazy = true },
+        { "nvim-treesitter/nvim-treesitter-context", lazy = true },
     },
+    build = ":TSUpdate",
     event = "VeryLazy",
 }
 

@@ -1,24 +1,31 @@
 local vk = vim.keymap
-local vl = vim.lsp
 
-local function on_attach(ev)
-    local buf = vl.buf
-    vk.set("n", "<leader>lD", buf.declaration, { buffer = ev.buf, desc = "Declaration" })
-    vk.set("n", "<leader>ld", "<cmd>Telescope lsp_definitions<CR>", { buffer = ev.buf, desc = "Definition" })
-    vk.set("n", "<leader>li", buf.implementation, { buffer = ev.buf, desc = "Implementation" })
-    vk.set("n", "<leader>lt", buf.type_definition, { buffer = ev.buf, desc = "Type definition" })
-    vk.set("n", "<leader>lr", buf.rename, { buffer = ev.buf, desc = "Rename" })
-    vk.set("n", "<leader>lR", "<cmd>Telescope lsp_references<CR>", { buffer = ev.buf, desc = "References" })
+local function on_attach(args)
+    local bufnr = args.buf
+    local buf = vim.lsp.buf
+    vk.set("n", "<leader>lD", buf.declaration, { buffer = bufnr, desc = "Declaration" })
+    vk.set("n", "<leader>ld", "<cmd>Telescope lsp_definitions<CR>", { buffer = bufnr, desc = "Definition" })
+    vk.set("n", "<leader>li", buf.implementation, { buffer = bufnr, desc = "Implementation" })
+    vk.set("n", "<leader>lt", buf.type_definition, { buffer = bufnr, desc = "Type definition" })
+    vk.set("n", "<leader>lr", buf.rename, { buffer = bufnr, desc = "Rename" })
+    vk.set("n", "<leader>lR", "<cmd>Telescope lsp_references<CR>", { buffer = bufnr, desc = "References" })
     vk.set("n", "<leader>lh", function()
-        vl.inlay_hint.enable(not vl.inlay_hint.is_enabled({ bufnr = nil }))
-    end, { buffer = ev.buf, desc = "Toggle inlay hints" })
-    vk.set("n", "<leader>lwa", buf.add_workspace_folder, { buffer = ev.buf, desc = "Workspace Add Folder" })
-    vk.set("n", "<leader>lwr", buf.remove_workspace_folder, { buffer = ev.buf, desc = "Workspace Remove Folder" })
+        vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled({ bufnr = nil }))
+    end, { buffer = bufnr, desc = "Toggle inlay hints" })
+    vk.set("n", "<leader>lwa", buf.add_workspace_folder, { buffer = bufnr, desc = "Workspace Add Folder" })
+    vk.set("n", "<leader>lwr", buf.remove_workspace_folder, { buffer = bufnr, desc = "Workspace Remove Folder" })
 
     vk.set("n", "<leader>lwl", function()
         print(vim.inspect(buf.list_workspace_folders()))
-    end, { buffer = ev.buf, desc = "Workspace List Folders" })
-    vk.set("i", "<C-s>", buf.signature_help, { buffer = ev.buf, desc = "Signature documentation" })
+    end, { buffer = bufnr, desc = "Workspace List Folders" })
+
+    local client = vim.lsp.get_client_by_id(args.data.client_id)
+    local methods = vim.lsp.protocol.Methods
+    if not client.supports_method(methods.textDocument_completion) then
+        return
+    end
+
+    vim.lsp.completion.enable(true, client.id, bufnr, { autotrigger = false })
 end
 
 local lsp = {
@@ -35,15 +42,9 @@ local lsp = {
 lsp.config = function()
     local lspconfig = require("lspconfig")
 
-    vl.handlers["textDocument/signatureHelp"] = vl.with(vl.handlers["signature_help"], {
+    vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers["signature_help"], {
         border = "single",
     })
-
-    local capabilities = vim.tbl_deep_extend(
-        "force",
-        vl.protocol.make_client_capabilities(),
-        require("cmp_nvim_lsp").default_capabilities()
-    )
 
     vim.api.nvim_create_autocmd("LspAttach", {
         group = vim.api.nvim_create_augroup("UserLspConfig", { clear = true }),
@@ -52,15 +53,13 @@ lsp.config = function()
         end,
     })
 
-    lspconfig.clangd.setup({ capabilities = capabilities })
+    lspconfig.clangd.setup({})
     lspconfig.rust_analyzer.setup({
-        capabilities = capabilities,
         settings = { ["rust-analyzer"] = { check = { command = "clippy" } } },
         cmd = { "rustup", "run", "stable", "rust-analyzer" },
     })
-    lspconfig.bashls.setup({ capabilities = capabilities })
+    lspconfig.bashls.setup({})
     lspconfig.lua_ls.setup({
-        capabilities = capabilities,
         settings = {
             Lua = {
                 hint = {
@@ -79,7 +78,8 @@ lsp.config = function()
             },
         },
     })
-    lspconfig.nil_ls.setup({ capabilities = capabilities })
+    -- lspconfig.nil_ls.setup({})
+    lspconfig.arduino_language_server.setup({})
 end
 
 return {
@@ -92,7 +92,7 @@ return {
             lint.linters_by_ft = {
                 lua = { "selene" },
                 sh = { "shellcheck" },
-                nix = { "statix" },
+                -- nix = { "statix" },
             }
             vim.api.nvim_create_autocmd({ "BufWritePost", "BufEnter" }, {
                 group = vim.api.nvim_create_augroup("Linting", { clear = true }),
@@ -112,14 +112,14 @@ return {
                     lua = { "stylua" },
                     rust = { "rustfmt" },
                     sh = { "shfmt", "shellharden" },
-                    nix = { "alejandra" },
+                    -- nix = { "alejandra" },
                     markdown = { "prettier" },
                     yaml = { "prettier" },
                     json = { "jq" },
                 },
             })
             conform.formatters.shfmt = { prepend_args = { "-i", "4" } }
-            vk.set("n", "<leader>cf", function()
+            vk.set("n", "<leader>bf", function()
                 conform.format({ async = true, lsp_fallback = true })
             end, { remap = true, desc = "Format buffer" })
         end,

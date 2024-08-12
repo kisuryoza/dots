@@ -18,14 +18,14 @@ vk.set("n", "<leader>z", "<cmd>ZenMode<CR>", { desc = "ZenMode" })
 ---@param on any
 ---@param off any
 local function toggle_opt(option, on, off)
-    local curr_value = (vim.opt[option]):get()
+    local curr_value = (vim.o[option]):get()
     if type(curr_value) == "table" then
         curr_value = curr_value[next(curr_value)]
     end
     if curr_value == on then
-        vim.opt[option] = off
+        vim.o[option] = off
     else
-        vim.opt[option] = on
+        vim.o[option] = on
     end
 end
 
@@ -40,7 +40,6 @@ vk.set("n", "<leader>oc", function() toggle_opt("colorcolumn", "80", "0") end, {
 vk.set("n", "<leader>ol", function() toggle_opt("cursorline", true, false) end, { desc = "Cursor line" })
 -- stylua: ignore end
 
-vk.set("n", "<leader>e", vim.diagnostic.open_float, { desc = "Diagnostic menu" })
 vk.set("n", "<leader>bq", vim.diagnostic.setqflist, { desc = "Add all diags to qflist" })
 vk.set("n", "[q", "<cmd>cprev<CR>zz", { desc = "qflist prev" })
 vk.set("n", "]q", "<cmd>cnext<CR>zz", { desc = "qflist next" })
@@ -50,11 +49,9 @@ vk.set("n", "]l", "<cmd>lnext<CR>zz", { desc = "loclist next" })
 
 vk.set("n", "<leader>bd", "<cmd>lcd %:p:h<CR>", { desc = "Set local working dir" })
 vk.set("n", "<leader>bD", "<cmd>cd %:p:h<CR>", { desc = "Set global working dir" })
+vk.set("n", "<leader>bf", function()
+    vim.lsp.buf.format({ async = true })
+end, { desc = "Format buffer" })
 
 vk.set("n", "<leader>fc", "<cmd>e $MYVIMRC | :cd %:p:h<CR>", { desc = "Edit neovm config" })
 vk.set("n", "<leader>fx", "<cmd>!chmod +x %<CR>", { desc = "Make curr file executable" })
-
-vk.set("n", "<leader>ca", vim.lsp.buf.code_action, { desc = "Code actions" })
-vk.set("n", "<leader>cf", function()
-    vim.lsp.buf.format({ async = true })
-end, { desc = "Format buffer" })

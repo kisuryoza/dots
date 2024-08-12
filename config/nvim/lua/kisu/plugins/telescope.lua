@@ -3,10 +3,9 @@ local vk = vim.keymap
 local M = {
     "nvim-telescope/telescope.nvim",
     dependencies = {
-        "nvim-lua/plenary.nvim",
-        "nvim-tree/nvim-web-devicons",
-        "nvim-telescope/telescope-fzy-native.nvim",
-        "nvim-telescope/telescope-ui-select.nvim",
+        { "nvim-lua/plenary.nvim", lazy = true },
+        { "nvim-tree/nvim-web-devicons", lazy = true },
+        { "nvim-telescope/telescope-ui-select.nvim", lazy = true },
     },
     event = "VeryLazy",
 }
@@ -21,8 +20,6 @@ M.config = function()
             },
         },
     })
-    telescope.load_extension("fzy_native")
-    telescope.load_extension("harpoon")
     telescope.load_extension("ui-select")
     --[[ local trouble = require("trouble.providers.telescope")
     telescope.setup({
@@ -47,7 +44,7 @@ M.config = function()
         local word = vim.fn.expand("<cword>")
         builtin.grep_string({ search = word })
     end, { desc = "Grep curr word" })
-    return vk.set("n", "<leader>fW", function()
+    vk.set("n", "<leader>fW", function()
         local word = vim.fn.expand("<cWORD>")
         builtin.grep_string({ search = word })
     end, { desc = "Grep curr WORD" })

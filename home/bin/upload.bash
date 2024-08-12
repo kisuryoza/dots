@@ -3,7 +3,7 @@
 if [ "$1" = "" ]; then
     printf "No arguments specified."
     printf "Usage:"
-    printf "transfer <file|directory>"
+    printf "upload.bash <file|directory>"
     printf "... | transfer <file_name>"
     return 1
 fi

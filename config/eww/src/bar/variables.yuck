@@ -18,10 +18,20 @@
   "~/.config/eww/scripts/brightness.bash get")
 
 (defvar wm-tags "")
+;; (defpoll wm-tags
+;;   :interval "1s"
+;;   :initial ""
+;;   "leftwm-state -w 0 -t ~/.config/leftwm/themes/current/template-eww.liquid")
 
 (defpoll cpu-temperature
   :interval "30s"
+  :initial 0
   'sensors -j coretemp-isa-0000 | jq \'."coretemp-isa-0000"."Package id 0".temp1_input\'')
+
+(defpoll gpu-temperature
+  :interval "30s"
+  :initial 0
+  'nvidia-settings -q gpucoretemp -t')
 
 (deflisten eth-speed
   :initial "[0, 0]"

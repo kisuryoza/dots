@@ -1,9 +1,7 @@
 [manager]
 prepend_keymap = [
-    { on = [ "g", "h" ], run = "cd ~",                      desc = "home" },
     { on = [ "g", "c" ], run = "cd ~/.config",              desc = ".config" },
     { on = [ "g", "l" ], run = "cd ~/.local",               desc = ".local" },
-    { on = [ "g", "d" ], run = "cd ~/Downloads",            desc = "Downloads" },
     { on = [ "g", "t" ], run = "cd /tmp",                   desc = "tmp" },
     { on = [ "g", "e" ], run = "cd /run/media/$USER",       desc = "external devices" },
     { on = [ "g", "T" ], run = "cd ~/.local/share/Trash",   desc = "trash" },

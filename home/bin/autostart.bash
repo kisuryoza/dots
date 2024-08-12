@@ -16,9 +16,6 @@ chmod 600 "$DBUS_ADDRESS_FILE"
 echo "export DBUS_SESSION_BUS_ADDRESS=$DBUS_SESSION_BUS_ADDRESS" >>"$DBUS_ADDRESS_FILE"
 
 start_x() {
-    # Hotkey daemon
-    pgrep --exact sxhkd || sxhkd &>/dev/null &
-
     # Display Power Management Signaling
     xset s 170 170
     xset dpms 180 180 180
@@ -34,8 +31,6 @@ start_x() {
 
     # Bar and widgets
     ln -sf ~/.local/bin/eww-x ~/.local/bin/eww && eww open bar &>/dev/null
-    pgrep --full eww_fullscreen_fix.bash || ~/.config/bspwm/eww_fullscreen_fix.bash &>/dev/null &
-    pgrep --full keyboard-layout.bash || ~/.config/bspwm/update_eww_status.bash &>/dev/null &
 
     # wallpaper
     [[ -f ~/wallpaper.jpg ]] && feh --no-fehbg --bg-fill ~/wallpaper.jpg

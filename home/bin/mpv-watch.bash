@@ -1,8 +1,64 @@
 #!/usr/bin/env bash
+set -euo pipefail
 
-function find_vid {
-    declare -a subs
-    local counting pattern
+declare -a OPTIONS
+VID=""
+ARCHIVE="subs.7z"
+dir_name=$(realpath "$PWD")
+dir_name="${dir_name#"$HOME/"}"
+dir_name="${dir_name#"/run/media/$USER/"}"
+FONTS_DIR="/tmp/fonts/"
+EXT_DIR="/tmp/$dir_name"
+
+crc32-verify() {
+    local file checksum calculated
+    file=$(basename "$1")
+
+    checksum=$(echo "$file" | sd '.+\[(.+)\](\..+)$' '$1')
+    calculated="$(7z h "$file" | tail -n3 | head -n1 | sd '.*\s([\d\w]+)$' '$1')"
+    if [[ "$checksum" == "$calculated" ]]; then
+        echo "OK - $file"
+    else
+        echo "ERR - $file"
+    fi
+}
+
+find_subs() {
+    declare -a dirs subs
+    local where sub
+    where="$1"
+    mapfile -t dirs < <(fd -td . "$where")
+    for dir in "${dirs[@]}"; do
+        if [[ $(fd -1 -d 1 -e ass -e mks -e srt . "$dir") == "" ]]; then
+            continue
+        fi
+        mapfile -t subs < <(fd -e ass -e mks -e srt . "$dir")
+        sub=${subs[$counting - 1]}
+        if [[ -f "$sub" ]]; then
+            echo "Found sub: $sub"
+            OPTIONS+=(--sub-file="$sub")
+        fi
+    done
+}
+
+fonts() {
+    local where sub
+    where="$1"
+    if [[ $(fd -1 -e ttf -e otf . "$where") != "" ]]; then
+        mkdir -p "$FONTS_DIR"
+        (
+            cd "$FONTS_DIR" || exit 1
+            mapfile -t fonts < <(fd -e ttf -e otf . "$where")
+            for font in "${fonts[@]}"; do
+                ln -sf "$font" .
+            done
+        )
+    fi
+}
+
+find_vid() {
+    declare -a vids dubs
+    local counting
     counting="$1"
 
     mapfile -t vids < <(fd --max-depth=1 -e mkv -e mp4)
@@ -11,50 +67,43 @@ function find_vid {
         echo "Couldn't find any video"
         exit 1
     fi
+    echo "Found video: $VID"
 
-    if [[ -n "$counting" ]]; then
-        if [[ ${#counting} -eq 1 ]]; then
-            counting="0$1"
+    if [[ -f "$ARCHIVE" ]]; then
+        if [[ ! -d "$EXT_DIR" ]]; then
+            7z x -o"$EXT_DIR" "$ARCHIVE"
+            echo "Extracting done"
         fi
-        pattern="(S..E$counting)|( $counting )|((_)$counting(_))|([Ee]p?\.?$counting )|(\[$counting\])|($counting\.)"
+        find_subs "$EXT_DIR"
+        fonts "$EXT_DIR"
+    else
+        find_subs "$PWD"
+        fonts "$PWD"
     fi
 
-    mapfile -t subs < <(fd -e ass -e srt "$pattern")
-    for sub in "${subs[@]}"; do
-        OPTIONS+=(--sub-file="$sub")
-    done
-
-    mapfile -t dubs < <(fd -e mp3 -e ogg -e mka "$pattern")
-    for dub in "${dubs[@]}"; do
+    mapfile -t dubs < <(fd -e mp3 -e ogg -e mka)
+    if [[ ! "${#dubs[@]}" -eq 0 ]]; then
+        dub="${dubs[$counting - 1]}"
+        echo "Found dub: $dub"
         OPTIONS+=(--audio-file="$dub")
-    done
-
-    if [[ ! -d "fonts" && $(fd -1 -e ttf -e otf) != "" ]]; then
-        mkdir "fonts" && cd "fonts" || exit 1
-        mapfile -t fonts < <(fd -e ttf -e otf . ..)
-        for font in "${fonts[@]}"; do
-            ln -sf "$font" .
-        done
-        cd ..
     fi
 }
 
-function launch {
-    echo "$VID"
-    mpv "${OPTIONS[@]}" "$@" "$VID"
+launch() {
+    mpv --sub-fonts-dir="$FONTS_DIR" "${OPTIONS[@]}" "$@" "$VID"
 }
 
-function history {
+history() {
     local cache dir hist_path
     cache="$HOME/.cache/mpv-history"
-    [ ! -d "$cache" ] && mkdir "$cache"
+    mkdir -p "$cache"
 
     dir="$(realpath "$PWD")"
     hist_path="${dir//\//__}"
     HIST_FILE="$cache/$hist_path"
 }
 
-function play {
+play() {
     local counting
     history
     if [[ -r "$HIST_FILE" ]]; then
@@ -120,6 +169,12 @@ case "$1" in
     if [[ -d "fonts" ]]; then
         rm "fonts"
     fi
+    ;;
+"verify")
+    mapfile -t files < <(fd -e mkv -e mp4)
+    for file in "${files[@]}"; do
+        crc32-verify "$file"
+    done
     ;;
 *)
     history

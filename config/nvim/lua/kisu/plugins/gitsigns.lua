@@ -1,7 +1,5 @@
 local vk = vim.keymap
 
-local M = { "lewis6991/gitsigns.nvim", event = "VeryLazy" }
-
 local function on_attach(bufnr)
     local gitsigns = require("gitsigns")
     vk.set("n", "<leader>gl", gitsigns.toggle_linehl, { buffer = bufnr, desc = "Highlight lines" })
@@ -13,9 +11,6 @@ local function on_attach(bufnr)
     vk.set("n", "<leader>ghs", gitsigns.select_hunk, { buffer = bufnr, desc = "Select hunk" })
 end
 
-M.config = function()
-    local gitsigns = require("gitsigns")
-    gitsigns.setup({ numhl = true, on_attach = on_attach })
-end
+local M = { "lewis6991/gitsigns.nvim", opts = { numhl = true, on_attach = on_attach }, event = "VeryLazy" }
 
 return M

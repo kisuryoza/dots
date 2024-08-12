@@ -9,7 +9,7 @@ RESOURCES="$HOME/$REPO_NAME/post-install/deploy-cfg"
 declare -a AUR_PKG
 AUR_PKG+=(7-zip-full ueberzugpp)
 AUR_PKG+=(librewolf-bin freetube-bin)
-AUR_PKG+=(xkb-switch catppuccin-gtk-theme-mocha catppuccin-cursors-mocha ttf-comic-neue)
+AUR_PKG+=(xkb-switch catppuccin-cursors-mocha ttf-comic-neue)
 AUR_PKG+=(downgrade rate-mirrors-bin)
 # AUR_PKG+=(pince-git)
 if pacman -Q wlroots &>/dev/null; then
@@ -36,7 +36,6 @@ install_themes() {
     log "Installing themes"
     download_and_check "https://github.com/catppuccin/yazi/raw/main/themes/mocha.toml" "$XDG_CONFIG_HOME/yazi/theme.toml"
     download_and_check "https://github.com/catppuccin/bat/raw/main/themes/Catppuccin%20Mocha.tmTheme" "$XDG_CONFIG_HOME/yazi/Catppuccin-mocha.tmTheme"
-    git clone --depth 1 https://github.com/DreamMaoMao/mime.yazi.git ~/.config/yazi/plugins/mime.yazi
     git clone --depth 1 https://github.com/Reledia/glow.yazi.git ~/.config/yazi/plugins/glow.yazi
 
     download_and_check "https://github.com/catppuccin/zathura/raw/main/src/catppuccin-mocha" "$XDG_CONFIG_HOME/zathura/catppuccin-mocha"
@@ -207,11 +206,15 @@ post_root() {
     fi
 
     log "Configuring openresolv and dnscrypt-proxy"
-    {
-        echo 'name_servers="127.0.0.1"'
-        echo 'name_servers_append="::1"'
-        echo 'resolv_conf_options="edns0"'
-    } >>/etc/resolvconf.conf
+    cat <<EOF >"/etc/resolvconf.conf"
+nameserver ::1
+nameserver 127.0.0.1
+options edns0
+EOF
+    cat <<EOF >"/etc/NetworkManager/conf.d/dns.conf"
+[main]
+dns=none
+EOF
     # sed -Ei "s|^#? server_names .*|server_names = ['quad9-dnscrypt-ip4-filter-ecs-pri']|" /etc/dnscrypt-proxy/dnscrypt-proxy.toml
     resolvconf -u
 

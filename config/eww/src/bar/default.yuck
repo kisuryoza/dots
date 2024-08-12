@@ -43,6 +43,7 @@
 (defwidget cpu-temp []
  (box :orientation "v" :space-evenly false
   (label :class "cpu-result" :text "${round(cpu-temperature, 0)}°C")
+  (label :class "cpu-result" :text "${gpu-temperature}°C")
   (label :class "cpu-title" :text "󰔏")))
 
 (defwidget ram []

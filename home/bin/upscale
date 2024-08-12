@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+upscale() {
+    FILE="$1"
+    NAME="${FILE%.*}"
+    EXT="${FILE##*.}"
+    OUTPUT="$NAME"_upscaled."$EXT"
+
+    realesrgan-ncnn-vulkan -i "$FILE" -o "$OUTPUT" -n realesrgan-x4plus-anime
+    magick "$OUTPUT" -resize 50% -filter LanczosSharp "$OUTPUT"
+}
+
+for file in "$@"; do
+    upscale "$file"
+done
+
+# case "$EXT" in
+# "png")
+#     oxipng -s --threads=4 "$OUTPUT"
+#     ;;
+# "jpg")
+#     jpegoptim "$OUTPUT"
+#     ;;
+# esac

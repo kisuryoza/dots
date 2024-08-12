@@ -1,11 +1,5 @@
 local vk = vim.keymap
 
-local M = {
-    "saecki/crates.nvim",
-    dependencies = { "nvim-lua/plenary.nvim" },
-    event = "BufRead Cargo.toml",
-}
-
 local function on_attach(_client, bufnr)
     local crates = require("crates")
     vk.set("n", "<leader>Cp", crates.show_popup, { buffer = bufnr, desc = "Crates: Show popup" })
@@ -13,9 +7,10 @@ local function on_attach(_client, bufnr)
     vk.set("n", "<leader>Cd", crates.show_dependencies_popup, { buffer = bufnr, desc = "Crates: Dependencies" })
 end
 
-M.config = function()
-    local crates = require("crates")
-    crates.setup({
+local M = {
+    "saecki/crates.nvim",
+    dependencies = { "nvim-lua/plenary.nvim", lazy = true },
+    opts = {
         lsp = {
             enabled = true,
             on_attach = on_attach,
@@ -23,7 +18,8 @@ M.config = function()
             completion = true,
             hover = true,
         },
-    })
-end
+    },
+    event = "BufRead Cargo.toml",
+}
 
 return M

@@ -1,8 +1,8 @@
 return {
     {
         "catppuccin/nvim",
-        priority = 1000,
         name = "catppuccin",
+        priority = 1000,
         init = function()
             if os.getenv("TERM") ~= "linux" then
                 vim.cmd("colorscheme catppuccin-mocha")

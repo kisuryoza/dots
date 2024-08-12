@@ -28,7 +28,8 @@ XF86MonBrightness{Down,Up}
     ~/.config/eww/scripts/brightness.bash set {-10,+10}
 
 super + backslash
-    bash -c 'if pkill wp; then feh --no-fehbg --bg-fill ~/wallpaper.jpg; else wp ~/Arts start -d -i 30; fi'
+    ~/bin/misc/change-wallp.bash x
+    # bash -c 'if pkill wp; then feh --no-fehbg --bg-fill ~/wallpaper.jpg; else wp ~/Arts start -d -i 30; fi'
 
 ############################################################
 # bspwm hotkeys
