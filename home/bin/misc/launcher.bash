@@ -10,6 +10,10 @@ function lock {
 
 function launcher {
     bemenu-run --ignorecase --prompt "" --line-height 35 \
+        --wrap \
+        -l 20 down \
+        -W 0.5 \
+        --counter always \
         --fn "DejaVu Sans Mono 12" \
         --fb "#1a1b26" \
         --ff "#e0af68" \
@@ -26,7 +30,7 @@ function launcher {
 
 function screenshot_area {
     if [[ -n "$WAYLAND_DISPLAY" ]]; then
-        grim -g "$(slurp)"
+        grim -g "$(slurp -d)" - | wl-copy
     else
         flameshot gui
     fi

@@ -76,11 +76,11 @@
   :onhover "${EWW_CMD} update is_net_hovered=true"
   :onhoverlost "${EWW_CMD} update is_net_hovered=false"
   (box :orientation "v" :space-evenly false
-   (revealer :transition "slideup" :reveal is_net_hovered :duration "350ms"
+   ;; (revealer :transition "slideup" :reveal is_net_hovered :duration "350ms"
     (box :class "net-result" :orientation "v" :space-evenly false
      (label :text {eth-speed[0]})
      (label :text "󰯎")
-     (label :text {eth-speed[1]})))
+     (label :text {eth-speed[1]}))
    (label :class "net-title" :text {connection == -1 ? "󰈁" : connection == 0 ? "󰤮" : connection < 25 ? "󰤟" : connection < 50 ? "󰤢" : connection < 75 ? "󰤥" : "󰤨"}))))
 
 (defwidget power []

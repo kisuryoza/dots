@@ -9,6 +9,7 @@ if pkill wp; then
     for sock in /run/user/1000/Alacritty*.sock; do
         alacritty msg --socket="$sock" config window.opacity=1
     done
+    notify-send "killed: wp"
 else
     wp ~/Arts start -d -i 30
     for sock in /run/user/1000/Alacritty*.sock; do

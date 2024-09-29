@@ -1,0 +1,122 @@
+@import "colors.css";
+
+* {
+    font-family: "Comic Neue";
+    font-size: 12px;
+    animation-duration: 5.0s;
+    animation-timing-function: steps(6);
+}
+
+window#waybar {
+    background-color: @base;
+}
+
+window#waybar.hidden {
+    opacity: 0.2;
+}
+
+#workspaces {
+    font-size: 18px;
+}
+
+#workspaces button {
+    color: @text;
+    background-color: transparent;
+}
+
+#workspaces button:hover {
+    box-shadow: inherit;
+    text-shadow: inherit;
+}
+
+#workspaces button.empty {
+    color: @surface0;
+}
+
+#workspaces button.visible {
+    color: @yellow;
+}
+
+#workspaces button.active {
+    color: @red;
+}
+
+#mpd {
+    font-size: 15px;
+    color: @text;
+    background-color: @base;
+}
+
+#privacy {
+    color: @mauve;
+}
+
+#cpu {
+    color: @base;
+    background-color: @red;
+}
+
+#temperature {
+    color: @base;
+    background-color: @red;
+}
+
+#custom-gpu_load {
+    color: @base;
+    background-color: @maroon;
+}
+
+#custom-gpu_temp {
+    color: @base;
+    background-color: @maroon;
+}
+
+#memory {
+    color: @base;
+    background-color: @peach;
+}
+
+#disk {
+    color: @base;
+    background-color: @yellow;
+}
+
+#pulseaudio {
+    color: @base;
+    background-color: @green;
+}
+
+#backlight {
+    color: @base;
+    background-color: @teal;
+}
+
+#network {
+    color: @base;
+    background-color: @sky;
+}
+
+#battery {
+    color: @base;
+    background-color: @sapphire;
+}
+
+#language {
+    color: @base;
+    background-color: @blue;
+}
+
+#clock.w {
+    color: @lavender;
+    background-color: @base;
+}
+
+#clock.d {
+    color: @lavender;
+    background-color: @base;
+}
+
+#clock {
+    color: @base;
+    background-color: @lavender;
+}

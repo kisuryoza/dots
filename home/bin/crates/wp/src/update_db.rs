@@ -1,4 +1,4 @@
-use std::{fs, path::Path, rc::Rc};
+use std::{fs, io::{self, Write}, path::Path, process::Command, rc::Rc};
 
 use color_eyre::Result;
 use redb::{Database, ReadableTable};
@@ -34,7 +34,7 @@ fn init_table(db: &Database) -> Result<()> {
 }
 
 /// INSERT files into DB that exist in Filesystem but not in DB
-fn set_new_entries<P, T>(db: &Database, destination: P, _soft: bool, files: &[T]) -> Result<usize>
+fn set_new_entries<P, T>(db: &Database, destination: P, soft: bool, files: &[T]) -> Result<usize>
 where
     P: AsRef<Path>,
     T: AsRef<str>,
@@ -55,9 +55,9 @@ where
         .map(|file| -> Result<()> {
             let file = file.as_ref();
             let path = destination.join(file);
-            /* if !soft {
+            if !soft {
                 compress(&path)?;
-            } */
+            }
             let (width, height) = get_dimensions(path);
             table.insert(file, (width, height))?;
             Ok(())
@@ -164,7 +164,7 @@ where
     false
 }
 
-/* fn compress<P>(file: P) -> io::Result<()>
+fn compress<P>(file: P) -> io::Result<()>
 where
     P: AsRef<Path>,
 {
@@ -174,22 +174,24 @@ where
         match ext.to_str() {
             Some("png") => {
                 let output = Command::new("oxipng")
-                    .args(["-s", "--threads=4", file_str])
+                    .args(["-Z", "--opt=max", "--fast", file_str])
                     .output()?;
                 io::stdout().write_all(&output.stdout)?;
+                io::stdout().write_all(&output.stderr)?;
                 io::stdout().flush()?
             }
             Some("jpg") => {
                 let output = Command::new("jpegoptim").arg(file_str).output()?;
                 io::stdout().write_all(&output.stdout)?;
+                io::stdout().write_all(&output.stderr)?;
                 io::stdout().flush()?
             }
-            _ => (),
+            _ => unreachable!(),
         };
     }
 
     Ok(())
-} */
+}
 
 fn get_dimensions<P>(file: P) -> (u32, u32)
 where

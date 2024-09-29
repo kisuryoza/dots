@@ -30,7 +30,7 @@ start_x() {
     pgrep --exact flameshot || flameshot &>/dev/null &
 
     # Bar and widgets
-    ln -sf ~/.local/bin/eww-x ~/.local/bin/eww && eww open bar &>/dev/null
+    ln -sf ~/.local/bin/eww-x ~/.local/bin/eww && eww daemon &>/dev/null && eww open bar &>/dev/null
 
     # wallpaper
     [[ -f ~/wallpaper.jpg ]] && feh --no-fehbg --bg-fill ~/wallpaper.jpg

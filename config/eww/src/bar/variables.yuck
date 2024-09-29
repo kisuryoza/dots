@@ -15,7 +15,7 @@
 (defpoll brightness
   :interval "1s"
   :initial 0
-  "~/.config/eww/scripts/brightness.bash get")
+  "~/bin/misc/brightness.bash get")
 
 (defvar wm-tags "")
 ;; (defpoll wm-tags

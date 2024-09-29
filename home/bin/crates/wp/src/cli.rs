@@ -24,5 +24,4 @@ pub(crate) enum Commands {
         soft: bool,
     },
     PrintDB,
-    ResetDB,
 }

@@ -1,0 +1,172 @@
+{
+    "layer": "top",
+    "position": "left",
+    "modules-left": ["hyprland/workspaces"],
+    "modules-center": ["mpd"],
+    "modules-right": [
+        "privacy",
+        "cpu",
+        "temperature",
+        "custom/gpu_load",
+        "custom/gpu_temp",
+        "memory",
+        "disk",
+        "pulseaudio",
+        "backlight",
+        "network",
+        "battery",
+        "hyprland/language",
+        "clock#w",
+        "clock#d",
+        "clock",
+    ],
+    "hyprland/workspaces": {
+        "format": "{icon}",
+        "format-icons": {
+            "active": "󰝥",
+            "empty": "󰝦",
+            "default": "󰻃",
+        },
+        "persistent-workspaces": {
+            "*": [1, 2, 3, 4, 5, 6, 7, 8, 9],
+        },
+    },
+    "mpd": {
+        "format": "{stateIcon} {consumeIcon}{randomIcon}{repeatIcon}{singleIcon} {artist} - {title} ({elapsedTime:%M:%S}/{totalTime:%M:%S})",
+        "format-disconnected": "MPD disconnected",
+        "format-stopped": "{consumeIcon}{randomIcon}{repeatIcon}{singleIcon}MPD stopped",
+        "max-length": 70,
+        "rotate": 90,
+        "state-icons": {
+            "paused": "󰏤",
+            "playing": "󰐊",
+        },
+        "consume-icons": {
+            "on": "󰆐",
+        },
+        "random-icons": {
+            "on": "󰒟",
+        },
+        "repeat-icons": {
+            "on": "󰑖",
+        },
+        "single-icons": {
+            "on": "󰑘",
+        },
+    },
+    "privacy": {
+        "modules": [
+            {
+                "type": "screenshare",
+            },
+            {
+                "type": "audio-out",
+            },
+            {
+                "type": "audio-in",
+            },
+        ],
+    },
+    "cpu": {
+        "interval": 2,
+        "format": " {usage}",
+    },
+    "temperature": {
+        "interval": 5,
+        "thermal-zone": 3,
+        // "hwmon-path": "",
+        "critical-threshold": 60,
+        // "format-critical": "{temperatureC}°C ",
+        "format": "{temperatureC}°C",
+    },
+    "custom/gpu_load": {
+        "exec": "~/bin/misc/gpu-load.bash",
+        "format": "󰢮 {}",
+        "interval": 2,
+    },
+    "custom/gpu_temp": {
+        "exec": "nvidia-settings -q gpucoretemp -t",
+        "format": "{}°C",
+        "interval": 5,
+    },
+    "memory": {
+        "interval": 2,
+        "format": " {}",
+    },
+    "disk": {
+        "interval": 360,
+        "format": "󰋊 {specific_free:0.1f}",
+        "unit": "GiB",
+        "path": "/",
+    },
+    "pulseaudio": {
+        "format": "{icon} {volume}",
+        "format-bluetooth": "{icon} {volume}",
+        "format-muted": "󰖁",
+        "format-icons": {
+            "default": ["󰕿", "󰖀", "󰕾"],
+        },
+        "scroll-step": 5,
+        "ignored-sinks": ["Easy Effects Sink"],
+    },
+    "backlight": {
+        // "device": "intel_backlight",
+        "format": "{percent}% {icon}",
+        "format-icons": ["󰃜", "󰃠"],
+    },
+    "network": {
+        // "interface": "",
+        "interval": 1,
+        "format": "{ifname}",
+        "format-wifi": "{essid} ({signalStrength}%) ",
+        "format-ethernet": "󰈀", //"󰈀",
+        "format-disconnected": "󰤮",
+        "tooltip-format": "{ifname} via {gwaddr} 󰊗",
+        "tooltip-format-wifi": "{essid} ({signalStrength}%) ",
+        "tooltip-format-ethernet": "{ifname} {ipaddr}\n{bandwidthUpBytes}\n󰯎\n{bandwidthDownBytes}",
+        "tooltip-format-disconnected": "Disconnected",
+        "max-length": 50,
+    },
+    "battery": {
+        "interval": 60,
+        "states": {
+            "warning": 30,
+            "critical": 15,
+        },
+        "format": "{capacity}% {icon}",
+        "format-icons": ["", "", "", "", ""],
+        "max-length": 25,
+    },
+    "hyprland/language": {
+        "format": "{}",
+        "format-en": "EN",
+        "format-ru": "RU",
+    },
+    "clock": {
+        "format": "{:%H:%M}",
+        "format-alt": "{:%a\n%d/%m\n%H\n%M}",
+        "interval": 60,
+        "tooltip-format": "<tt><small>{calendar}</small></tt>",
+        "calendar": {
+            "mode": "year",
+            "mode-mon-col": 3,
+            "weeks-pos": "right",
+            "on-scroll": 1,
+            "format": {
+                "months": "<span color='#cba6f7'><b>{}</b></span>",
+                "weeks": "<span color='#fab387'><b>W{}</b></span>",
+                "weekdays": "<span color='#fab387'><b>{}</b></span>",
+                "days": "<span color='#cdd6f4'><b>{}</b></span>",
+                "today": "<span color='#f38ba8'><b><u>{}</u></b></span>",
+            },
+        },
+    },
+    "clock#d": {
+        "format": "{:%m/%d}",
+        "interval": 60,
+    },
+    "clock#w": {
+        "format": "{:%a}",
+        "interval": 60,
+    },
+}

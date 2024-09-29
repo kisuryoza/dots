@@ -27,15 +27,10 @@ rules = [
     { name = "*", use = [ "open", "edit", "reveal" ] },
 ]
 
+[tasks]
+suppress_preload = true
+
 [plugin]
-previewers = [
-    { name = "*/", run = "folder", sync = true },
+append_previewers = [
     { name = "*.md", run = "glow" },
-
-    { mime = "text/*", run = "code" },
-    { mime = "application/json", run = "json" },
-
-    { mime = "image/*", run = "image" },
-    # Fallback
-    { name = "*", run = "file" },
 ]

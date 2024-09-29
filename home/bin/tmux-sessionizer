@@ -1,13 +1,5 @@
 #!/usr/bin/env bash
 
-# declare -a LIST tmp
-# LIST=(~/dots ~/Coding ~/Downloads ~/gitclones ~/Anime)
-# mapfile -t tmp < <(fd -td --max-depth=1 . ~/dots ~/Coding ~/Downloads ~/gitclones)
-# LIST+=("${tmp[@]}")
-# mapfile -t tmp < <(fd -td --max-depth=3 . ~/Anime)
-# LIST+=("${tmp[@]}")
-#
-# SELECTED=$(printf "%s\n" "${LIST[@]}" | fzy --lines=50)
 SELECTED=$(zoxide query -i)
 if [[ -z $SELECTED ]]; then
     exit 0

@@ -116,10 +116,10 @@ EOF
         log "Installing eww"
         git clone https://github.com/elkowar/eww ~/gitclones/eww && cd ~/gitclones/eww
         if pacman -Q gtk-layer-shell &>/dev/null; then
-            cargo build --release --no-default-features --features=wayland
+            RUSTFLAGS="-C target-cpu=native" cargo build --release --no-default-features --features=wayland
             install -vsDm 744 target/release/eww ~/.local/bin/eww-wayland
         else
-            cargo build --release --no-default-features --features=x11
+            RUSTFLAGS="-C target-cpu=native" cargo build --release --no-default-features --features=x11
             install -vsDm 744 target/release/eww ~/.local/bin/eww-x
         fi
         cargo clean
@@ -154,7 +154,7 @@ EOF
 
     log "Setting crontab"
     cat <<'EOF' >/tmp/crontab
-* * * * * for i in {1..30}; do sar -u 2 1 | awk 'ENDFILE {usage=100-$NF; printf("\%3u\n", usage)}' >> /tmp/cpu-load & sleep 2; done
+* * * * * for i in {1..30}; do iostat -c 1 2 | awk 'ENDFILE {usage=100-$NF; printf("\%3u\n", usage)}' >> /tmp/cpu-load & sleep 2; done
 * * * * * for i in {1..30}; do free | awk '$1 ~ /Mem/ {printf("\%3u\n", 100*$3/$2)}' >> /tmp/ram-load; sleep 2; done
 0 * * * * tail -n1 /tmp/cpu-load > /tmp/cpu-load; tail -n1 /tmp/ram-load > /tmp/ram-load
 */5 * * * * ~/bin/misc/battery.bash

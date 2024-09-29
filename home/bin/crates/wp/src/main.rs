@@ -59,12 +59,6 @@ fn main() -> Result<()> {
 
     let path = cli.destination.join(LOCAL_DATABASE);
 
-    if let cli::Commands::ResetDB = &cli.command {
-        std::fs::remove_file(&path)?;
-        info!("Removed database file at {}", path.display());
-        return Ok(());
-    }
-
     let db = if let Ok(db) = redb::Database::open(&path) {
         db
     } else {
@@ -75,7 +69,6 @@ fn main() -> Result<()> {
         cli::Commands::Update { soft } => update_db::update_db(&cli.destination, *soft, &db),
         cli::Commands::Start { interval, .. } => start::start(&cli.destination, *interval, db),
         cli::Commands::PrintDB => print_db(&db),
-        cli::Commands::ResetDB => unreachable!(),
     }?;
     Ok(())
 }
