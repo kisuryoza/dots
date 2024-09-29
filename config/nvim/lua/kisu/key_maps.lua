@@ -11,14 +11,14 @@ vk.set("v", "y", "ygv<esc>", { desc = "Yank sel text w/out moving cursor back" }
 vk.set("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move selected Down" })
 vk.set("v", "K", ":m '<-2<CR>gv=gv", { desc = "Move selected Up" })
 
-vk.set("n", "<leader>z", "<cmd>ZenMode<CR>", { desc = "ZenMode" })
+vk.set("n", "<leader>gN", "<cmd>cd " .. vim.fn.expand("~/Sync/Notes/") .. " | edit index.md<CR>", { desc = "Notes" })
 
 ---
 ---@param option string
 ---@param on any
 ---@param off any
 local function toggle_opt(option, on, off)
-    local curr_value = (vim.o[option]):get()
+    local curr_value = vim.api.nvim_get_option_value(option, {})
     if type(curr_value) == "table" then
         curr_value = curr_value[next(curr_value)]
     end
@@ -38,9 +38,10 @@ vk.set("n", "<leader>os", function() toggle_opt("spell", true, false) end, { des
 vk.set("n", "<leader>ow", function() toggle_opt("wrap", true, false) end, { desc = "Wrap" })
 vk.set("n", "<leader>oc", function() toggle_opt("colorcolumn", "80", "0") end, { desc = "Color column" })
 vk.set("n", "<leader>ol", function() toggle_opt("cursorline", true, false) end, { desc = "Cursor line" })
+vk.set("n", "<leader>od", function() vim.diagnostic.enable(not vim.diagnostic.is_enabled()) end, { desc = "Toggle diags" })
 -- stylua: ignore end
 
-vk.set("n", "<leader>bq", vim.diagnostic.setqflist, { desc = "Add all diags to qflist" })
+vk.set("n", "<leader>q", vim.diagnostic.setqflist, { desc = "Add diags to qflist" })
 vk.set("n", "[q", "<cmd>cprev<CR>zz", { desc = "qflist prev" })
 vk.set("n", "]q", "<cmd>cnext<CR>zz", { desc = "qflist next" })
 vk.set("n", "<leader>bl", vim.diagnostic.setloclist, { desc = "Add buf diags to loclist" })

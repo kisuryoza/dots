@@ -6,7 +6,7 @@ local M = {
         {
             "rcarriga/nvim-dap-ui",
             version = "4.0.0",
-            dependencies = "nvim-neotest/nvim-nio",
+            dependencies = { "nvim-neotest/nvim-nio" },
             config = function()
                 local dapui = require("dapui")
                 dapui.setup()
@@ -15,12 +15,45 @@ local M = {
         },
         {
             "theHamsta/nvim-dap-virtual-text",
+            dependencies = {
+                "nvim-treesitter/nvim-treesitter",
+            },
             opts = {
                 all_references = true, --[[ text_prefix = " ==> " ]]
             },
         },
     },
-    ft = { "c", "cpp", "rust" },
+    keys = {
+        { "<leader>dt", "<cmd>DapTerminate<cr>", desc = "Terminate" },
+        { "<leader>dc", "<cmd>DapContinue<cr>", desc = "Continue" },
+        { "<leader>dr", "<cmd>DapToggleRepl<cr>", desc = "Toggle repl" },
+        { "<leader>dso", "<cmd>DapStepOver<cr>", desc = "Step over" },
+        { "<leader>dsi", "<cmd>DapStepInto<cr>", desc = "Step into" },
+        { "<leader>dsO", "<cmd>DapStepOut<cr>", desc = "Step out" },
+        { "<leader>db", "<cmd>DapToggleBreakpoint<cr>", desc = "Toggle breakpoint" },
+        {
+            "<leader>dBb",
+            function()
+                local dap = require("dap")
+                dap.set_breakpoint(nil, nil, vim.fn.input("Log msg: "))
+            end,
+            desc = "Set breakpoint",
+        },
+        {
+            "<leader>dBs",
+            function()
+                local dap = require("dap")
+                dap.set_breakpoint(
+                    vim.fn.input(
+                        "Breakpoint condition: ",
+                        vim.fn.input("Breakpoint hit condition: "),
+                        vim.fn.input("Log msg: ")
+                    )
+                )
+            end,
+            desc = "Set breakpoint with conditions",
+        },
+    },
 }
 
 M.config = function()
@@ -65,29 +98,6 @@ M.config = function()
             end,
         },
     }
-    vk.set("n", "<leader>dt", dap.terminate, { desc = "Terminate" })
-    vk.set("n", "<leader>dc", dap.continue, { desc = "Continue" })
-
-    vk.set("n", "<leader>dr", dap.repl.open, { desc = "Repl open" })
-    vk.set("n", "<leader>ddl", dap.run_last, { desc = "Run last" })
-
-    vk.set("n", "<leader>dso", dap.step_over, { desc = "Step over" })
-    vk.set("n", "<leader>dsi", dap.step_into, { desc = "Step into" })
-    vk.set("n", "<leader>dsO", dap.step_out, { desc = "Step out" })
-
-    vk.set("n", "<leader>db", dap.toggle_breakpoint, { desc = "Toggle breakpoint" })
-    vk.set("n", "<leader>dBb", function()
-        dap.set_breakpoint(nil, nil, vim.fn.input("Log msg: "))
-    end, { desc = "Set breakpoint" })
-    vk.set("n", "<leader>dBs", function()
-        dap.set_breakpoint(
-            vim.fn.input(
-                "Breakpoint condition: ",
-                vim.fn.input("Breakpoint hit condition: "),
-                vim.fn.input("Log msg: ")
-            )
-        )
-    end, { desc = "Set breakpoint with conditions" })
 
     vk.set({ "n", "v" }, "<leader>dwh", widgets.hover, { desc = "Widgets hover" })
     vk.set({ "n", "v" }, "<leader>dwp", widgets.preview, { desc = "Widgets preview" })

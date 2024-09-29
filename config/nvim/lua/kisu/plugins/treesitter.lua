@@ -1,9 +1,7 @@
 local M = {
     "nvim-treesitter/nvim-treesitter",
     dependencies = {
-        { "nvim-treesitter/nvim-treesitter-textobjects", lazy = true },
-        { "nvim-treesitter/nvim-treesitter-refactor", lazy = true },
-        { "nvim-treesitter/nvim-treesitter-context", lazy = true },
+        "nvim-treesitter/nvim-treesitter-context",
     },
     build = ":TSUpdate",
     event = "VeryLazy",
@@ -19,6 +17,9 @@ M.config = function()
             "bash",
             "lua",
             "markdown",
+            "markdown_inline",
+            "html",
+            "diff",
         },
         auto_install = true,
         highlight = {
@@ -39,95 +40,6 @@ M.config = function()
                 scope_incremental = "<S-CR>",
                 node_decremental = "<BS>",
             },
-        },
-    }
-    setup.textobjects = {
-        enable = true,
-        select = {
-            enable = true,
-            lookahead = true,
-            keymaps = {
-                aa = {
-                    query = "@parameter.outer",
-                    desc = "Outer part of parameter",
-                },
-                ia = {
-                    query = "@parameter.inner",
-                    desc = "Inner part of parameter",
-                },
-                af = {
-                    query = "@function.outer",
-                    desc = "Outer part of func",
-                },
-                ["if"] = {
-                    query = "@function.inner",
-                    desc = "Inner part of func",
-                },
-                ac = {
-                    query = "@class.outer",
-                    desc = "Outer part of class",
-                },
-                ic = {
-                    query = "@class.inner",
-                    desc = "Inner part of class",
-                },
-            },
-        },
-        swap = {
-            enable = true,
-            swap_next = { ["<leader>csn"] = "@parameter.inner" },
-            swap_previous = { ["<leader>csp"] = "@parameter.inner" },
-        },
-        move = {
-            enable = true,
-            set_jumps = true,
-            goto_next_start = {
-                ["]m"] = {
-                    query = "@function.outer",
-                    desc = "Next func start",
-                },
-                ["]]"] = {
-                    query = "@class.outer",
-                    desc = "Next class start",
-                },
-                ["]s"] = {
-                    query = "@statement.outer",
-                    desc = "Next statement",
-                },
-            },
-            goto_next_end = {
-                ["]M"] = {
-                    query = "@function.outer",
-                    desc = "Next func end",
-                },
-                ["]["] = { query = "@class.outer", desc = "Next class end" },
-            },
-            goto_previous_start = {
-                ["[m"] = {
-                    query = "@function.outer",
-                    desc = "Prev func start",
-                },
-                ["[["] = {
-                    query = "@class.outer",
-                    desc = "Prev class start",
-                },
-                ["[s"] = {
-                    query = "@statement.outer",
-                    desc = "Prev statement",
-                },
-            },
-            goto_previous_end = {
-                ["[M"] = {
-                    query = "@function.outer",
-                    desc = "Prev func end",
-                },
-                ["[]"] = { query = "@class.outer", desc = "Prev class end" },
-            },
-        },
-    }
-    setup.refactor = {
-        highlight_definitions = {
-            enable = true,
         },
     }
     treesitter.setup(setup)

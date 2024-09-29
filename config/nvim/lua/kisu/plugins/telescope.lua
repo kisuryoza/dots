@@ -3,11 +3,41 @@ local vk = vim.keymap
 local M = {
     "nvim-telescope/telescope.nvim",
     dependencies = {
-        { "nvim-lua/plenary.nvim", lazy = true },
-        { "nvim-tree/nvim-web-devicons", lazy = true },
-        { "nvim-telescope/telescope-ui-select.nvim", lazy = true },
+        "nvim-lua/plenary.nvim",
+        "echasnovski/mini.icons",
+        "nvim-telescope/telescope-ui-select.nvim",
+        -- "nvim-treesitter/nvim-treesitter",
     },
-    event = "VeryLazy",
+    keys = {
+        { "<leader>bb", "<cmd>Telescope buffers<cr>", desc = "Buffers" },
+        { "<leader>ff", "<cmd>Telescope find_files<cr>", desc = "Find Files" },
+        { "<leader>fr", "<cmd>Telescope oldfiles<cr>", desc = "Recent" },
+        { "<leader>fl", "<cmd>Telescope live_grep<cr>", desc = "Live grep" },
+        {
+            "<leader>fg",
+            function()
+                local word = vim.fn.input("Grep > ")
+                require("telescope.builtin").grep_string({ search = word })
+            end,
+            desc = "Grep word",
+        },
+        {
+            "<leader>fw",
+            function()
+                local word = vim.fn.expand("<cword>")
+                require("telescope.builtin").grep_string({ search = word })
+            end,
+            desc = "Grep curr word",
+        },
+        {
+            "<leader>fW",
+            function()
+                local word = vim.fn.expand("<cWORD>")
+                require("telescope.builtin").grep_string({ search = word })
+            end,
+            desc = "Grep curr WORD",
+        },
+    },
 }
 
 M.config = function()
@@ -30,24 +60,6 @@ M.config = function()
             },
         },
     }) ]]
-
-    local builtin = require("telescope.builtin")
-    vk.set("n", "<leader>bb", builtin.buffers, { desc = "Buffers" })
-    vk.set("n", "<leader>ff", builtin.find_files, { desc = "Find Files" })
-    vk.set("n", "<leader>fr", builtin.oldfiles, { desc = "Recent" })
-    vk.set("n", "<leader>fl", builtin.live_grep, { desc = "Live grep" })
-    vk.set("n", "<leader>fg", function()
-        local word = vim.fn.input("Grep > ")
-        builtin.grep_string({ search = word })
-    end, { desc = "Grep word" })
-    vk.set("n", "<leader>fw", function()
-        local word = vim.fn.expand("<cword>")
-        builtin.grep_string({ search = word })
-    end, { desc = "Grep curr word" })
-    vk.set("n", "<leader>fW", function()
-        local word = vim.fn.expand("<cWORD>")
-        builtin.grep_string({ search = word })
-    end, { desc = "Grep curr WORD" })
 end
 
 return M

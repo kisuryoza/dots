@@ -3,6 +3,26 @@ local M = {}
 local align = "%="
 local reset = "%*"
 
+local LSP_progress = ""
+
+vim.lsp.handlers["$/progress"] = function(_, result, ctx)
+    local client_id = ctx.client_id
+    local name = vim.lsp.get_client_by_id(client_id).name
+    local val = result.value
+
+    if not val.kind then
+        return
+    end
+
+    if val.kind == "begin" then
+        LSP_progress = "%#DiagnosticFloatingError#" .. name
+    elseif val.kind == "report" then
+        LSP_progress = "%#DiagnosticFloatingWarn#" .. name
+    elseif val.kind == "end" then
+        LSP_progress = "%#DiagnosticFloatingInfo#" .. name
+    end
+end
+
 ---@class Statusline
 ---@field arr table
 local Statusline = {}
@@ -192,6 +212,7 @@ local function active()
     stl:insert(file(), " " .. reset)
     stl:insert(git())
     stl:insert(align)
+    stl:insert(LSP_progress, " " .. reset)
     stl:insert(lsp(), " " .. reset)
     stl:insert(file_encoding(), " " .. reset)
     stl:insert(file_format(), " " .. reset)

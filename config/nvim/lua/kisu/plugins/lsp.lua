@@ -1,8 +1,55 @@
 local vk = vim.keymap
 
+local function lsp_completion(args)
+    local bufnr = args.buf
+    local client = vim.lsp.get_client_by_id(args.data.client_id)
+    local methods = vim.lsp.protocol.Methods
+    if not client.supports_method(methods.textDocument_completion) then
+        return
+    end
+
+    vim.lsp.completion.enable(true, client.id, bufnr, {
+        autotrigger = true,
+        --[[ convert = function(item)
+        end, ]]
+    })
+
+    local function feedkeys(key)
+        vim.api.nvim_feedkeys(vim.keycode(key), "n", true)
+    end
+
+    local function pumvisible()
+        return tonumber(vim.fn.pumvisible()) ~= 0
+    end
+
+    -- same with <C-x><C-o>
+    --[[ vk.set("i", "<C-x><C-j>", function()
+        vim.lsp.completion.trigger()
+    end, { buffer = bufnr, desc = "" }) ]]
+
+    vk.set("i", "<Tab>", function()
+        if pumvisible() then
+            feedkeys("<C-y>")
+        elseif vim.snippet.active({ direction = 1 }) then
+            vim.snippet.jump(1)
+        else
+            feedkeys("<Tab>")
+        end
+    end, { buffer = bufnr, desc = "" })
+
+    vk.set("i", "<S-Tab>", function()
+        if vim.snippet.active({ direction = -1 }) then
+            vim.snippet.jump(-1)
+        else
+            feedkeys("<S-Tab>")
+        end
+    end, { buffer = bufnr, desc = "" })
+end
+
 local function on_attach(args)
     local bufnr = args.buf
     local buf = vim.lsp.buf
+    require("telescope")
     vk.set("n", "<leader>lD", buf.declaration, { buffer = bufnr, desc = "Declaration" })
     vk.set("n", "<leader>ld", "<cmd>Telescope lsp_definitions<CR>", { buffer = bufnr, desc = "Definition" })
     vk.set("n", "<leader>li", buf.implementation, { buffer = bufnr, desc = "Implementation" })
@@ -14,35 +61,22 @@ local function on_attach(args)
     end, { buffer = bufnr, desc = "Toggle inlay hints" })
     vk.set("n", "<leader>lwa", buf.add_workspace_folder, { buffer = bufnr, desc = "Workspace Add Folder" })
     vk.set("n", "<leader>lwr", buf.remove_workspace_folder, { buffer = bufnr, desc = "Workspace Remove Folder" })
-
     vk.set("n", "<leader>lwl", function()
         print(vim.inspect(buf.list_workspace_folders()))
     end, { buffer = bufnr, desc = "Workspace List Folders" })
 
-    local client = vim.lsp.get_client_by_id(args.data.client_id)
-    local methods = vim.lsp.protocol.Methods
-    if not client.supports_method(methods.textDocument_completion) then
-        return
-    end
-
-    vim.lsp.completion.enable(true, client.id, bufnr, { autotrigger = false })
+    -- lsp_completion(args)
 end
 
 local lsp = {
     "neovim/nvim-lspconfig",
-    dependencies = {
-        {
-            "j-hui/fidget.nvim",
-            opts = { notification = { window = { winblend = 0 } } },
-        },
-    },
     event = "VeryLazy",
 }
 
 lsp.config = function()
     local lspconfig = require("lspconfig")
 
-    vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers["signature_help"], {
+    vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, {
         border = "single",
     })
 
@@ -79,7 +113,7 @@ lsp.config = function()
         },
     })
     -- lspconfig.nil_ls.setup({})
-    lspconfig.arduino_language_server.setup({})
+    -- lspconfig.arduino_language_server.setup({})
 end
 
 return {

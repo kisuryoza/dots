@@ -1,3 +1,21 @@
+--[[ ---@param findstart number
+---@param base string
+function comletionfunc(findstart, base)
+    -- if findstart == 1 then
+    --     return 0
+    -- end
+    -- local matches = { "aaa", "bbb", "ccc" }
+    -- if string.len(base) == 0 then
+    --     return matches
+    -- end
+    -- print(base)
+    local a = vim.lsp.completion._omnifunc(findstart, base)
+    print()
+    print(vim.inspect(a))
+    return a
+end
+vim.o.completefunc = "v:lua.comletionfunc" ]]
+
 vim.o.completeopt = "menu,menuone,popup,noselect"
 vim.o.clipboard = "unnamedplus"
 vim.o.expandtab = true
@@ -27,9 +45,18 @@ vim.o.swapfile = true
 vim.o.undofile = true
 vim.o.undodir = (os.getenv("HOME") .. "/.cache/nvim/undo//")
 vim.o.history = 100
-vim.o.grepprg = "rg --color=never --vimgrep --smart-case";
+vim.o.grepprg = "rg --color=never --vimgrep --smart-case"
 
-vim.o.fillchars = "horiz:━,horizdown:┳,horizup:┻,vert:┃,verthoriz:╋,vertleft:┨,vertright:┣"
+vim.opt.fillchars:append({
+    horiz = "━",
+    horizup = "┻",
+    horizdown = "┳",
+    vert = "┃",
+    vertleft = "┨",
+    vertright = "┣",
+    verthoriz = "╋",
+    diff = "󰿟",
+})
 
 vim.diagnostic.config({
     signs = {
