@@ -32,15 +32,15 @@ M.config = function()
                 end
             end,
         },
-        incremental_selection = {
-            enable = true,
-            keymaps = {
-                init_selection = "<CR>",
-                node_incremental = "<CR>",
-                scope_incremental = "<S-CR>",
-                node_decremental = "<BS>",
-            },
-        },
+        -- incremental_selection = {
+        --     enable = true,
+        --     keymaps = {
+        --         init_selection = "<CR>",
+        --         node_incremental = "<CR>",
+        --         scope_incremental = "<S-CR>",
+        --         node_decremental = "<BS>",
+        --     },
+        -- },
     }
     treesitter.setup(setup)
 end

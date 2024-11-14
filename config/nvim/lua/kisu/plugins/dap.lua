@@ -27,9 +27,9 @@ local M = {
         { "<leader>dt", "<cmd>DapTerminate<cr>", desc = "Terminate" },
         { "<leader>dc", "<cmd>DapContinue<cr>", desc = "Continue" },
         { "<leader>dr", "<cmd>DapToggleRepl<cr>", desc = "Toggle repl" },
-        { "<leader>dso", "<cmd>DapStepOver<cr>", desc = "Step over" },
-        { "<leader>dsi", "<cmd>DapStepInto<cr>", desc = "Step into" },
-        { "<leader>dsO", "<cmd>DapStepOut<cr>", desc = "Step out" },
+        { "<leader>dn", "<cmd>DapStepOver<cr>", desc = "Step over" },
+        { "<leader>di", "<cmd>DapStepInto<cr>", desc = "Step into" },
+        { "<leader>df", "<cmd>DapStepOut<cr>", desc = "Step out" },
         { "<leader>db", "<cmd>DapToggleBreakpoint<cr>", desc = "Toggle breakpoint" },
         {
             "<leader>dBb",

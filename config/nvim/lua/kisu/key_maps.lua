@@ -55,4 +55,3 @@ vk.set("n", "<leader>bf", function()
 end, { desc = "Format buffer" })
 
 vk.set("n", "<leader>fc", "<cmd>e $MYVIMRC | :cd %:p:h<CR>", { desc = "Edit neovm config" })
-vk.set("n", "<leader>fx", "<cmd>!chmod +x %<CR>", { desc = "Make curr file executable" })

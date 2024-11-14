@@ -10,7 +10,7 @@ return {
         end,
         opts = {
             transparent_background = true,
-            dim_inactive = { enabled = true },
+            -- dim_inactive = { enabled = true },
             compile_path = (vim.fn.stdpath("cache") .. "/catppuccin"),
             integrations = {
                 harpoon = true,
