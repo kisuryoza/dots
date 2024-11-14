@@ -4,16 +4,16 @@ super + Return
     alacritty
 
 super + grave
-    ~/bin/misc/launcher.bash launcher
+    pgrep -x bemenu-run || bemenu-run -iCw -l 20 down -p "" -H 35 -W 0.5 --counter always --fn "DejaVu Sans Mono 12" --fb "#1a1b26" --ff "#e1af68" --nb "#1a1b26" --nf "#c0caf5" --ab "#24283b" --af "#c0caf5" --hb "#1a1b26" --hf "#f7768e"
 
 super + shift + z
-    ~/bin/misc/launcher.bash lock
+    i3lock -c 1a1b26
 
 super + Print
-    ~/bin/misc/launcher.bash screenshot-area
+    flameshot gui
 
 Print
-    ~/bin/misc/launcher.bash screenshot
+    flameshot full --clipboard
 
 XF86Audio{Prev,Play,Next}
     mpc {prev,toggle,next}

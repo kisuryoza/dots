@@ -3,6 +3,11 @@ sort_by = "natural"
 sort_dir_first = true
 linemode = "size"
 
+[preview]
+max_width = 600
+max_height = 600
+cache_dir = "~/.cache/yazi/"
+
 [opener]
 edit = [{ run = 'nvim "$@"', block = true }]
 open = [{ run = 'handlr open "$@"' }]

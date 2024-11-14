@@ -4,7 +4,7 @@ SCRIPT_PATH=$(realpath -s "${BASH_SOURCE[0]}")
 USER=$(echo "$SCRIPT_PATH" | awk -F '/' '{print $3}')
 HOME="/home/$USER"
 REPO_NAME=$(echo "$SCRIPT_PATH" | awk -F '/' '{print $4}')
-RESOURCES="$HOME/$REPO_NAME/post-install/deploy-cfg"
+RESOURCES="$HOME/$REPO_NAME/post-install"
 
 declare -a AUR_PKG
 AUR_PKG+=(7-zip-full ueberzugpp)
@@ -152,16 +152,6 @@ EOF
         handlr set 'application/x-bittorrent' org.qbittorrent.qBittorrent.desktop
     fi
 
-    log "Setting crontab"
-    cat <<'EOF' >/tmp/crontab
-* * * * * for i in {1..30}; do iostat -c 1 2 | awk 'ENDFILE {usage=100-$NF; printf("\%3u\n", usage)}' >> /tmp/cpu-load & sleep 2; done
-* * * * * for i in {1..30}; do free | awk '$1 ~ /Mem/ {printf("\%3u\n", 100*$3/$2)}' >> /tmp/ram-load; sleep 2; done
-0 * * * * tail -n1 /tmp/cpu-load > /tmp/cpu-load; tail -n1 /tmp/ram-load > /tmp/ram-load
-*/5 * * * * ~/bin/misc/battery.bash
-*/30 * * * * [ -r "/tmp/.dbus-address" ] && source /tmp/.dbus-address && pgrep --exact dunst && notify-send "$USER" "fix the poisture"
-EOF
-    crontab /tmp/crontab
-
     cat <<EOF >"$HOME/.xinitrc"
 #!/usr/bin/bash
 exec bspwm
@@ -203,6 +193,10 @@ post_root() {
         files+=(/etc/modprobe.d/nvidia.conf)
         sed -Ei "s|^#?FILES=.*|FILES=(${files[*]})|" /etc/mkinitcpio.conf
         mkinitcpio -p linux-zen || mkinitcpio -p linux
+
+        install -vDm 744 "$HOME/$REPO_NAME"/home/bin/misc/nvidia-fan-control.bash /usr/local/bin/
+        install -vm 644 "$RESOURCES"/nvidia-fan-control.service /etc/systemd/system/
+        install -vm 644 "$RESOURCES"/nvidia-fan-control.timer /etc/systemd/system/
     fi
 
     log "Configuring openresolv and dnscrypt-proxy"
@@ -232,7 +226,6 @@ EOF
     } >/etc/iwd/main.conf
 
     systemctl enable dnscrypt-proxy.service
-    systemctl enable cronie.service
     systemctl enable earlyoom.service
 }
 

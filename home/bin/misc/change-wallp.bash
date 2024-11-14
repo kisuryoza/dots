@@ -12,7 +12,8 @@ if pkill wp; then
     notify-send "killed: wp"
 else
     wp ~/Arts start -d -i 30
+    NUM=$(awk -F " = " '/opacity/ {print $NF}' ~/.config/alacritty/alacritty.toml)
     for sock in /run/user/1000/Alacritty*.sock; do
-        alacritty msg --socket="$sock" config window.opacity=0.9
+        alacritty msg --socket="$sock" config window.opacity="$NUM"
     done
 fi

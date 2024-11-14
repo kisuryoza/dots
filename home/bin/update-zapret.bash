@@ -6,14 +6,24 @@ if [[ -d "$TMPZ" ]]; then
     rm -rf "$TMPZ"
 fi
 
-cp /opt/zapret/config "$TMP"/config
-cp /opt/zapret/ipset/zapret-hosts-user-exclude.txt "$TMP"/zapret-hosts-user-exclude.txt
+FILES=(config youtube-hosts.txt discord-hosts.txt ipset/zapret-hosts-user-exclude.txt)
 
-git clone --depth 1 https://github.com/bol-van/zapret "$TMPZ"  || exit 1
+for file in "${FILES[@]}"; do
+    install -vD "/opt/zapret/$file" "$TMP/$file"
+done
 
-cp "$TMP"/config "$TMPZ"
-cp "$TMP"/zapret-hosts-user-exclude.txt  "$TMPZ"/ipset/
+git clone --depth 1 https://github.com/bol-van/zapret "$TMPZ" || exit 1
+
+for file in "${FILES[@]}"; do
+    install -vD "$TMP/$file" "$TMPZ/$file"
+done
 
 nvim -d "$TMPZ"/config.default "$TMPZ"/config
 
+sudo rm -rf /opt/zapret/
+
 "$TMPZ"/install_easy.sh
+
+for file in "${FILES[@]}"; do
+    sudo chown alex /opt/zapret/"$file"
+done

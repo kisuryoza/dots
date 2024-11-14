@@ -1,0 +1,9 @@
+[Unit]
+Description=Run nvidia-fan-control every 5 sec
+
+[Timer]
+OnBootSec=10min
+OnUnitActiveSec=5sec
+
+[Install]
+WantedBy=timers.target

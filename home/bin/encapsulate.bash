@@ -1,38 +1,31 @@
 #!/usr/bin/env bash
 
 (exec bwrap \
-    --ro-bind /usr /usr \
-    --dir /tmp \
-    --dir /var \
-    --symlink ../tmp var/tmp \
+    --ro-bind /usr/bin /usr/bin \
+    --ro-bind /usr/share /usr/share/ \
+    --ro-bind /usr/lib /usr/lib \
+    --ro-bind /usr/lib64 /usr/lib64 \
+    --symlink /usr/lib /lib \
+    --symlink /usr/lib64 /lib64 \
+    --symlink /usr/bin /bin \
+    --symlink /usr/bin /sbin \
     --proc /proc \
     --dev /dev \
-    --ro-bind /etc/resolv.conf /etc/resolv.conf \
-    --ro-bind /usr/share/ca-certificates /usr/share/ca-certificates \
-    --ro-bind /etc/ssl /etc/ssl \
-    --ro-bind /etc/ca-certificates /etc/ca-certificates \
-    --ro-bind-try /etc/alsa /etc/alsa \
-    --ro-bind-try /etc/pulse /etc/pulse \
-    --ro-bind-try /etc/pipewire /etc/pipewire \
     --tmpfs /run \
-    --ro-bind-try /run/user/"$(id -u)"/pipewire-0 /run/user/"$(id -u)"/pipewire-0 \
-    --ro-bind /run/user/"$(id -u)/$WAYLAND_DISPLAY" /run/user/"$(id -u)/$WAYLAND_DISPLAY" \
-    --symlink usr/lib /lib \
-    --symlink usr/lib64 /lib64 \
-    --symlink usr/bin /bin \
-    --symlink usr/sbin /sbin \
-    --dir /run/user/$(id -u) \
+    --tmpfs /tmp \
+    --dir /var \
+    --dir "$XDG_RUNTIME_DIR" \
     --dir "$PWD" \
     --chdir "$PWD" \
     --ro-bind "$1" "$PWD/$1" \
-    --setenv XDG_RUNTIME_DIR "/run/user/$(id -u)" \
-    --setenv PS1 "capsule$ " \
+    --setenv PS1 "bwrap$ " \
     --unshare-all \
-    --share-net \
     --die-with-parent \
     --new-session \
+    --seccomp 10 \
     --file 11 /etc/passwd \
     --file 12 /etc/group \
     /bin/bash) \
-    11< <(getent passwd $UID 65534) \
-    12< <(getent group $(id -g) 65534)
+    10< <(cat /usr/local/bin/seccomp_default_filter.bpf) \
+    11< <(getent passwd "$UID" 65534) \
+    12< <(getent group "$(id -g)" 65534)

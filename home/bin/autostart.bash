@@ -10,10 +10,6 @@ fi
 
 # Notification daemon
 pgrep --exact dunst || dunst &>/dev/null &
-DBUS_ADDRESS_FILE="/tmp/.dbus-address"
-touch "$DBUS_ADDRESS_FILE"
-chmod 600 "$DBUS_ADDRESS_FILE"
-echo "export DBUS_SESSION_BUS_ADDRESS=$DBUS_SESSION_BUS_ADDRESS" >>"$DBUS_ADDRESS_FILE"
 
 start_x() {
     # Display Power Management Signaling

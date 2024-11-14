@@ -35,7 +35,9 @@
         "format": "{stateIcon} {consumeIcon}{randomIcon}{repeatIcon}{singleIcon} {artist} - {title} ({elapsedTime:%M:%S}/{totalTime:%M:%S})",
         "format-disconnected": "MPD disconnected",
         "format-stopped": "{consumeIcon}{randomIcon}{repeatIcon}{singleIcon}MPD stopped",
+        "tooltip-format": "{album} - {artist} - {title} {elapsedTime:%M:%S}/{totalTime:%M:%S} {songPosition}/{queueLength}",
         "max-length": 70,
+        "on-click": "mpc toggle",
         "rotate": 90,
         "state-icons": {
             "paused": "󰏤",
@@ -55,6 +57,7 @@
         },
     },
     "privacy": {
+        "icon-size": 14,
         "modules": [
             {
                 "type": "screenshare",
@@ -107,6 +110,7 @@
             "default": ["󰕿", "󰖀", "󰕾"],
         },
         "scroll-step": 5,
+        "on-click": "pamixer -t",
         "ignored-sinks": ["Easy Effects Sink"],
     },
     "backlight": {

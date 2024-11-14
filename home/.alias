@@ -1,6 +1,6 @@
 alias pac='sudo pacman -S --disable-download-timeout'
 alias pacd='sudo pacman -Rns'
-alias ssc='sudo systemctl'
+alias pkglist='pacman -Qei | rg "Name|Description" | less'
 alias emergency-update='sudo pacman -Sy archlinux-keyring && sudo pacman -Syu'
 alias clean='paru -c && paru -Sc'
 alias ua-drop-caches='sudo paccache -rk3; clean'
@@ -12,11 +12,11 @@ alias ua-update-all='export TMPFILE="$(mktemp)"; \
     && ua-drop-caches \
     && paru -Syyu'
 
+alias ssc='sudo systemctl'
+
 alias ip='ip -color=always'
 alias yt-dlp-audio='yt-dlp -x --embed-metadata --parse-metadata ":(?P<meta_synopsis>)" --convert-thumbnails=jpg --embed-thumbnail'
 alias fcd='cd "$(fd -td -L --max-depth=5 | fzy --lines=20)"'
-alias eza='eza --all --long --group-directories-first --color=always'
+alias ezaa='eza --all --long --group-directories-first --color=always'
 alias gitc='git clone --depth 1'
-alias tsc='tsc -t esnext'
-alias zellijk='zellij k $(zellij ls | fzy | cut -f1 -d" ")'
 alias mank='man -k . | fzf --preview "man {}" | awk "{print $1}" | xargs -r man'
