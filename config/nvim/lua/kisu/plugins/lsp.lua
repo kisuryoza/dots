@@ -158,37 +158,4 @@ return {
             end, { remap = true, desc = "Format buffer" })
         end,
     },
-    {
-        "williamboman/mason.nvim",
-        event = "VeryLazy",
-        config = function()
-            local packages = {
-                "codelldb",
-                "lua-language-server",
-                "selene",
-                "stylua",
-                "bash-language-server",
-                "shellcheck",
-                "shfmt",
-                "shellharden",
-                "prettier",
-            }
-
-            require("mason").setup()
-            local mason_registry = require("mason-registry")
-            local show = vim.schedule_wrap(function(msg)
-                vim.notify(msg, vim.log.levels.INFO)
-            end)
-
-            for _i, item in ipairs(packages) do
-                local p = mason_registry.get_package(item)
-                if not p:is_installed() then
-                    p:once("install:success", function()
-                        show(string.format("%s: successfully installed", p.name))
-                    end)
-                    p:install()
-                end
-            end
-        end,
-    },
 }
