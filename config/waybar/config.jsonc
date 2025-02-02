@@ -16,9 +16,11 @@
         "network",
         "battery",
         "hyprland/language",
+        "custom/weather",
         "clock#w",
         "clock#d",
         "clock",
+        "custom/power",
     ],
     "hyprland/workspaces": {
         "format": "{icon}",
@@ -81,16 +83,19 @@
         "critical-threshold": 60,
         // "format-critical": "{temperatureC}°C ",
         "format": "{temperatureC}°C",
+        "tooltip": false,
     },
     "custom/gpu_load": {
         "exec": "~/bin/misc/gpu-load.bash",
         "format": "󰢮 {}",
         "interval": 2,
+        "tooltip": false,
     },
     "custom/gpu_temp": {
         "exec": "nvidia-settings -q gpucoretemp -t",
         "format": "{}°C",
         "interval": 5,
+        "tooltip": false,
     },
     "memory": {
         "interval": 2,
@@ -98,7 +103,7 @@
     },
     "disk": {
         "interval": 360,
-        "format": "󰋊 {specific_free:0.1f}",
+        "format": "󰋊 {specific_free:0.0f}",
         "unit": "GiB",
         "path": "/",
     },
@@ -146,9 +151,15 @@
         "format-en": "EN",
         "format-ru": "RU",
     },
+    "custom/weather":{
+        "exec": "~/bin/misc/weather.bash",
+        "return-type": "json",
+        "interval": 7200,
+        "format": "{}",
+    },
     "clock": {
         "format": "{:%H:%M}",
-        "format-alt": "{:%a\n%d/%m\n%H\n%M}",
+        "format-alt": "{:%a\n%m/%d\n%H\n%M}",
         "interval": 60,
         "tooltip-format": "<tt><small>{calendar}</small></tt>",
         "calendar": {
@@ -158,7 +169,7 @@
             "on-scroll": 1,
             "format": {
                 "months": "<span color='#cba6f7'><b>{}</b></span>",
-                "weeks": "<span color='#fab387'><b>W{}</b></span>",
+                "weeks": "<span color='#fab387'><b>W{:%W}</b></span>",
                 "weekdays": "<span color='#fab387'><b>{}</b></span>",
                 "days": "<span color='#cdd6f4'><b>{}</b></span>",
                 "today": "<span color='#f38ba8'><b><u>{}</u></b></span>",
@@ -168,9 +179,16 @@
     "clock#d": {
         "format": "{:%m/%d}",
         "interval": 60,
+        "tooltip": false,
     },
     "clock#w": {
         "format": "{:%a}",
         "interval": 60,
+        "tooltip": false,
+    },
+    "custom/power":{
+        "format": "󰤁",
+        "on-click": "~/bin/misc/power.bash",
+        "tooltip": false,
     },
 }

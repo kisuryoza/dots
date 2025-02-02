@@ -1,6 +1,14 @@
 [workspace]
-members = ["gmods", "wp"]
+members = ["gmods"]
 resolver = "2"
+
+[package]
+name = "smolscripts"
+version = "0.1.0"
+edition = "2021"
+
+[[bin]]
+name = "nvidia_fan_control"
 
 [profile.release]
 codegen-units = 1

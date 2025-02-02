@@ -5,6 +5,8 @@ if [[ -z $SELECTED ]]; then
     exit 0
 fi
 
+zoxide add "$SELECTED" # increment rank
+
 SELECTED_NAME=$(basename "$SELECTED" | tr . _)
 TMUX_RUNNING=$(pgrep tmux)
 if [[ -z $TMUX ]] && [[ -z $TMUX_RUNNING ]]; then

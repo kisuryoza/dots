@@ -35,7 +35,3 @@ rules = [
 [tasks]
 suppress_preload = true
 
-[plugin]
-append_previewers = [
-    { name = "*.md", run = "glow" },
-]

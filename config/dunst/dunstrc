@@ -4,12 +4,13 @@
     # follow = none
 
     ### Geometry ###
-    width = (200, 500)
-    height = 300
+    # width = 300
+    # height = (0, 300)
     origin = bottom-right
-    offset = 20x80
+    # offset = 20x80
+    # offset = (10, 50)
     # scale = 0
-    notification_limit = 0
+    # notification_limit = 20
 
     ### Progress bar ###
     # progress_bar = true
@@ -18,7 +19,9 @@
     # progress_bar_min_width = 150
     # progress_bar_max_width = 300
     # progress_bar_corner_radius = 0
+    # progress_bar_corners = all
     # icon_corner_radius = 0
+    # icon_corners = all
     # indicate_hidden = yes
     # transparency = 0
     # separator_height = 2
@@ -26,7 +29,7 @@
     # horizontal_padding = 8
     # text_icon_padding = 0
     frame_width = 1
-    # frame_color = "#0f0f14"
+    frame_color = "#1e66f5"
     # gap_size = 0
     # separator_color = frame
     # sort = yes
@@ -47,56 +50,55 @@
     # show_indicators = yes
 
     ### Icons ###
-    # enable_recursive_icon_lookup = true
-    icon_theme = breeze-dark
+    enable_recursive_icon_lookup = true
+    icon_theme = "breeze, Adwaita"
     # icon_position = left
-    min_icon_size = 16
-    max_icon_size = 32
-    icon_path = /usr/share/icons/breeze-dark/status/16/:/usr/share/icons/breeze-dark/devices/16/
+    min_icon_size = 64
+    # max_icon_size = 128
 
     ### History ###
     # sticky_history = yes
     # history_length = 20
 
     ### Misc/Advanced ###
-    dmenu = /usr/bin/bemenu -p dunst:
-    # browser = /usr/bin/xdg-open
+    dmenu = /usr/bin/bemenu-run -p dunst:
+    browser = /usr/bin/handlr
     # always_run_script = true
     # title = Dunst
     # class = Dunst
-    corner_radius = 10
+    # corner_radius = 0
+    # corners = all
     # ignore_dbusclose = false
 
     ### Wayland ###
-    # layer = top
-    force_xwayland = false
+    layer = top
+    # force_xwayland = false
 
     ### Legacy
-    force_xinerama = false
+    # force_xinerama = false
 
     ### mouse
     mouse_left_click = do_action
     mouse_middle_click = context
     mouse_right_click = close_current
 
-[global]
-frame_color = "#1E66F5"
-separator_color= frame
+[experimental]
+    # per_monitor_dpi = false
 
 [urgency_low]
-background = "#EFF1F5"
-foreground = "#4C4F69"
-timeout = 10
+    background = "#eff1f5"
+    foreground = "#4c4f69"
+    timeout = 10
 
 [urgency_normal]
-background = "#EFF1F5"
-foreground = "#4C4F69"
-timeout = 10
+    background = "#eff1f5"
+    foreground = "#4c4f69"
+    timeout = 10
 
 [urgency_critical]
-background = "#FE640B"
-foreground = "#4C4F69"
-frame_color = "#EFF1F5"
-timeout = 0
+    background = "#eff1f5"
+    foreground = "#4c4f69"
+    frame_color = "#fe640b"
+    timeout = 0
 
 # vim: ft=cfg

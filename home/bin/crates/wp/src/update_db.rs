@@ -94,6 +94,7 @@ where
 
     let amount_of_obsolete_entries = obsolete_keys
         .map(|key| -> Result<()> {
+            info!("Obsolete: {}", key);
             table.remove(key.as_ref())?;
             Ok(())
         })

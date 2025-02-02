@@ -1,0 +1,19 @@
+--- /usr/lib/librewolf/distribution/policies.json   2024-12-16 06:30:59.000000000 +0400
++++ policies.json   2024-12-25 09:23:27.706907392 +0400
+@@ -24,7 +24,15 @@
+         },
+         "Extensions": {
+             "Install": [
+-                "https://addons.mozilla.org/firefox/downloads/latest/ublock-origin/latest.xpi"
++                "https://addons.mozilla.org/firefox/downloads/latest/ublock-origin/latest.xpi",
++                "https://addons.mozilla.org/firefox/downloads/latest/localcdn-fork-of-decentraleyes/latest.xpi",
++                "https://addons.mozilla.org/firefox/downloads/latest/canvasblocker/latest.xpi",
++                "https://addons.mozilla.org/firefox/downloads/latest/user-agent-string-switcher/latest.xpi",
++                "https://addons.mozilla.org/firefox/downloads/latest/darkreader/latest.xpi",
++                "https://addons.mozilla.org/firefox/downloads/latest/image-search-options/latest.xpi",
++                "https://addons.mozilla.org/firefox/downloads/latest/simple-translate/latest.xpi",
++                "https://addons.mozilla.org/firefox/downloads/latest/vimium-ff/latest.xpi",
++                "https://addons.mozilla.org/firefox/downloads/latest/country-flags-ip-whois/latest.xpi"
+             ],
+             "Uninstall": [
+                 "google@search.mozilla.org",

@@ -2,9 +2,11 @@ export XDG_CONFIG_HOME=$HOME/.config
 export XDG_CACHE_HOME=$HOME/.cache
 export XDG_DATA_HOME=$HOME/.local/share
 export XDG_STATE_HOME=$HOME/.local/state
+export XDG_DATA_DIRS=/usr/local/share:/usr/share
+export XDG_CONFIG_DIRS=/etc/xdg
 
 export QT_STYLE_OVERRIDE=kvantum
-export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+export MANPAGER="sh -c 'col -bx | bat -l man -p --paging always'"
 export MANROFFOPT="-c"
 export BROWSER=librewolf
 export EDITOR=nvim

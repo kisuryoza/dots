@@ -1,8 +1,0 @@
-[Unit]
-Description=Nvidia fan control
-
-[Service]
-ExecStart=/usr/local/bin/nvidia-fan-control.bash run
-
-[Install]
-WantedBy=multi-user.target

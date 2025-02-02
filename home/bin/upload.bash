@@ -1,13 +1,5 @@
 #!/usr/bin/env bash
 
-if [ "$1" = "" ]; then
-    printf "No arguments specified."
-    printf "Usage:"
-    printf "upload.bash <file|directory>"
-    printf "... | transfer <file_name>"
-    return 1
-fi
-
 if ! tty -s; then
     # curl --upload-file "-" "https://transfer.sh/$1"
     return

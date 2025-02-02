@@ -44,79 +44,90 @@ window#waybar.hidden {
 #mpd {
     font-size: 15px;
     color: @text;
-    background-color: @base;
+    background-color: transparent;
 }
 
 #privacy {
     color: @mauve;
+    background-color: transparent;
 }
 
 #cpu {
-    color: @base;
-    background-color: @red;
+    color: @red;
+    background-color: transparent;
 }
 
 #temperature {
-    color: @base;
-    background-color: @red;
+    color: @red;
+    background-color: transparent;
 }
 
 #custom-gpu_load {
-    color: @base;
-    background-color: @maroon;
+    color: @maroon;
+    background-color: transparent;
 }
 
 #custom-gpu_temp {
-    color: @base;
-    background-color: @maroon;
+    color: @maroon;
+    background-color: transparent;
 }
 
 #memory {
-    color: @base;
-    background-color: @peach;
+    color: @peach;
+    background-color: transparent;
 }
 
 #disk {
-    color: @base;
-    background-color: @yellow;
+    color: @yellow;
+    background-color: transparent;
 }
 
 #pulseaudio {
-    color: @base;
-    background-color: @green;
+    color: @green;
+    background-color: transparent;
 }
 
 #backlight {
-    color: @base;
-    background-color: @teal;
+    color: @teal;
+    background-color: transparent;
 }
 
 #network {
-    color: @base;
-    background-color: @sky;
+    color: @sky;
+    background-color: transparent;
 }
 
 #battery {
-    color: @base;
-    background-color: @sapphire;
+    color: @sapphire;
+    background-color: transparent;
 }
 
 #language {
-    color: @base;
-    background-color: @blue;
+    color: @blue;
+    background-color: transparent;
+}
+
+#custom-weather {
+    color: @lavender;
+    background-color: transparent;
 }
 
 #clock.w {
-    color: @lavender;
-    background-color: @base;
+    color: @rosewater;
+    background-color: transparent;
 }
 
 #clock.d {
-    color: @lavender;
-    background-color: @base;
+    color: @flamingo;
+    background-color: transparent;
 }
 
 #clock {
-    color: @base;
-    background-color: @lavender;
+    color: @pink;
+    background-color: transparent;
+}
+
+#custom-power {
+    color: @mauve;
+    background-color: transparent;
 }

@@ -1,6 +1,9 @@
 alacritty/*
 !alacritty/alacritty.toml
 
+foot/*
+!foot/foot.ini
+
 fish/*
 !fish/config.fish
 
@@ -16,6 +19,3 @@ yazi/*
 
 zathura/*
 !zathura/zathurarc
-
-zsh/zfunc/
-zsh/.zcompdump
