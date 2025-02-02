@@ -59,45 +59,50 @@ local M = {
 M.config = function()
     local dap, widgets = require("dap"), require("dap.ui.widgets")
     -- local command = require("mason-registry").get_package("codelldb"):get_install_path()
-    local command = vim.fn.expand("~/.local/share/nvim/mason/packages/codelldb/extension/adapter/codelldb")
-    dap.adapters.codelldb = {
-        type = "server",
-        port = "${port}",
-        executable = {
-            command = command,
-            args = { "--port", "${port}" },
-        },
+    -- local command = vim.fn.expand("~/.local/share/nvim/mason/packages/codelldb/extension/adapter/codelldb")
+    dap.adapters.lldb = {
+        type = "executable",
+        -- command = "/usr/bin/codelldb",
+        command = "/usr/bin/lldb-dap",
+        name = "lldb",
     }
     dap.configurations.c = {
         {
-            name = "codelldb",
-            type = "codelldb",
+            name = "lldb",
+            type = "lldb",
             request = "launch",
             program = function()
-                return vim.fn.input("Path to executable: ", (vim.fn.getcwd() .. "/"), "file")
+                -- return vim.fn.input("Path to executable: ", (vim.fn.getcwd() .. "/"), "file")
+                return coroutine.create(function(coro)
+                    local pickers = require("telescope.pickers")
+                    local finders = require("telescope.finders")
+                    local conf = require("telescope.config").values
+                    local actions = require("telescope.actions")
+                    local action_state = require("telescope.actions.state")
+                    local opts = {}
+                    pickers
+                        .new(opts, {
+                            prompt_title = "Path to executable",
+                            finder = finders.new_oneshot_job({ "fd", "--type", "x" }, {}),
+                            sorter = conf.generic_sorter(opts),
+                            attach_mappings = function(buffer_number)
+                                actions.select_default:replace(function()
+                                    actions.close(buffer_number)
+                                    coroutine.resume(coro, action_state.get_selected_entry()[1])
+                                end)
+                                return true
+                            end,
+                        })
+                        :find()
+                end)
             end,
             cwd = "${workspaceFolder}",
             stopOnEntry = false,
         },
     }
     dap.configurations.cpp = dap.configurations.c
-    dap.configurations.rust = {
-        {
-            name = "codelldb",
-            type = "codelldb",
-            request = "launch",
-            program = function()
-                vim.notify("Building...", vim.log.levels.WARN)
-                vim.fn.system("cargo build")
-                local output = vim.fn.system("cargo metadata --format-version=1 --no-deps")
-                local artifact = vim.fn.json_decode(output)
-                local target_name = artifact.packages[1].targets[1].name
-                local target_dir = artifact.target_directory
-                vim.notify(("Binary name: " .. target_name), vim.log.levels.INFO)
-                return target_dir .. "/debug/" .. target_name
-            end,
-        },
-    }
+    dap.configurations.rust = dap.configurations.c
+    dap.configurations.zig = dap.configurations.c
 
     vk.set({ "n", "v" }, "<leader>dwh", widgets.hover, { desc = "Widgets hover" })
     vk.set({ "n", "v" }, "<leader>dwp", widgets.preview, { desc = "Widgets preview" })

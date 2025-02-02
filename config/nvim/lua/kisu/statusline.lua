@@ -3,11 +3,9 @@ local M = {}
 local align = "%="
 local reset = "%*"
 
-local LSP_progress = ""
-
+--[[ local LSP_progress = ""
 vim.lsp.handlers["$/progress"] = function(_, result, ctx)
-    local client_id = ctx.client_id
-    local name = vim.lsp.get_client_by_id(client_id).name
+    local name = vim.lsp.get_client_by_id(ctx.client_id).name
     local val = result.value
 
     if not val.kind then
@@ -21,7 +19,7 @@ vim.lsp.handlers["$/progress"] = function(_, result, ctx)
     elseif val.kind == "end" then
         LSP_progress = "%#DiagnosticFloatingInfo#" .. name
     end
-end
+end ]]
 
 ---@class Statusline
 ---@field arr table
@@ -84,28 +82,28 @@ end
 
 ---@return string|false
 local function git()
-    local label = {}
-
     local status = vim.b.gitsigns_status_dict
     if not status then
         return false
     end
 
-    table.insert(label, "%#Boolean#")
+    local label = {}
+
+    table.insert(label, "%#kisu_stl_gitbranch#")
     table.insert(label, "󰘬 " .. status.head)
 
     local added, changed, removed = status.added, status.changed, status.removed
     if added and added > 0 then
-        table.insert(label, "%#diffAdded#" .. "+" .. added)
+        table.insert(label, "%#kisu_stl_diffAdded#" .. "+" .. added)
     end
     if changed and changed > 0 then
-        table.insert(label, "%#diffChanged#" .. "~" .. changed)
+        table.insert(label, "%#kisu_stl_diffChanged#" .. "~" .. changed)
     end
     if removed and removed > 0 then
-        table.insert(label, "%#diffRemoved#" .. "-" .. removed)
+        table.insert(label, "%#kisu_stl_diffRemoved#" .. "-" .. removed)
     end
 
-    return table.concat(label, " ") .. reset
+    return table.concat(label, " ")
 end
 
 ---@param n number
@@ -166,16 +164,16 @@ local function lsp()
     local label = {}
 
     if #errors ~= 0 then
-        table.insert(label, "%#DiagnosticFloatingError#󰝥 " .. #errors)
+        table.insert(label, "%#kisu_stl_diagError#󰝥 " .. #errors)
     end
     if #warns ~= 0 then
-        table.insert(label, "%#DiagnosticFloatingWarn#󰝥 " .. #warns)
+        table.insert(label, "%#kisu_stl_diagWarn#󰝥 " .. #warns)
     end
     if #infos ~= 0 then
-        table.insert(label, "%#DiagnosticFloatingInfo#󰝥 " .. #infos)
+        table.insert(label, "%#kisu_stl_diagInfo#󰝥 " .. #infos)
     end
     if #hints ~= 0 then
-        table.insert(label, "%#DiagnosticFloatingHint#󰌵 " .. #hints)
+        table.insert(label, "%#kisu_stl_diagHint#󰌵 " .. #hints)
     end
 
     return table.concat(label, " ")
@@ -210,9 +208,10 @@ local function active()
     -- " %#kisu_stl_sep#┃"
     stl:insert(mode(), " " .. reset)
     stl:insert(file(), " " .. reset)
+    stl:insert("%#kisu_stl_bg#")
     stl:insert(git())
     stl:insert(align)
-    stl:insert(LSP_progress, " " .. reset)
+    -- stl:insert(LSP_progress, " " .. reset)
     stl:insert(lsp(), " " .. reset)
     stl:insert(file_encoding(), " " .. reset)
     stl:insert(file_format(), " " .. reset)
@@ -280,6 +279,16 @@ function M.setup()
     vim.api.nvim_set_hl(0, "kisu_stl_file", { fg = "black", bg = get_hl("Title").fg })
     vim.api.nvim_set_hl(0, "kisu_stl_ruler", { fg = "black", bg = get_hl("Identifier").fg })
     vim.api.nvim_set_hl(0, "kisu_stl_filetype", { fg = "black", bg = get_hl("Statement").fg, bold = true })
+    local bg = get_hl("CursorColumn").bg
+    vim.api.nvim_set_hl(0, "kisu_stl_bg", { bg = bg })
+    vim.api.nvim_set_hl(0, "kisu_stl_gitbranch", { fg = get_hl("Boolean").fg, bg = bg })
+    vim.api.nvim_set_hl(0, "kisu_stl_diffAdded", { fg = get_hl("diffAdded").fg, bg = bg })
+    vim.api.nvim_set_hl(0, "kisu_stl_diffChanged", { fg = get_hl("diffChanged").fg, bg = bg })
+    vim.api.nvim_set_hl(0, "kisu_stl_diffRemoved", { fg = get_hl("diffRemoved").fg, bg = bg })
+    vim.api.nvim_set_hl(0, "kisu_stl_diagError", { fg = get_hl("DiagnosticFloatingError").fg, bg = bg })
+    vim.api.nvim_set_hl(0, "kisu_stl_diagWarn", { fg = get_hl("DiagnosticFloatingWarn").fg, bg = bg })
+    vim.api.nvim_set_hl(0, "kisu_stl_diagInfo", { fg = get_hl("DiagnosticFloatingInfo").fg, bg = bg })
+    vim.api.nvim_set_hl(0, "kisu_stl_diagHint", { fg = get_hl("DiagnosticFloatingHint").fg, bg = bg })
     vim.o.statusline = "%{%v:lua.require'kisu.statusline'.eval_statusline()%}"
 end
 

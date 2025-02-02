@@ -1,11 +1,13 @@
 local vk = vim.keymap
 
-vk.set("t", "<Esc>", vim.api.nvim_replace_termcodes("<C-\\><C-n>", true, true, true), { desc = "Exit terminal mode" })
+vk.set("t", "<Esc>", vim.keycode("<C-\\><C-n>"), { desc = "Exit terminal mode" })
 
 vk.set("n", "<C-d>", "<C-d>zz")
 vk.set("n", "<C-u>", "<C-u>zz")
 vk.set("n", "<Esc>", "<cmd>noh<CR>", { desc = "Turn off highlighting" })
 vk.set("n", "<C-t>", "<cmd>tabnew<CR>")
+vk.set("i", "<C-j>", [[pumvisible() ? "<C-n>" : "<C-j>"]], { expr = true })
+vk.set("i", "<C-k>", [[pumvisible() ? "<C-p>" : "<C-k>"]], { expr = true })
 
 vk.set("v", "y", "ygv<esc>", { desc = "Yank sel text w/out moving cursor back" })
 vk.set("v", "J", ":m '>+1<CR>gv=gv", { desc = "Move selected Down" })

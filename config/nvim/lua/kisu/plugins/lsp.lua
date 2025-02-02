@@ -9,9 +9,7 @@ local function lsp_completion(args)
     end
 
     vim.lsp.completion.enable(true, client.id, bufnr, {
-        autotrigger = true,
-        --[[ convert = function(item)
-        end, ]]
+        autotrigger = false,
     })
 
     local function feedkeys(key)
@@ -49,6 +47,7 @@ end
 local function on_attach(args)
     local bufnr = args.buf
     local buf = vim.lsp.buf
+
     require("telescope")
     vk.set("n", "<leader>lD", buf.declaration, { buffer = bufnr, desc = "Declaration" })
     vk.set("n", "<leader>ld", "<cmd>Telescope lsp_definitions<CR>", { buffer = bufnr, desc = "Definition" })
@@ -64,35 +63,41 @@ local function on_attach(args)
     vk.set("n", "<leader>lwl", function()
         print(vim.inspect(buf.list_workspace_folders()))
     end, { buffer = bufnr, desc = "Workspace List Folders" })
+    -- vk.set("n", "K", function()
+    --     buf.hover({ border = "rounded" })
+    -- end, { buffer = bufnr })
+    -- vk.set("i", "<C-s>", function()
+    --     buf.signature_help({ border = "rounded" })
+    -- end, { buffer = bufnr })
 
-    -- lsp_completion(args)
+    -- vim.opt_local.omnifunc = 'v:lua.vim.lsp.omnifunc'
+    vim.o.omnifunc = "v:lua.MiniCompletion.completefunc_lsp"
 end
 
 local lsp = {
     "neovim/nvim-lspconfig",
-    event = "VeryLazy",
+    cmd = { "LspInfo", "LspStart" },
 }
 
 lsp.config = function()
     local lspconfig = require("lspconfig")
-
-    vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, {
-        border = "single",
+    lspconfig.util.default_config = vim.tbl_extend("force", lspconfig.util.default_config, {
+        autostart = false,
     })
 
     vim.api.nvim_create_autocmd("LspAttach", {
         group = vim.api.nvim_create_augroup("UserLspConfig", { clear = true }),
         callback = function(args)
             on_attach(args)
+            lsp_completion(args)
         end,
     })
 
     lspconfig.clangd.setup({})
     lspconfig.rust_analyzer.setup({
         settings = { ["rust-analyzer"] = { check = { command = "clippy" } } },
-        cmd = { "rustup", "run", "stable", "rust-analyzer" },
     })
-    lspconfig.bashls.setup({})
+    lspconfig.zls.setup({})
     lspconfig.lua_ls.setup({
         settings = {
             Lua = {
@@ -120,7 +125,7 @@ return {
     lsp,
     {
         "mfussenegger/nvim-lint",
-        event = "VeryLazy",
+        ft = { "lua", "sh" },
         config = function()
             local lint = require("lint")
             lint.linters_by_ft = {
@@ -138,13 +143,12 @@ return {
     },
     {
         "stevearc/conform.nvim",
-        event = "VeryLazy",
+        ft = { "lua", "sh", "markdown", "yaml", "json" },
         config = function()
             local conform = require("conform")
             conform.setup({
                 formatters_by_ft = {
                     lua = { "stylua" },
-                    rust = { "rustfmt" },
                     sh = { "shfmt", "shellharden" },
                     -- nix = { "alejandra" },
                     markdown = { "prettier" },

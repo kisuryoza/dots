@@ -11,17 +11,16 @@ M.config = function()
     local treesitter, setup = require("nvim-treesitter.configs"), {}
     setup = {
         ensure_installed = {
+            "zig",
             "rust",
             "c",
-            "cpp",
             "bash",
             "lua",
             "markdown",
             "markdown_inline",
-            "html",
             "diff",
         },
-        auto_install = true,
+        auto_install = false,
         highlight = {
             enable = true,
             disable = function(_lang, buf)

@@ -16,7 +16,8 @@ function comletionfunc(findstart, base)
 end
 vim.o.completefunc = "v:lua.comletionfunc" ]]
 
-vim.o.completeopt = "menu,menuone,popup,noselect"
+vim.o.pumblend = 15
+vim.o.completeopt = "menuone,popup,noinsert,noselect"
 vim.o.clipboard = "unnamedplus"
 vim.o.expandtab = true
 vim.o.tabstop = 4
@@ -39,7 +40,6 @@ vim.o.smartcase = true
 vim.o.updatetime = 300
 vim.o.splitbelow = true
 vim.o.splitright = true
-vim.o.mousemodel = "extend"
 
 vim.o.swapfile = true
 vim.o.undofile = true

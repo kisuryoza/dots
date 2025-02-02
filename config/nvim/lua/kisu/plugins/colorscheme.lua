@@ -10,8 +10,12 @@ return {
         end,
         opts = {
             transparent_background = true,
-            -- dim_inactive = { enabled = true },
             compile_path = (vim.fn.stdpath("cache") .. "/catppuccin"),
+            custom_highlights = function(colors)
+                return {
+                    NormalFloat = { bg = colors.crust },
+                }
+            end,
             integrations = {
                 harpoon = true,
                 leap = true,
@@ -34,7 +38,6 @@ return {
         opts = {
             compile = true,
             transparent = true,
-            dimInactive = true,
             colors = { theme = { all = { ui = { bg_gutter = "none" } } } },
         },
     }, ]]

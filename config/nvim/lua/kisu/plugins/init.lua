@@ -4,12 +4,31 @@ return {
 
     require("kisu.plugins.lsp"),
     require("kisu.plugins.dap"),
-    require("kisu.plugins.cmp"),
+    -- require("kisu.plugins.cmp"),
 
     require("kisu.plugins.treesitter"),
     require("kisu.plugins.telescope"),
     require("kisu.plugins.gitsigns"),
 
+    {
+        "echasnovski/mini.surround", -- Surround actions
+        version = false,
+        opts = {},
+        event = "VeryLazy",
+    },
+    {
+        "echasnovski/mini.comment", -- Comment lines
+        version = false,
+        opts = {},
+        event = "VeryLazy",
+    },
+    {
+        "echasnovski/mini.completion", -- Completion and signature help
+        version = false,
+        opts = { lsp_completion = { source_func = "omnifunc", auto_setup = false }, fallback_action = function() end },
+        event = "VeryLazy",
+    },
+    -- { "echasnovski/mini.snippets", version = false, opts = {} },
     {
         "echasnovski/mini.icons",
         lazy = true,
@@ -17,6 +36,23 @@ return {
             require("mini.icons").setup()
             MiniIcons.mock_nvim_web_devicons()
         end,
+    },
+    {
+        "echasnovski/mini.hipatterns", -- Highlight patterns in text
+        version = false,
+        config = function()
+            local hipatterns = require("mini.hipatterns")
+            hipatterns.setup({
+                highlighters = {
+                    fixme = { pattern = "%f[%w]()FIXME()%f[%W]", group = "MiniHipatternsFixme" },
+                    hack = { pattern = "%f[%w]()HACK()%f[%W]", group = "MiniHipatternsHack" },
+                    todo = { pattern = "%f[%w]()TODO()%f[%W]", group = "MiniHipatternsTodo" },
+                    note = { pattern = "%f[%w]()NOTE()%f[%W]", group = "MiniHipatternsNote" },
+                    hex_color = hipatterns.gen_highlighter.hex_color(),
+                },
+            })
+        end,
+        event = "VeryLazy",
     },
     {
         -- motions allow to jump to any position in the visible editor area
@@ -32,8 +68,7 @@ return {
         end,
         event = "VeryLazy",
         keys = {
-            { "s", "<Plug>(leap-forward)", desc = "Leap forward" },
-            { "S", "<Plug>(leap-backward)", desc = "Leap backward" },
+            { "<CR>", "<Plug>(leap)", desc = "Leap forward" },
             { "gs", "<Plug>(leap-from-window)", desc = "Leap from window" },
         },
     },
@@ -85,14 +120,6 @@ return {
         "folke/which-key.nvim",
         opts = { icons = { rules = false } },
     },
-    {
-        -- highlight and search for todo comments
-        "folke/todo-comments.nvim",
-        dependencies = { "nvim-lua/plenary.nvim" },
-        opts = {},
-        event = "VeryLazy",
-        keys = { { "<leader>ct", "<cmd>TodoQuickFix<cr>", desc = "List of TODOs" } },
-    },
     --[[ {
         -- A pretty list for showing diagnostics, references, telescope results, quickfix and location lists
         "folke/trouble.nvim",
@@ -103,18 +130,6 @@ return {
             { "<leader>cx", "<cmd>Trouble diagnostics toggle<cr>", desc = "Diagnostics (Trouble)" },
         },
     }, ]]
-    {
-        -- Smart and powerful comment plugin for neovim
-        "numToStr/Comment.nvim",
-        opts = {},
-        event = "VeryLazy",
-    },
-    {
-        -- Add/change/delete surrounding delimiter pairs with ease
-        "kylechui/nvim-surround",
-        opts = {},
-        event = "VeryLazy",
-    },
     {
         -- manage undos as a tree
         "jiaoshijie/undotree",
@@ -128,8 +143,7 @@ return {
             "nvim-treesitter/nvim-treesitter",
             "echasnovski/mini.icons",
         },
-        ft = "markdown",
-        -- event = "VeryLazy",
+        lazy = false,
     },
     {
         "saecki/crates.nvim",
