@@ -1,0 +1,503 @@
+#!/usr/bin/env bash
+
+ROOT_PASSWORD=""
+
+# If empty the user will not be created
+USER=""
+USER_PASSWORD=""
+
+HOST_NAME="arch"
+
+# Bootloader:
+# If empty the Bootloader will not be installed
+# grub | uki
+BOOTLOADER="uki"
+
+# If empty timezone will not be set
+# ln -sf /usr/share/zoneinfo/"$TIMEZONE" /etc/localtime
+TIMEZONE="Europe/Berlin"
+
+# dm-crypt with LUKS
+# yes | no
+ENABLE_FULL_DRIVE_ENCRYPTION="no"
+PASSPHRASE_FOR_ENCRYPTION=""
+
+ESP="/boot/efi"
+GITCLONE_SELF="https://github.com/kisuryoza/dots.git"
+readonly ROOT_PASSWORD USER USER_PASSWORD HOST_NAME TIMEZONE ENABLE_FULL_DRIVE_ENCRYPTION PASSPHRASE_FOR_ENCRYPTION ESP GITCLONE_SELF
+
+declare -a PKG KERNEL_PARAMS MODULES HOOKS FILES
+PKG+=(linux linux-firmware base base-devel opendoas)
+PKG+=(e2fsprogs btrfs-progs)
+PKG+=(git networkmanager iwd iptables-nft wget)
+PKG+=(man-db man-pages texinfo)
+PKG+=(zsh vim reflector)
+
+if [[ "$BOOTLOADER" == "uki" ]]; then
+    PKG+=(efibootmgr)
+fi
+
+KERNEL_PARAMS+=(rw bgrt_disable nowatchdog)
+
+###############################################################################
+# {{{ Header
+SCRIPT_PATH=$(realpath -s "${BASH_SOURCE[0]}")
+SCRIPT_NAME=$(basename "$SCRIPT_PATH")
+SCRIPT_DIR=$(dirname "$SCRIPT_PATH")
+readonly SCRIPT_PATH SCRIPT_NAME SCRIPT_DIR
+
+help() {
+    printf "Usage:
+%s <DEVICE>
+" "$SCRIPT_PATH"
+    exit
+}
+for var in "$@"; do if [[ $var == "-h" || $var == "--help" ]]; then help; fi; done
+
+LOG="log.txt"
+set -Eo pipefail
+trap "on_exit" EXIT
+exec 3>&1 4>&2
+# exec 1>log.txt 2>&1
+if [[ -n "$LOG" ]]; then
+    readonly LOG
+    [[ -f "$LOG" ]] && rm "$LOG"
+    exec &> >(tee -ia "$LOG")
+fi
+on_exit() {
+    trap - ERR
+    [[ "$STATUS_MAIN" == "error" ]] && log "Errors acquired during main installation" err
+    [[ "$STATUS_PARTITIONING" == "error" ]] && log "Errors acquired during Partitioning the drive" err
+    [[ "$STATUS_FORMATING" == "error" ]] && log "Errors acquired during Formatting the partitions" err
+    [[ "$STATUS_BOOTLOADER" == "error" ]] && log "Errors acquired during Installation of the bootloader" err
+    [[ -n "$LOG" && "$LOG_ERR" == true ]] && echo "Check log.txt for errors" >&3
+}
+log() {
+    local BOLD RED GREEN YELLOW ESC
+    BOLD=$(tput bold) ESC=$(tput sgr0)
+    RED=$(tput setaf 1) GREEN=$(tput setaf 2) YELLOW=$(tput setaf 3)
+    case "$2" in
+    "err")
+        printf "%s%s%s\n" "${BOLD}${RED}" "$1" "$ESC" >&4
+        [[ -n "$LOG" ]] && printf "=== Error: [ %s ] ===\n" "$1" >>"$LOG"
+        LOG_ERR=true
+        false # with `set -E` this triggers a ERR trap
+        ;;
+    "warn")
+        printf "%s%s%s\n" "${BOLD}${YELLOW}" "$1" "$ESC" >&3
+        [[ -n "$LOG" ]] && printf "=== Warn: [ %s ] ===\n" "$1" >>"$LOG"
+        ;;
+    *)
+        printf "%s%s%s\n" "${BOLD}${GREEN}" "$1" "$ESC" >&3
+        [[ -n "$LOG" ]] && printf "=== [ %s ] ===\n" "$1" >>"$LOG"
+        ;;
+    esac
+    if [[ -n "$3" ]]; then
+        exit "$3"
+    fi
+}
+# }}}
+
+###############################################################################
+# {{{ Safety checks
+if [[ "$1" != "/dev/"* ]]; then
+    log "A single input drive is required" err
+    help
+fi
+
+readonly DRIVE="$1"
+if lsblk --nodeps --noheadings --paths --raw --output NAME | grep -x "$DRIVE" &>/dev/null; then
+    case $DRIVE in
+    *"sd"* | *"vd"*)
+        P1="1"
+        P2="2"
+        #P3="3"
+        ;;
+    *"nvme"*)
+        P1="p1"
+        P2="p2"
+        #P3="p3"
+        ;;
+    *)
+        log "Only HDD or SSD" err 1
+        ;;
+    esac
+    readonly P1 P2
+else
+    log "Wrong \"$DRIVE\" drive" err
+    help
+fi
+
+check_uefi() {
+    [ -d /sys/firmware/efi/ ]
+}
+
+if ! check_uefi; then
+    if [[ "$BOOTLOADER" != "grub" ]]; then
+        log "UEFI is not supported" err
+        log "Grub will be installed instead" warn
+        BOOTLOADER="grub"
+    fi
+    if [[ "$BOOTLOADER" == "grub" && $ENABLE_FULL_DRIVE_ENCRYPTION == "yes" ]]; then
+        log "BIOS + grub + full drive encryption is not supported because I didnt bother" err 1
+    fi
+fi
+# }}}
+
+###############################################################################
+# PARTITIONING & FORMATTING
+###############################################################################
+# References:
+# https://wiki.archlinux.org/title/Dm-crypt/Device_encryption#Encrypting_devices_with_cryptsetup
+# https://wiki.archlinux.org/title/Dm-crypt/Encrypting_an_entire_system#LUKS_on_a_partition
+# https://wiki.archlinux.org/title/Dm-crypt/Specialties#Disable_workqueue_for_increased_solid_state_drive_(SSD)_performance
+# {{{ Partition the Drive
+partitioning() {
+    trap "STATUS_PARTITIONING=error" ERR
+    log "Partitioning the drive"
+
+    log "Clearing existing partition tables"
+    sgdisk "$DRIVE" -Z
+    if check_uefi; then
+        log "Partitioning 1G for EFI and the rest for Linux"
+        TYPECODE="ef00"
+    else
+        log "Partitioning 1G for BIOS and the rest for Linux"
+        TYPECODE="ef02"
+    fi
+    sgdisk "$DRIVE" --align-end --new=1:0:+1G --typecode=1:"$TYPECODE" --largest-new=2
+
+    log "Partition table:"
+    sgdisk "$DRIVE" -p
+    trap - ERR
+}
+# }}}
+
+# {{{ Format and Mount the Partitions (non-crypt)
+formatting() {
+    trap "STATUS_FORMATING=error" ERR
+    log "Formatting the partitions (non-crypt)"
+
+    mkfs.fat -F 32 "$DRIVE$P1"
+    mkfs.ext4 "$DRIVE$P2"
+
+    log "Mounting the partitions"
+    mount "$DRIVE$P2" /mnt
+    mkdir -p /mnt"$ESP"
+    mount "$DRIVE$P1" /mnt"$ESP"
+    trap - ERR
+}
+# }}}
+
+# {{{ Drive preparation (crypt)
+## Securely wipe the drive before Partitioning and Encrypting the drive
+# References:
+# https://wiki.archlinux.org/title/Dm-crypt/Drive_preparation
+function drive-preparation {
+    log "Creating a temporary encrypted container on the drive"
+    cryptsetup open --type plain --key-file /dev/urandom "$DRIVE" to_be_wiped || log "'cryptsetup open'" err 1
+    log "Wiping it"
+    dd if=/dev/zero of=/dev/mapper/to_be_wiped bs=1M status=progress
+    log "Closing the container"
+    cryptsetup close to_be_wiped
+}
+# }}}
+
+# {{{ Format and Mount the Partitions (crypt)
+formatting-crypt() {
+    trap "STATUS_FORMATTING=error" ERR
+    log "Formatting the partitions (crypt)"
+
+    mkfs.fat -F 32 "$DRIVE$P1"
+
+    log "Formatting LUKS partitions"
+    echo "$PASSPHRASE_FOR_ENCRYPTION" | cryptsetup --verbose luksFormat "$DRIVE$P2"
+    log "Unlocking/Mapping LUKS partitions with the device mapper"
+    if [[ "$DRIVE" == *"nvme"* ]]; then
+        # See the reference
+        echo "$PASSPHRASE_FOR_ENCRYPTION" | cryptsetup --perf-no_read_workqueue --perf-no_write_workqueue --persistent open "$DRIVE$P2" root
+    else
+        echo "$PASSPHRASE_FOR_ENCRYPTION" | cryptsetup open "$DRIVE$P2" root
+    fi
+    mkfs.ext4 /dev/mapper/root
+
+    log "Mounting the partitions"
+    mount /dev/mapper/root /mnt
+    mkdir -p /mnt"$ESP"
+    mount "$DRIVE$P1" /mnt"$ESP"
+    trap - ERR
+}
+# }}}
+
+###############################################################################
+# BOOTLOADERS
+###############################################################################
+# {{{ grub
+# https://wiki.archlinux.org/title/GRUB
+bootloader-grub() {
+    trap "STATUS_BOOTLOADER=error" ERR
+    log "Begining the grub's installation"
+
+    pacstrap /mnt grub efibootmgr
+
+    rm -rf /mnt"${ESP:?}"/*
+    if [[ $ENABLE_FULL_DRIVE_ENCRYPTION == "yes" ]]; then
+        # https://wiki.archlinux.org/title/GRUB#LUKS2
+        if [[ $(cryptsetup luksDump "$DRIVE$P2" | grep "PBKDF" | awk '{print $NF}') != "pbkdf2" ]]; then
+            log "Changing the hash and PBDKDF algorithms"
+            echo "$PASSPHRASE_FOR_ENCRYPTION" | cryptsetup luksConvertKey --hash sha256 --pbkdf pbkdf2 "$DRIVE$P2"
+        fi
+
+        log "Installing grub"
+        arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory="$ESP" --modules="luks2 part_gpt cryptodisk gcry_rijndael pbkdf2 gcry_sha256 ext2" --removable
+
+        local uuid uuid_tr
+        uuid=$(blkid -s UUID -o value "$DRIVE$P2")
+        uuid_tr=$(echo "$uuid" | tr -d -)
+
+        KERNEL_PARAMS+=(cryptdevice=UUID="$uuid":root root=/dev/mapper/root)
+
+        sed -Ei "s|^#?GRUB_ENABLE_CRYPTODISK=.*|GRUB_ENABLE_CRYPTODISK=y|" /mnt/etc/default/grub
+
+        {
+            echo "cryptomount -u $uuid_tr"
+            echo "set root=crypto0"
+            echo "set prefix=(\$root)/boot/grub"
+            echo "insmod normal"
+            echo -e "normal\n"
+        } >/mnt/grub-pre.cfg
+
+        log "Creating .efi image"
+        arch-chroot /mnt grub-mkimage -p /boot/grub -O x86_64-efi -c /grub-pre.cfg -o /grubx64.efi luks2 part_gpt cryptodisk gcry_rijndael pbkdf2 gcry_sha256 ext2
+        arch-chroot /mnt install -v /grubx64.efi "$ESP"/EFI/BOOT/BOOTX64.EFI
+        rm /mnt/grub-pre.cfg /mnt/grubx64.efi
+    else
+        log "Installing grub"
+        arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory="$ESP" --removable
+        arch-chroot /mnt grub-install --target=x86_64-efi --efi-directory="$ESP" --bootloader-id=Arch
+    fi
+
+    log "Configuring grub"
+    sed -Ei "s|^#?GRUB_CMDLINE_LINUX_DEFAULT=.*|GRUB_CMDLINE_LINUX_DEFAULT=\"${KERNEL_PARAMS[*]}\"|" /mnt/etc/default/grub
+    sed -Ei "s|^#?GRUB_GFXMODE=.*|GRUB_GFXMODE=1920x1080x24,1280x1024x24,auto|" /mnt/etc/default/grub
+    sed -Ei "s|^#?GRUB_GFXPAYLOAD_LINUX=.*|GRUB_GFXPAYLOAD_LINUX=keep|" /mnt/etc/default/grub
+    sed -Ei "s|^#?GRUB_DISABLE_SUBMENU=.*|GRUB_DISABLE_SUBMENU=y|" /mnt/etc/default/grub
+    sed -Ei "s|^#?GRUB_DEFAULT=.*|GRUB_DEFAULT=saved|" /mnt/etc/default/grub
+    sed -Ei "s|^#?GRUB_SAVEDEFAULT=.*|GRUB_SAVEDEFAULT=true|" /mnt/etc/default/grub
+    arch-chroot /mnt grub-mkconfig -o /boot/grub/grub.cfg
+    trap - ERR
+}
+# }}}
+
+# {{{ uki
+# https://wiki.archlinux.org/title/Unified_kernel_image
+bootloader-unified-kernel-image() {
+    trap "STATUS_BOOTLOADER=error" ERR
+    log "Creating Unified Kernel Image"
+
+    if [[ $ENABLE_FULL_DRIVE_ENCRYPTION == "yes" ]]; then
+        source /mnt/etc/mkinitcpio.conf
+        HOOKS+=(encrypt)
+        MODULES+=(dm_crypt)
+        [[ -n "$MODULES" ]] && sed -Ei "s|^#?MODULES=.*|MODULES=(${MODULES[*]})|" /mnt/etc/mkinitcpio.conf
+        # [[ -n "$FILES" ]] && sed -Ei "s|^#?FILES=.*|FILES=(${FILES[*]})|" /mnt/etc/mkinitcpio.conf
+        [[ -n "$HOOKS" ]] && sed -Ei "s|^#?HOOKS=.*|HOOKS=(${HOOKS[*]})|" /mnt/etc/mkinitcpio.conf
+    fi
+
+    [[ ! -r "/mnt/etc/mkinitcpio.d/linux.preset.backup" ]] && mv /mnt/etc/mkinitcpio.d/linux.preset /mnt/etc/mkinitcpio.d/linux.preset.backup
+
+    log "Creating linux preset for mkinitcpio"
+    cat <<EOF >/mnt/etc/mkinitcpio.d/linux.preset
+#ALL_config="/etc/mkinitcpio.conf"
+ALL_kver="/boot/vmlinuz-linux"
+
+PRESETS=('default')
+
+default_config="/etc/mkinitcpio.conf"
+#default_image="/boot/initramfs-linux.img"
+#default_uki="$ESP/EFI/Linux/arch-linux.efi"
+default_uki="$ESP/EFI/BOOT/bootx64.efi"
+EOF
+
+    local uuid root_params
+    uuid=$(blkid -s UUID -o value "$DRIVE$P2")
+    root_params="root=UUID=$uuid"
+    if [[ $ENABLE_FULL_DRIVE_ENCRYPTION == "yes" ]]; then
+        root_params="cryptdevice=UUID=$uuid:root root=/dev/mapper/root"
+    fi
+
+    log "Applying kernel parameters"
+    echo "$root_params ${KERNEL_PARAMS[*]}" >/mnt/etc/kernel/cmdline
+
+    rm -rf /mnt"${ESP:?}"/*
+    mkdir -p /mnt"$ESP"/EFI/Linux
+    mkdir -p /mnt"$ESP"/EFI/BOOT
+
+    log "Starting mkinitcpio"
+    arch-chroot /mnt mkinitcpio -p linux
+
+    log "Creating UEFI boot entry"
+    local model
+    model=$(lsblk --output=MODEL --noheadings --ascii "$DRIVE" | tr -d '\n')
+    arch-chroot /mnt efibootmgr --create --disk "$DRIVE" --part 1 --label "Arch ($model)" --loader "EFI\BOOT\bootx64.efi" --verbose
+    trap - ERR
+}
+# }}}
+
+###############################################################################
+# BEGIN INSTALATION
+###############################################################################
+trap "STATUS_MAIN=error" ERR
+log "Testing ethernet connection..."
+ping archlinux.org -c 2 &>/dev/null || log "No ethernet connection" err 1
+
+###############################################################################
+# {{{ Partitioning & formatting
+log "Partitioning & formatting..."
+if [[ $ENABLE_FULL_DRIVE_ENCRYPTION == "yes" ]]; then
+    if [[ "$DRIVE" == *"nvme"* ]]; then
+        # FIXME: ugly and lazy workaround
+        log "According to https://wiki.archlinux.org/title/Solid_state_drive/Memory_cell_clearing#Sanitize_command"
+        log "On nvme device in order to prepare the drive before partition, before continuing one should do:"
+        log "# nvme sanitize /dev/nvme0 -a 0x04" warn
+        log "One can follow the progress with the Sanitize Log:"
+        log "# nvme sanitize-log /dev/nvme0" warn
+        log "When done the output will show 'Sanitize Status : 0x101'"
+        log "find delete this block manually" err 1
+    fi
+    drive-preparation
+    partitioning
+    formatting-crypt
+else
+    partitioning
+    formatting
+fi
+trap "STATUS_MAIN=error" ERR
+# }}}
+
+###############################################################################
+# {{{ Packages
+log "Packages..."
+
+CPU_VENDOR=$(awk -F ": " '/vendor_id/ {print $NF; exit}' /proc/cpuinfo)
+case "$CPU_VENDOR" in
+"GenuineIntel") PKG+=(intel-ucode) ;;
+"AuthenticAMD") PKG+=(amd-ucode) ;;
+esac
+
+sed -Ei 's|^#Color|Color|' /etc/pacman.conf
+sed -Ei "s|^#?ParallelDownloads.*|ParallelDownloads = 3|" /etc/pacman.conf
+while ! pacstrap /mnt "${PKG[@]}"; do
+    log "Problems with ethernet connection." err
+    read -rp "Shall we resume downloading? y/n " answer
+    echo
+    if [[ "$answer" == "n" ]]; then
+        exit 1
+    fi
+done
+# }}}
+
+###############################################################################
+# {{{ Time
+log "Time..."
+timedatectl
+[[ -n "$TIMEZONE" ]] && ln -sf /mnt/usr/share/zoneinfo/"$TIMEZONE" /mnt/etc/localtime
+hwclock --systohc
+# }}}
+
+###############################################################################
+# {{{ Localization
+log "Localization..."
+sed -Ei "s|^#en_US.UTF-8 UTF-8|en_US.UTF-8 UTF-8|" /mnt/etc/locale.gen
+sed -Ei "s|^#en_GB.UTF-8 UTF-8|en_GB.UTF-8 UTF-8|" /mnt/etc/locale.gen
+arch-chroot /mnt locale-gen
+cat <<EOF >/mnt/etc/locale.conf
+LANG=en_US.UTF-8
+LC_TIME=en_GB.UTF-8
+LC_ALL=en_US.UTF-8
+EOF
+# }}}
+
+###############################################################################
+# {{{ Network
+log "Network..."
+echo "$HOST_NAME" >/mnt/etc/hostname
+cat <<EOF >/mnt/etc/hosts
+127.0.0.1        localhost
+::1              localhost
+127.0.1.1        $HOST_NAME
+EOF
+
+mkdir -p /mnt/etc/systemd/resolved.conf.d/
+cat <<EOF >/mnt/etc/systemd/resolved.conf.d/10-securedns.conf
+[Resolve]
+DNSOverTLS=true
+DNS=9.9.9.9#dns.quad9.net 149.112.112.112#dns.quad9.net 2620:fe::fe#dns.quad9.net 2620:fe::9#dns.quad9.net
+DNSSEC=true
+EOF
+ln -sf ../run/systemd/resolve/stub-resolv.conf /mnt/etc/resolv.conf
+
+arch-chroot /mnt systemctl enable NetworkManager.service
+arch-chroot /mnt systemctl enable systemd-resolved.service
+arch-chroot /mnt systemctl enable nftables.service
+# }}}
+
+###############################################################################
+# {{{ Users
+log "Users..."
+arch-chroot /mnt bash -c "echo root:$ROOT_PASSWORD | chpasswd"
+if [[ -n "$USER" ]]; then
+    arch-chroot /mnt useradd --create-home --groups wheel "$USER"
+    if [[ -n "$USER_PASSWORD" ]]; then
+        arch-chroot /mnt bash -c "echo $USER:$USER_PASSWORD | chpasswd"
+    else
+        arch-chroot /mnt passwd -d "$USER"
+    fi
+fi
+
+# sed -Ei "s|^# %wheel ALL=\(ALL:ALL\) ALL|%wheel ALL=(ALL:ALL) ALL|" /mnt/etc/sudoers
+cat <<EOF >/mnt/etc/doas.conf
+permit setenv {PATH=/usr/local/bin:/usr/local/sbin:/usr/bin:/usr/sbin} :wheel
+
+EOF
+arch-chroot /mnt chown -c root:root /etc/doas.conf
+arch-chroot /mnt chmod -c 0400 /etc/doas.conf
+# }}}
+
+###############################################################################
+# {{{ Bootloader
+log "Bootloader..."
+case "$BOOTLOADER" in
+"grub") bootloader-grub ;;
+"uki") bootloader-unified-kernel-image ;;
+esac
+trap "STATUS_MAIN=error" ERR
+# }}}
+
+###############################################################################
+# {{{ Dotfiles
+if [[ -n "$GITCLONE_SELF" && -n "$USER" ]]; then
+    log "Dotfiles..."
+    (
+        cd /mnt/home/"$USER"
+        git clone "$GITCLONE_SELF"
+    )
+    arch-chroot /mnt chown "$USER":"$USER" -R "/home/$USER"
+fi
+# }}}
+
+###############################################################################
+# Miscs
+genfstab -U /mnt >>/mnt/etc/fstab
+
+trap - ERR
+set +Eo pipefail
+
+log "Unmount..."
+sleep 3
+umount -lR /mnt || echo "Error: Failed to umount /mnt"
+if [[ $ENABLE_FULL_DRIVE_ENCRYPTION == "yes" ]]; then
+    cryptsetup close root || echo "Error: Failed to close encrypted partition"
+fi
+
+# vim: foldmethod=marker foldlevel=0 foldlevelstart=0

@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 if ! pacman -Q libnetfilter_queue &>/dev/null; then
-    sudo pacman -S libnetfilter_queue
+    doas pacman -S libnetfilter_queue
 fi
 
 TMPZ="/tmp/zapret"
@@ -29,11 +29,11 @@ done
 
 nvim -d "$TMPZ"/config.default "$TMPC"/config
 
-sudo rm -rf /opt/zapret/
+doas rm -rf /opt/zapret/
 
 "$TMPZ"/install_easy.sh
 
 (
     cd /opt/zapret/
-    sudo chown alex "${FILES[@]}"
+    doas chown alex "${FILES[@]}"
 )

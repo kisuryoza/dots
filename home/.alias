@@ -1,18 +1,17 @@
-alias pac='sudo pacman -S --disable-download-timeout'
-alias pacd='sudo pacman -Rns'
+alias sudo='doas'
+alias pac='doas pacman -S --disable-download-timeout'
+alias pacd='doas pacman -Rns'
 alias pkglist='pacman -Qei | rg "Name|Description" | less'
-alias emergency-update='sudo pacman -Sy archlinux-keyring && sudo pacman -Syu'
-alias clean='paru -c && paru -Sc'
-alias ua-drop-caches='sudo paccache -rk3; clean'
-alias ua-update-all='export TMPFILE="$(mktemp)"; \
-    sudo true; \
+alias emergency-update='doas pacman -Sy archlinux-keyring && doas pacman -Syu'
+alias clean-caches='paru -c; doas paccache -rk2'
+alias update-all='export TMPFILE="$(mktemp)"; \
     rate-mirrors --save=$TMPFILE arch --max-delay=21600 \
-    && sudo mv /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist-backup \
-    && sudo mv $TMPFILE /etc/pacman.d/mirrorlist \
-    && ua-drop-caches \
-    && paru -Syyu'
+    && doas mv /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist-backup \
+    && doas mv $TMPFILE /etc/pacman.d/mirrorlist \
+    && drop-caches \
+    && paru -Syyu --noconfirm'
 
-alias ssc='sudo systemctl'
+alias ssc='doas systemctl'
 
 alias lsa='ls -al --group-directories-first --color=always'
 alias ezaa='eza -al --group-directories-first --color=always'

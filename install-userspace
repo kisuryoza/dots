@@ -1,0 +1,392 @@
+#!/usr/bin/env bash
+
+WAYLAND=false
+XORG=false
+[[ "$1" == *"wayland"* ]] && WAYLAND=true
+[[ "$1" == *"xorg"* ]] && XORG=true
+
+# {{{ Header
+SCRIPT_PATH=$(realpath -s "${BASH_SOURCE[0]}")
+SCRIPT_NAME=$(basename "$SCRIPT_PATH")
+SCRIPT_DIR=$(dirname "$SCRIPT_PATH")
+readonly SCRIPT_PATH SCRIPT_NAME SCRIPT_DIR
+
+help() {
+    printf "First execute as root then as user:
+doas %s [DISPLAY MANAGER]
+%s [DISPLAY MANAGER]
+
+    display manager: wayland | xorg | xorg,wayland
+" "$SCRIPT_PATH" "$SCRIPT_PATH"
+    exit
+}
+for var in "$@"; do if [[ $var == "-h" || $var == "--help" ]]; then help; fi; done
+
+LOG="log.txt"
+set -Eo pipefail
+trap "on_exit" EXIT
+exec 3>&1 4>&2
+# exec 1>log.txt 2>&1
+if [[ -n "$LOG" ]]; then
+    readonly LOG
+    [[ -f "$LOG" ]] && rm "$LOG"
+    exec &> >(tee -ia "$LOG")
+fi
+on_exit() {
+    trap - ERR
+    [[ "$STATUS_USER" == "error" ]] && log "Errors acquired in user's path" err
+    [[ "$STATUS_ROOT" == "error" ]] && log "Errors acquired in root's path" err
+    [[ -n "$LOG" && "$LOG_ERR" == true ]] && echo "Check log.txt for errors" >&3
+}
+log() {
+    local BOLD RED GREEN YELLOW ESC
+    BOLD=$(tput bold) ESC=$(tput sgr0)
+    RED=$(tput setaf 1) GREEN=$(tput setaf 2) YELLOW=$(tput setaf 3)
+    case "$2" in
+    "err")
+        printf "%s%s%s\n" "${BOLD}${RED}" "$1" "$ESC" >&4
+        [[ -n "$LOG" ]] && printf "=== Error: [ %s ] ===\n" "$1" >>"$LOG"
+        LOG_ERR=true
+        false # with `set -E` this triggers a ERR trap
+        ;;
+    "warn")
+        printf "%s%s%s\n" "${BOLD}${YELLOW}" "$1" "$ESC" >&3
+        [[ -n "$LOG" ]] && printf "=== Warn: [ %s ] ===\n" "$1" >>"$LOG"
+        ;;
+    *)
+        printf "%s%s%s\n" "${BOLD}${GREEN}" "$1" "$ESC" >&3
+        [[ -n "$LOG" ]] && printf "=== [ %s ] ===\n" "$1" >>"$LOG"
+        ;;
+    esac
+    if [[ -n "$3" ]]; then
+        exit "$3"
+    fi
+}
+# }}}
+
+source "$SCRIPT_DIR"/home/.profile
+declare -a PKG AUR_PKG
+source "$SCRIPT_DIR"/misc/package-list.bash
+
+sync_packages() {
+    declare -a ALL_PKG META_PKGS CURR_PKGS TO_DELETE
+
+    mapfile -t META_PKGS < <(pacman -Qi base base-devel | awk -F': ' '/Depends On/ {print $NF}' | sed 's/  /\n/g')
+    ALL_PKG=("${PKG[@]}" "${AUR_PKG[@]}" "${META_PKGS[@]}")
+
+    mapfile -t CURR_PKGS < <(pacman -Qqe)
+    for pkg in "${CURR_PKGS[@]}"; do
+        [[ ! ${ALL_PKG[*]} =~ ${pkg} ]] && TO_DELETE+=("$pkg")
+    done
+
+    if [[ ${#TO_DELETE[@]} -gt 0 ]]; then
+        echo "# These packages will be removed, edit if needed:" >/tmp/pkgstoremove
+        printf '%s\n' "${TO_DELETE[@]}" >>/tmp/pkgstoremove
+
+        vim /tmp/pkgstoremove
+        sed -Ei 's|^#.*||' /tmp/pkgstoremove
+        mapfile -t TO_DELETE < <(cat /tmp/pkgstoremove)
+        if [[ ${#TO_DELETE[@]} -gt 0 ]]; then
+            doas pacman -D --asdeps "${TO_DELETE[@]}"
+        fi
+
+        if pacman -Qdtq; then
+            pacman -Qdtq | doas pacman -Rns -
+        fi
+    fi
+    doas pacman -Syu --needed "${PKG[@]}"
+    paru -S --needed --skipreview "${AUR_PKG[@]}"
+}
+
+download_and_check() {
+    file_time=$(stat -L --format %Y "$2")
+    curr_time=$(date +%s)
+    if [[ -f "$2" ]] && (((curr_time - file_time) < (60 * 60 * 24 * 7))); then
+        return
+    fi
+    log "Downloading from $1 and installing to $2"
+    if curl --proto '=https' --tlsv1.3 -LsSf "$1" -o /tmp/pending; then
+        vim /tmp/pending
+        read -rp "Are we good? Y/n: " answer
+        [[ $answer != "n" ]] && install -vD /tmp/pending "$2"
+    else
+        log "Failed to get from $1" err
+    fi
+}
+
+# {{{ user
+as_user() {
+    trap "STATUS_USER=error" ERR
+
+    log "Stow..."
+    (
+        cd "$SCRIPT_DIR" &&
+            stow -vt ~/.config config &&
+            stow -v home
+    ) || log "Stow - failed" err 1
+
+    localectl set-x11-keymap us,ru pc104 qwerty grp:win_space_toggle,caps:escape
+
+    ###########################################################################
+    log "XDG..."
+    DIRS=(
+        "$XDG_CONFIG_HOME" "$XDG_CACHE_HOME" "$XDG_DATA_HOME" "$XDG_STATE_HOME"
+        "$HOME"/.local/bin/ "$HOME"/gitclones/
+    )
+    for dir in "${DIRS[@]}"; do [[ ! -d "$dir" ]] && mkdir -pv "$dir"; done
+
+    [[ ! -d ~/.local/share/applications/ ]] && mkdir -pv ~/.local/share/applications/
+    cat <<EOF >~/.local/share/applications/nvim.desktop
+[Desktop Entry]
+Name=neovim
+Exec=nvim %F
+Terminal=true
+Type=Application
+EOF
+
+    if [[ -n $(command -v gio) ]]; then
+        gio mime inode/directory yazi.desktop
+        gio mime application/x-shellscript nvim.desktop
+        gio mime image/png imv-dir.desktop
+        gio mime image/jpeg imv-dir.desktop
+        [[ "$XORG" == true ]] && gio mime x-scheme-handler/terminal Alacritty.desktop
+        [[ "$WAYLAND" == true ]] && gio mime x-scheme-handler/terminal foot.desktop
+        gio mime application/pdf org.pwmt.zathura.desktop
+        gio mime application/x-bittorrent org.qbittorrent.qBittorrent.desktop
+    fi
+    if [[ -n $(command -v handlr) ]]; then
+        handlr set 'inode/directory' yazi.desktop
+        handlr set 'application/x-shellscript' nvim.desktop
+        handlr set 'text/*' nvim.desktop
+        handlr set 'audio/*' mpv.desktop
+        handlr set 'video/*' mpv.desktop
+        handlr set 'image/*' imv-dir.desktop
+        [[ "$XORG" == true ]] && handlr set 'x-scheme-handler/terminal' Alacritty.desktop
+        [[ "$WAYLAND" == true ]] && handlr set 'x-scheme-handler/terminal' foot.desktop
+        handlr set 'application/pdf' org.pwmt.zathura.desktop
+        handlr set 'application/x-bittorrent' org.qbittorrent.qBittorrent.desktop
+    fi
+
+    ###########################################################################
+    log "gpg-agent..."
+    [[ ! -d ~/.ssh/ ]] && mkdir -v ~/.ssh/
+    [[ ! -d ~/.gnupg/ ]] && mkdir -v ~/.gnupg/
+    if ! grep -q "AddKeysToAgent" ~/.ssh/config; then
+        echo "AddKeysToAgent yes" >>~/.ssh/config
+    fi
+    if ! grep -q "default-cache-ttl" ~/.gnupg/gpg-agent.conf; then
+        echo "default-cache-ttl 3600" >>~/.gnupg/gpg-agent.conf
+        gpg-connect-agent reloadagent /bye
+    fi
+
+    ###########################################################################
+    if [[ -n $(command -v rustup) ]]; then
+        log "rustup..."
+        rustup default stable
+        # rustup update
+    fi
+
+    ###########################################################################
+    if [[ -z $(command -v paru) ]]; then
+        log "Paru..."
+        [[ ! -d ~/.config/paru/ ]] && mkdir -pv ~/.config/paru/
+        cat <<EOF >~/.config/paru/paru.conf
+[options]
+BottomUp
+PgpFetch
+NewsOnUpgrade
+UpgradeMenu
+[bin]
+Sudo = /usr/bin/doas
+EOF
+        [[ -d /tmp/paru/ ]] && rm -rf /tmp/paru/
+        (
+            git clone https://aur.archlinux.org/paru-git.git /tmp/paru &&
+                cd /tmp/paru/ &&
+                makepkg -sic &&
+                paru -S --needed --skipreview "${AUR_PKG[@]}"
+        ) || log "Paru - failed" err
+    fi
+
+    ###########################################################################
+    [[ ! -d ~/.config/git/ ]] && mkdir -pv ~/.config/git/
+    if ! grep -q "lg1-specific" ~/.config/git/config; then
+        cat <<EOF >>~/.config/git/config
+[alias]
+    lg = lg1-specific --all
+    lg2 = lg2-specific --all
+    lg3 = lg3-specific --all
+
+    lg1-specific = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)'
+    lg2-specific = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(auto)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'
+    lg3-specific = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset) %C(bold cyan)(committed: %cD)%C(reset) %C(auto)%d%C(reset)%n''          %C(white)%s%C(reset)%n''          %C(dim white)- %an <%ae> %C(reset) %C(dim white)(committer: %cn <%ce>)%C(reset)'
+EOF
+    fi
+
+    ###########################################################################
+    log "Themes..."
+    download_and_check \
+        "https://raw.githubusercontent.com/catppuccin/yazi/refs/heads/main/themes/mocha/catppuccin-mocha-peach.toml" \
+        "$XDG_CONFIG_HOME/yazi/theme.toml"
+    download_and_check \
+        "https://raw.githubusercontent.com/catppuccin/bat/refs/heads/main/themes/Catppuccin%20Mocha.tmTheme" \
+        "$XDG_CONFIG_HOME/yazi/Catppuccin-mocha.tmTheme"
+
+    download_and_check \
+        "https://raw.githubusercontent.com/catppuccin/zathura/refs/heads/main/src/catppuccin-mocha" \
+        "$XDG_CONFIG_HOME/zathura/catppuccin-mocha"
+    download_and_check \
+        "https://raw.githubusercontent.com/catppuccin/alacritty/refs/heads/main/catppuccin-mocha.toml" \
+        "$XDG_CONFIG_HOME/alacritty/catppuccin-mocha.toml"
+    download_and_check \
+        "https://raw.githubusercontent.com/catppuccin/foot/refs/heads/main/themes/catppuccin-mocha.ini" \
+        "$XDG_CONFIG_HOME/foot/catppuccin-mocha.toml"
+
+    if [[ -n $(command -v kvantummanager) ]]; then
+        if [[ -d ~/.config/Kvantum/ ]]; then
+            if fd -1 -I --changed-before 7d -q . ~/.config/Kvantum/; then
+                log "Kvantum..."
+                rm -r ~/.config/Kvantum/
+                mkdir -pv ~/.config/Kvantum/
+                [[ -d /tmp/Kvantum/ ]] && rm -rf /tmp/Kvantum/
+                (
+                    git clone https://github.com/catppuccin/Kvantum /tmp/Kvantum &&
+                        mv -v /tmp/Kvantum/themes/* ~/.config/Kvantum/ &&
+                        kvantummanager --set catppuccin-macchiato-maroon
+                ) || log "Kvantum - failed" err
+            fi
+        fi
+    fi
+
+    ###########################################################################
+    if [[ "$XORG" == true ]]; then
+        log "Xorg..."
+        if [[ ! -f ~/.xinitrc ]]; then
+            cp /etc/X11/xinit/xinitrc ~/.xinitrc
+            echo "exec bspwm" >>~/.xinitrc
+        fi
+
+        # if [[ ! -d ~/gitclones/eww/ ]]; then
+        #     git clone https://github.com/elkowar/eww ~/gitclones/eww || log "Eww - failed" err
+        # fi
+        # (
+        #     cd ~/gitclones/eww/ &&
+        #         git pull &&
+        #         RUSTFLAGS="-C target-cpu=native" cargo build --release --no-default-features --features=x11 &&
+        #         install -vsDm 744 target/release/eww ~/.local/bin/eww-x
+        # ) || log "Eww - failed" err
+    fi
+
+    sync_packages
+
+    trap - ERR
+}
+# }}}
+
+# {{{ root
+as_root() {
+    trap "STATUS_ROOT=error" ERR
+
+    ###########################################################################
+    # NetworkManager
+    cat <<EOF >/etc/NetworkManager/conf.d/wifi_backend.conf
+[device]
+wifi.backend=iwd
+EOF
+    cat <<EOF >/etc/NetworkManager/conf.d/wifi_rand_mac.conf
+[device-mac-randomization]
+wifi.scan-rand-mac-address=yes
+
+[connection-mac-randomization]
+ethernet.cloned-mac-address=random
+wifi.cloned-mac-address=random
+EOF
+
+    ###########################################################################
+    # copy dots
+    install -vm 644 "$SCRIPT_DIR"/home/.alias /root/
+    install -vm 644 "$SCRIPT_DIR"/home/.zprofile /root/
+    install -vm 644 "$SCRIPT_DIR"/home/.zshrc /root/
+    install -vm 644 "$SCRIPT_DIR"/home/.vim/vimrc /root/.vimrc
+
+    ###########################################################################
+    # pacman
+    sed -Ei 's|^#UseSyslog|UseSyslog|' /etc/pacman.conf
+    sed -Ei 's|^#Color|Color|' /etc/pacman.conf
+    sed -Ei 's|^#VerbosePkgLists|VerbosePkgLists|' /etc/pacman.conf
+    sed -Ei 's|^#?ParallelDownloads.*|ParallelDownloads = 3|' /etc/pacman.conf
+    sed -zi 's|#\[multilib\]\n#Include = \/etc\/pacman.d\/mirrorlist|\[multilib\]\nInclude = \/etc\/pacman.d\/mirrorlist|' /etc/pacman.conf
+    sed -Ei 's|^#?PACMAN_AUTH=.*|PACMAN_AUTH=(/usr/bin/doas)|' /etc/makepkg.conf
+    sed -Ei 's|-march=x86-64 -mtune=generic|-march=native|' /etc/makepkg.conf
+    sed -Ei "s|^#?MAKEFLAGS=.*|MAKEFLAGS=\"-j$(nproc)\"|" /etc/makepkg.conf
+    sed -Ei 's|^#?RUSTFLAGS="|RUSTFLAGS="-C opt-level=2 -C target-cpu=native |' /etc/makepkg.conf.d/rust.conf
+
+    reflector -l 10 -p http,https --sort rate --save /etc/pacman.d/mirrorlist
+    while ! pacman -Syu --needed "${PKG[@]}"; do
+        log "Problems with ethernet connection"
+        read -rp "Shall we resume downloading? Y/n " answer
+        echo
+        [[ "$answer" == "n" ]] && break
+    done
+
+    ###########################################################################
+    # zsh
+    USER=$(echo "$SCRIPT_PATH" | awk -F '/' '{print $3}')
+    chsh -s /usr/bin/zsh
+    chsh "$USER" -s /usr/bin/zsh
+
+    ###########################################################################
+    # usbguard
+    usbguard generate-policy >/etc/usbguard/rules.conf
+    systemctl enable usbguard.service
+
+    ###########################################################################
+    # apparmor
+    [[ ! -d /etc/cmdline.d/ ]] && mkdir -v /etc/cmdline.d/
+    echo "lsm=landlock,lockdown,yama,integrity,apparmor,bpf" >/etc/cmdline.d/apparmor.conf
+    systemctl enable apparmor.service
+
+    ###########################################################################
+    # dnscrypt-proxy
+    rm /etc/resolv.conf
+    cat <<EOF >/etc/resolv.conf
+nameserver ::1
+nameserver 127.0.0.1
+options edns0
+EOF
+    cat <<EOF >/etc/NetworkManager/conf.d/dns.conf
+[main]
+dns=none
+systemd-resolved=false
+EOF
+    sed -Ei "s|^#? ?server_names .*|server_names = ['quad9-dnscrypt-ip4-filter-pri']|" /etc/dnscrypt-proxy/dnscrypt-proxy.toml
+    systemctl disable systemd-resolved.service
+    systemctl enable dnscrypt-proxy.service
+
+    ###########################################################################
+    install -vm 644 "$SCRIPT_DIR"/misc/kernel-args-hardening.conf /etc/cmdline.d/hardening.conf
+    install -vm 644 "$SCRIPT_DIR"/misc/kernel-module-blacklist.conf /etc/modprobe.d/blacklist.conf
+
+    if pacman -Q nvidia-utils &>/dev/null; then
+        sed -Ei "s|^#? ?MODULES=.*|MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)|" /etc/mkinitcpio.conf
+    fi
+    if pacman -Q nvidia-dkms &>/dev/null; then
+        sed -Ei "s|^module.sig_enforce=1|# module.sig_enforce=1 # nvidia-dkms: doesn't sign correct|" /etc/cmdline.d/hardening.conf
+        sed -Ei "s|^lockdown=confidentiality|# lockdown=confidentiality # nvidia-dkms: hardware compatibility issues|" /etc/cmdline.d/hardening.conf
+    fi
+    mkinitcpio -p linux
+
+    ###########################################################################
+    systemctl enable earlyoom.service
+
+    trap - ERR
+}
+# }}}
+
+if [[ $(id -u) -eq 0 ]]; then
+    as_root
+else
+    as_user
+fi
+
+# vim: foldmethod=marker foldlevel=0 foldlevelstart=0

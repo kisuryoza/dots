@@ -62,4 +62,3 @@ end
 bind \cf yazi
 
 zoxide init fish | source
-task

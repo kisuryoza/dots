@@ -1,4 +1,0 @@
-My dot files
-
-#+html: <p align="center"><img src="https://user-images.githubusercontent.com/53265642/287467243-649152fd-79c3-4cf9-a03c-2cf32d2f78d4.png" /></p>
-
