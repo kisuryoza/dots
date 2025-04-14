@@ -21,9 +21,7 @@ vk.set("n", "<leader>gN", "<cmd>cd " .. vim.fn.expand("~/Sync/Notes/") .. " | ed
 ---@param off any
 local function toggle_opt(option, on, off)
     local curr_value = vim.api.nvim_get_option_value(option, {})
-    if type(curr_value) == "table" then
-        curr_value = curr_value[next(curr_value)]
-    end
+    if type(curr_value) == "table" then curr_value = curr_value[next(curr_value)] end
     if curr_value == on then
         vim.o[option] = off
     else
@@ -52,8 +50,6 @@ vk.set("n", "]l", "<cmd>lnext<CR>zz", { desc = "loclist next" })
 
 vk.set("n", "<leader>bd", "<cmd>lcd %:p:h<CR>", { desc = "Set local working dir" })
 vk.set("n", "<leader>bD", "<cmd>cd %:p:h<CR>", { desc = "Set global working dir" })
-vk.set("n", "<leader>bf", function()
-    vim.lsp.buf.format({ async = true })
-end, { desc = "Format buffer" })
+vk.set("n", "<leader>bf", function() vim.lsp.buf.format({ async = true }) end, { desc = "Format buffer" })
 
 vk.set("n", "<leader>fc", "<cmd>e $MYVIMRC | :cd %:p:h<CR>", { desc = "Edit neovm config" })

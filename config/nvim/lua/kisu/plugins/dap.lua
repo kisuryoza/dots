@@ -24,12 +24,12 @@ local M = {
         },
     },
     keys = {
+        { "<F5>", "<cmd>DapContinue<cr>", desc = "Continue" },
+        { "<F10>", "<cmd>DapStepOver<cr>", desc = "Step over" },
+        { "<F11>", "<cmd>DapStepInto<cr>", desc = "Step into" },
+        { "<F12>", "<cmd>DapStepOut<cr>", desc = "Step out" },
         { "<leader>dt", "<cmd>DapTerminate<cr>", desc = "Terminate" },
-        { "<leader>dc", "<cmd>DapContinue<cr>", desc = "Continue" },
         { "<leader>dr", "<cmd>DapToggleRepl<cr>", desc = "Toggle repl" },
-        { "<leader>dn", "<cmd>DapStepOver<cr>", desc = "Step over" },
-        { "<leader>di", "<cmd>DapStepInto<cr>", desc = "Step into" },
-        { "<leader>df", "<cmd>DapStepOut<cr>", desc = "Step out" },
         { "<leader>db", "<cmd>DapToggleBreakpoint<cr>", desc = "Toggle breakpoint" },
         {
             "<leader>dBb",
@@ -64,11 +64,15 @@ M.config = function()
         type = "executable",
         -- command = "/usr/bin/codelldb",
         command = "/usr/bin/lldb-dap",
-        name = "lldb",
     }
+    -- dap.adapters.gdb = {
+    --     type = "executable",
+    --     command = "gdb",
+    --     args = { "--interpreter=dap", "--eval-command", "set print pretty on" },
+    -- }
     dap.configurations.c = {
         {
-            name = "lldb",
+            name = "Launch",
             type = "lldb",
             request = "launch",
             program = function()
@@ -83,7 +87,7 @@ M.config = function()
                     pickers
                         .new(opts, {
                             prompt_title = "Path to executable",
-                            finder = finders.new_oneshot_job({ "fd", "--type", "x" }, {}),
+                            finder = finders.new_oneshot_job({ "fd", "--no-ignore" , "--type", "x" }, {}),
                             sorter = conf.generic_sorter(opts),
                             attach_mappings = function(buffer_number)
                                 actions.select_default:replace(function()
@@ -106,12 +110,8 @@ M.config = function()
 
     vk.set({ "n", "v" }, "<leader>dwh", widgets.hover, { desc = "Widgets hover" })
     vk.set({ "n", "v" }, "<leader>dwp", widgets.preview, { desc = "Widgets preview" })
-    vk.set("n", "<leader>dwf", function()
-        widgets.centered_float(widgets.frames)
-    end, { desc = "Widgets float" })
-    vk.set("n", "<leader>dws", function()
-        widgets.centered_float(widgets.scopes)
-    end, { desc = "Widgets scope" })
+    vk.set("n", "<leader>dwf", function() widgets.centered_float(widgets.frames) end, { desc = "Widgets float" })
+    vk.set("n", "<leader>dws", function() widgets.centered_float(widgets.scopes) end, { desc = "Widgets scope" })
 end
 
 return M
