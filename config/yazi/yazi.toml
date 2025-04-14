@@ -15,7 +15,6 @@ img = [{ run = 'imv-dir "$@"', orphan = true }]
 img_edit = [{ run = 'krita "$@"', orphan = true }]
 play = [{ run = 'mpv --no-pause --player-operation-mode=pseudo-gui "$@"', orphan = true }]
 reveal = [{ run = 'handlr open "$(dirname "$0")"', desc = "Reveal" }]
-archive = [{ run = 'ark "$1"' }]
 
 [open]
 rules = [
@@ -26,8 +25,8 @@ rules = [
 
     { mime = "text/*", use = [ "edit", "open", "reveal" ] },
 
-    { mime = "application/*zip", use = [ "archive", "open", "reveal" ] },
-    { mime = "application/x-{tar,bzip*,7z-compressed,xz,rar}", use = [ "archive", "open", "reveal" ] },
+    { mime = "application/*zip", use = [ "open", "reveal" ] },
+    { mime = "application/x-{tar,bzip*,7z-compressed,xz,rar}", use = [ "open", "reveal" ] },
 
     { name = "*", use = [ "open", "edit", "reveal" ] },
 ]
@@ -35,3 +34,7 @@ rules = [
 [tasks]
 suppress_preload = true
 
+[plugin]
+prepend_preloaders = [
+    { mime = "{audio,video}/*", run = "noop" },
+]

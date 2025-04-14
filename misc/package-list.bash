@@ -23,7 +23,7 @@ PKG+=(eza bat ripgrep sd fd dust hyperfine) # sane gnu replacments
 # developing
 PKG+=(nasm zig zls rustup rust-analyzer python)
 PKG+=(perf lldb clang sccache valgrind)
-PKG+=(radare2 iaito) # disasm, debug, analyze and manipulate binary files
+PKG+=(radare2) # disasm, debug, analyze and manipulate binary files
 PKG+=(prettier shellharden shfmt lua-language-server selene stylua)
 
 # monitors
@@ -33,8 +33,6 @@ PKG+=(htop btop nvtop)
 PKG+=(bubblewrap) # Unprivileged sandboxing tool
 # PKG+=(aircrack-ng)  # Key cracker for the 802.11 WEP and WPA-PSK protocols
 
-# misc
-PKG+=(xdg-desktop-portal)
 PKG+=(pkgstats pacman-contrib)
 
 if [[ "$WAYLAND" == true ]]; then
@@ -72,6 +70,7 @@ fi
 
 if [[ "$WAYLAND" == true || "$XORG" == true ]]; then
     PKG+=(mesa mesa-utils glfw vulkan-icd-loader lib32-vulkan-icd-loader)
+    PKG+=(xdg-desktop-portal)
 
     GRAPHICS=$(lspci -v | grep -A1 -e VGA -e 3D)
     case ${GRAPHICS^^} in
@@ -87,7 +86,7 @@ if [[ "$WAYLAND" == true || "$XORG" == true ]]; then
 
     PKG+=(imv)             # Image viewer for Wayland and X11
     PKG+=(mpd mpc ncmpcpp) # Music player
-    PKG+=(mpv mediainfo songrec easyeffects)
+    PKG+=(mpv mediainfo songrec noise-suppression-for-voice)
     # PKG+=(soundconverter)   # A simple sound converter application for GNOME
     # PKG+=(lmms)             # The Linux MultiMedia Studio
     PKG+=(imagemagick jpegoptim oxipng ffmpeg mkvtoolnix-gui opus-tools)

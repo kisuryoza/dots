@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 
 # https://github.com/valoq/bwscripts
-# https://github.com/flatpak/flatpak/blob/4c6136ab2146234bff37925b218026de846d584e/common/flatpak-run.c#L1791
 # https://wiki.archlinux.org/title/Bubblewrap/Examples
 
 if [[ -z "$WAYLAND_DISPLAY" ]]; then

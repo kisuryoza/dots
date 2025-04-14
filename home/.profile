@@ -15,8 +15,8 @@ export XDG_PICTURES_DIR="$HOME/Arts"
 export XDG_VIDEOS_DIR="$HOME/Videos"
 
 export QT_STYLE_OVERRIDE=kvantum
-export MANPAGER="sh -c 'col -bx | bat -l man -p --paging always'"
-export MANROFFOPT="-c"
+export MANPAGER='nvim +Man!'
+export MANROFFOPT='-c'
 export BROWSER=librewolf
 export VISUAL=nvim
 export BAT_THEME=gruvbox-dark

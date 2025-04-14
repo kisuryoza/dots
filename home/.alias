@@ -8,7 +8,7 @@ alias update-all='export TMPFILE="$(mktemp)"; \
     rate-mirrors --save=$TMPFILE arch --max-delay=21600 \
     && doas mv /etc/pacman.d/mirrorlist /etc/pacman.d/mirrorlist-backup \
     && doas mv $TMPFILE /etc/pacman.d/mirrorlist \
-    && drop-caches \
+    && clean-caches \
     && paru -Syyu --noconfirm'
 
 alias ssc='doas systemctl'
@@ -16,5 +16,5 @@ alias ssc='doas systemctl'
 alias lsa='ls -al --group-directories-first --color=always'
 alias ezaa='eza -al --group-directories-first --color=always'
 alias ip='ip -color=always'
-alias yt-dlp-audio='yt-dlp -x --embed-metadata --parse-metadata ":(?P<meta_synopsis>)" --convert-thumbnails=jpg --embed-thumbnail'
+alias yt-dlp-audio='yt-dlp --prefer-free-formats -x --embed-metadata --parse-metadata ":(?P<meta_synopsis>)" --convert-thumbnails=jpg --embed-thumbnail'
 alias gitc='git clone --depth 1'

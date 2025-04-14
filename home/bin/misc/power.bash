@@ -6,6 +6,6 @@ SELECTED=$(printf "Suspend\nReboot\nPower off" | bemenu --ignorecase --prompt ""
 case "$SELECTED" in
 "Suspend") systemctl suspend ;;
 "Reboot") systemctl reboot ;;
-"Power off") systemctl -i poweroff ;;
+"Power off") systemctl poweroff ;;
 *) ;;
 esac

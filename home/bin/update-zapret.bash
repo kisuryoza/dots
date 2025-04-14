@@ -5,7 +5,6 @@ if ! pacman -Q libnetfilter_queue &>/dev/null; then
 fi
 
 TMPZ="/tmp/zapret"
-TMPC="/tmp/zapret-configs"
 [[ -d "$TMPZ" ]] && rm -rf "$TMPZ"
 
 if [[ ! -d /opt/zapret ]]; then
@@ -14,20 +13,15 @@ if [[ ! -d /opt/zapret ]]; then
     exit
 fi
 
-FILES=(youtube-hosts.txt discord-hosts.txt ipset/zapret-hosts-user-exclude.txt)
-
-install -vD "/opt/zapret/$file" "$TMPC/config"
-for file in "${FILES[@]}"; do
-    install -vD "/opt/zapret/$file" "$TMPC/$file"
-done
+FILES=(ipset/zapret-hosts-user-exclude.txt)
 
 git clone --depth 1 https://github.com/bol-van/zapret "$TMPZ" || exit 1
 
 for file in "${FILES[@]}"; do
-    install -vD "$TMPC/$file" "$TMPZ/$file"
+    install -vD "/opt/zapret/$file" "$TMPZ/$file"
 done
 
-nvim -d "$TMPZ"/config.default "$TMPC"/config
+nvim -d "$TMPZ"/config.default /opt/zapret/config
 
 doas rm -rf /opt/zapret/
 
@@ -35,5 +29,5 @@ doas rm -rf /opt/zapret/
 
 (
     cd /opt/zapret/
-    doas chown alex "${FILES[@]}"
+    doas chown alex /opt/zapret/config "${FILES[@]}"
 )

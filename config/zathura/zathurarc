@@ -1,3 +1,0 @@
-include catppuccin-mocha
-set sandbox strict
-set selection-clipboard clipboard

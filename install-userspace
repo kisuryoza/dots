@@ -183,7 +183,8 @@ EOF
     if [[ -n $(command -v rustup) ]]; then
         log "rustup..."
         rustup default stable
-        # rustup update
+        rustup update
+        rustup component add clippy
     fi
 
     ###########################################################################
@@ -231,16 +232,23 @@ EOF
     download_and_check \
         "https://raw.githubusercontent.com/catppuccin/bat/refs/heads/main/themes/Catppuccin%20Mocha.tmTheme" \
         "$XDG_CONFIG_HOME/yazi/Catppuccin-mocha.tmTheme"
+    # ya pack -a yazi-rs/plugins:mount
 
+    mkdir -p ~/.config/zathura/
+    cat <<EOF >>~/.config/zathura/zathurarc
+include catppuccin-mocha
+set selection-clipboard clipboard
+EOF
     download_and_check \
         "https://raw.githubusercontent.com/catppuccin/zathura/refs/heads/main/src/catppuccin-mocha" \
         "$XDG_CONFIG_HOME/zathura/catppuccin-mocha"
+
     download_and_check \
         "https://raw.githubusercontent.com/catppuccin/alacritty/refs/heads/main/catppuccin-mocha.toml" \
         "$XDG_CONFIG_HOME/alacritty/catppuccin-mocha.toml"
     download_and_check \
         "https://raw.githubusercontent.com/catppuccin/foot/refs/heads/main/themes/catppuccin-mocha.ini" \
-        "$XDG_CONFIG_HOME/foot/catppuccin-mocha.toml"
+        "$XDG_CONFIG_HOME/foot/catppuccin-mocha.ini"
 
     if [[ -n $(command -v kvantummanager) ]]; then
         if [[ -d ~/.config/Kvantum/ ]]; then
@@ -286,6 +294,8 @@ EOF
 # {{{ root
 as_root() {
     trap "STATUS_ROOT=error" ERR
+
+    chattr +i "$SCRIPT_DIR"/home/.profile "$SCRIPT_DIR"/home/.zprofile "$SCRIPT_DIR"/home/.zshrc "$SCRIPT_DIR"/config/fish/config.fish
 
     ###########################################################################
     # NetworkManager
