@@ -1,6 +1,8 @@
 .PHONY: wp
 wp:
-	RUSTFLAGS="-C target-cpu=native" cargo build --release --bin=wp
+	cd ./wp/
+	RUSTFLAGS="-C target-cpu=native" cargo build --release
+	cd ..
 	install -vDm 744 ./target/release/wp ~/.local/bin
 
 .PHONY: onefiles

@@ -35,4 +35,4 @@ pgrep --exact dunst || dunst &>/dev/null &
 pgrep --exact picom || picom &>/dev/null &
 pgrep --exact flameshot || flameshot &>/dev/null &
 ln -sf ~/.local/bin/eww-x ~/.local/bin/eww && eww daemon &>/dev/null && eww open bar &>/dev/null
-[[ -f ~/wallpaper.jpg ]] && feh --no-fehbg --bg-fill ~/wallpaper.jpg
+[[ -f ~/wallpaper.* ]] && feh --no-fehbg --bg-fill ~/wallpaper.*

@@ -18,6 +18,7 @@ export QT_STYLE_OVERRIDE=kvantum
 export MANPAGER='nvim +Man!'
 export MANROFFOPT='-c'
 export BROWSER=librewolf
+export EDITOR=nvim
 export VISUAL=nvim
 export BAT_THEME=gruvbox-dark
 GPG_TTY=$(tty)

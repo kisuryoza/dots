@@ -13,12 +13,10 @@
         "disk",
         "pulseaudio",
         "backlight",
-        "network",
         "battery",
+        "network",
         "hyprland/language",
         "custom/weather",
-        "clock#w",
-        "clock#d",
         "clock",
         "custom/power",
     ],
@@ -34,13 +32,16 @@
             "7": "七",
             "8": "八",
             "9": "九",
-            // "active": "󰝥",
-            "empty": "󰝦",
             "default": "󰻃",
         },
         "persistent-workspaces": {
             "*": [1, 2, 3, 4, 5, 6, 7, 8, 9],
         },
+        "actions": {
+            "on-click": "",
+            "on-click-left": "",
+            "on-click-right": "",
+        }
     },
     "mpd": {
         "format": "{stateIcon} {consumeIcon}{randomIcon}{repeatIcon}{singleIcon} {artist} - {title} ({elapsedTime:%M:%S}/{totalTime:%M:%S})",
@@ -83,7 +84,7 @@
     },
     "cpu": {
         "interval": 2,
-        "format": " {usage}",
+        "format": "󰻠 {usage}",
     },
     "temperature": {
         "interval": 5,
@@ -95,7 +96,7 @@
         "tooltip": false,
     },
     "custom/gpu_load": {
-        "exec": "~/bin/misc/gpu-load.bash",
+        "exec": "~/bin/misc/gpu-load.sh NVIDIA",
         "format": "󰢮 {}",
         "interval": 2,
         "tooltip": false,
@@ -129,21 +130,8 @@
     },
     "backlight": {
         // "device": "intel_backlight",
-        "format": "{percent}% {icon}",
+        "format": "{icon} {percent}",
         "format-icons": ["󰃜", "󰃠"],
-    },
-    "network": {
-        // "interface": "",
-        "interval": 1,
-        "format": "{ifname}",
-        "format-wifi": "{essid} ({signalStrength}%) ",
-        "format-ethernet": "󰈀", //"󰈀",
-        "format-disconnected": "󰤮",
-        "tooltip-format": "{ifname} via {gwaddr} 󰊗",
-        "tooltip-format-wifi": "{essid} ({signalStrength}%) ",
-        "tooltip-format-ethernet": "{ifname} {ipaddr}\n{bandwidthUpBytes}\n󰯎\n{bandwidthDownBytes}",
-        "tooltip-format-disconnected": "Disconnected",
-        "max-length": 50,
     },
     "battery": {
         "interval": 60,
@@ -151,9 +139,22 @@
             "warning": 30,
             "critical": 15,
         },
-        "format": "{capacity}% {icon}",
+        "format": "{icon} {capacity}",
         "format-icons": ["", "", "", "", ""],
         "max-length": 25,
+    },
+    "network": {
+        // "interface": "",
+        "interval": 1,
+        "format": "{ifname}",
+        "format-wifi": "{essid} ({signalStrength}%) ",
+        "format-ethernet": "󰈀",
+        "format-disconnected": "󰤮",
+        "tooltip-format": "{ifname} via {gwaddr} 󰊗",
+        "tooltip-format-wifi": "{essid} ({signalStrength}%) ",
+        "tooltip-format-ethernet": "{ifname}\n{ipaddr}\n{bandwidthUpBytes}\n󰯎\n{bandwidthDownBytes}",
+        "tooltip-format-disconnected": "Disconnected",
+        "max-length": 50,
     },
     "hyprland/language": {
         "format": "{}",
@@ -161,14 +162,12 @@
         "format-ru": "RU",
     },
     "custom/weather":{
-        "exec": "~/bin/misc/weather.bash",
-        "return-type": "json",
+        "exec": "~/bin/misc/weather.sh",
         "interval": 7200,
         "format": "{}",
     },
     "clock": {
-        "format": "{:%H:%M}",
-        "format-alt": "{:%a\n%m/%d\n%H\n%M}",
+        "format": "{:%m/%d\n %a\n%H:%M}",
         "interval": 60,
         "tooltip-format": "<tt><small>{calendar}</small></tt>",
         "calendar": {
@@ -185,19 +184,9 @@
             },
         },
     },
-    "clock#d": {
-        "format": "{:%m/%d}",
-        "interval": 60,
-        "tooltip": false,
-    },
-    "clock#w": {
-        "format": "{:%a}",
-        "interval": 60,
-        "tooltip": false,
-    },
     "custom/power":{
         "format": "󰤁",
-        "on-click": "~/bin/misc/power.bash",
+        "on-click": "~/bin/misc/power.sh",
         "tooltip": false,
     },
 }

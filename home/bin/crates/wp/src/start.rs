@@ -62,10 +62,27 @@ fn iterate(interval: u64, files: &[File]) -> ! {
 
 fn set_it(next_path: &str) {
     if std::env::var("WAYLAND_DISPLAY").is_ok() {
-        Command::new("swww")
-            .args(["img", "-t", "none", next_path])
+        Command::new("hyprctl")
+            .args(["hyprpaper", "preload", next_path])
             .status()
             .expect("failed to execute process");
+        // hyprctl hyprpaper wallpaper "HDMI-A-1,~/Arts/Scenery/OnFdBdd.png"
+        let mut path = String::from("HDMI-A-1,");
+        path.push_str(next_path);
+        Command::new("hyprctl")
+            .args(["hyprpaper", "wallpaper", path.as_str()])
+            .status()
+            .expect("failed to execute process");
+
+        Command::new("hyprctl")
+            .args(["hyprpaper", "unload", "all"])
+            .status()
+            .expect("failed to execute process");
+
+        // Command::new("swww")
+        //     .args(["img", "-t", "none", next_path])
+        //     .status()
+        //     .expect("failed to execute process");
 
         return;
     }

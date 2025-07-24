@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-WAYLAND=false
-XORG=false
-[[ "$1" == *"wayland"* ]] && WAYLAND=true
+XORG=${XORG:-false}
+WAYLAND=${WAYLAND:-false}
 [[ "$1" == *"xorg"* ]] && XORG=true
+[[ "$1" == *"wayland"* ]] && WAYLAND=true
 
 # {{{ Header
 SCRIPT_PATH=$(realpath -s "${BASH_SOURCE[0]}")
@@ -66,7 +66,7 @@ log() {
 
 source "$SCRIPT_DIR"/home/.profile
 declare -a PKG AUR_PKG
-source "$SCRIPT_DIR"/misc/package-list.bash
+source "$SCRIPT_DIR"/misc/package-list.sh
 
 sync_packages() {
     declare -a ALL_PKG META_PKGS CURR_PKGS TO_DELETE
@@ -131,19 +131,26 @@ as_user() {
     log "XDG..."
     DIRS=(
         "$XDG_CONFIG_HOME" "$XDG_CACHE_HOME" "$XDG_DATA_HOME" "$XDG_STATE_HOME"
-        "$HOME"/.local/bin/ "$HOME"/gitclones/
+        "$HOME"/.local/bin/
     )
     for dir in "${DIRS[@]}"; do [[ ! -d "$dir" ]] && mkdir -pv "$dir"; done
 
-    [[ ! -d ~/.local/share/applications/ ]] && mkdir -pv ~/.local/share/applications/
-    cat <<EOF >~/.local/share/applications/nvim.desktop
-[Desktop Entry]
-Name=neovim
-Exec=nvim %F
-Terminal=true
-Type=Application
-EOF
+    ###########################################################################
+    git config --global commit.gpgSign false
+    git config --global diff.tool nvimdiff
+    git config --global alias.lg "log --all --graph --decorate=short --pretty=format:'%C(yellow)%h%C(auto)%d%C(reset) %s %C(dim white)- %an%C(reset)'"
+    git config --global alias.lg2 "log --all --graph --decorate=short --pretty=format:'%C(yellow)%h%C(auto)%d%C(reset) %s %C(dim white)- %an%C(reset)%n        %C(dim white)%aD (%ar)%C(reset)%n%w(80,12,8)%-b'"
 
+    ###########################################################################
+    if [[ "$XORG" == true ]]; then
+        log "Xorg..."
+        if [[ ! -f ~/.xinitrc ]]; then
+            cp /etc/X11/xinit/xinitrc ~/.xinitrc
+            echo "exec bspwm" >>~/.xinitrc
+        fi
+    fi
+
+    ###########################################################################
     if [[ -n $(command -v gio) ]]; then
         gio mime inode/directory yazi.desktop
         gio mime application/x-shellscript nvim.desktop
@@ -180,17 +187,40 @@ EOF
     fi
 
     ###########################################################################
-    if [[ -n $(command -v rustup) ]]; then
-        log "rustup..."
-        rustup default stable
-        rustup update
-        rustup component add clippy
+    # if [[ -n $(command -v rustup) ]]; then
+    #     log "rustup..."
+    #     rustup default stable
+    #     rustup update
+    #     rustup component add clippy
+    # fi
+
+    ###########################################################################
+    log "Themes..."
+    download_and_check \
+        "https://raw.githubusercontent.com/catppuccin/yazi/refs/heads/main/themes/mocha/catppuccin-mocha-peach.toml" \
+        "$XDG_CONFIG_HOME/yazi/theme.toml"
+    # ya pkg add yazi-rs/plugins:mount
+
+    if [[ -n $(command -v kvantummanager) ]]; then
+        if [[ -d ~/.config/Kvantum/ ]]; then
+            if fd -1 -I --changed-before 7d -q . ~/.config/Kvantum/; then
+                log "Kvantum..."
+                rm -r ~/.config/Kvantum/
+                mkdir -pv ~/.config/Kvantum/
+                [[ -d /tmp/Kvantum/ ]] && rm -rf /tmp/Kvantum/
+                (
+                    git clone https://github.com/catppuccin/Kvantum /tmp/Kvantum &&
+                        mv -v /tmp/Kvantum/themes/* ~/.config/Kvantum/ &&
+                        kvantummanager --set catppuccin-macchiato-maroon
+                ) || log "Kvantum - failed" err
+            fi
+        fi
     fi
 
     ###########################################################################
     if [[ -z $(command -v paru) ]]; then
         log "Paru..."
-        [[ ! -d ~/.config/paru/ ]] && mkdir -pv ~/.config/paru/
+        mkdir -pv ~/.config/paru/
         cat <<EOF >~/.config/paru/paru.conf
 [options]
 BottomUp
@@ -210,79 +240,18 @@ EOF
     fi
 
     ###########################################################################
-    [[ ! -d ~/.config/git/ ]] && mkdir -pv ~/.config/git/
-    if ! grep -q "lg1-specific" ~/.config/git/config; then
-        cat <<EOF >>~/.config/git/config
-[alias]
-    lg = lg1-specific --all
-    lg2 = lg2-specific --all
-    lg3 = lg3-specific --all
-
-    lg1-specific = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold green)(%ar)%C(reset) %C(white)%s%C(reset) %C(dim white)- %an%C(reset)%C(auto)%d%C(reset)'
-    lg2-specific = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset)%C(auto)%d%C(reset)%n''          %C(white)%s%C(reset) %C(dim white)- %an%C(reset)'
-    lg3-specific = log --graph --abbrev-commit --decorate --format=format:'%C(bold blue)%h%C(reset) - %C(bold cyan)%aD%C(reset) %C(bold green)(%ar)%C(reset) %C(bold cyan)(committed: %cD)%C(reset) %C(auto)%d%C(reset)%n''          %C(white)%s%C(reset)%n''          %C(dim white)- %an <%ae> %C(reset) %C(dim white)(committer: %cn <%ce>)%C(reset)'
+    # Simple dot management
+    if [[ ! -d ~/.config/fontconfig ]]; then
+        mkdir -pv ~/.config/fontconfig/
+        cat <<EOF >~/.config/fontconfig/fonts.conf
+<?xml version="1.0"?>
+<!DOCTYPE fontconfig SYSTEM "fonts.dtd">
+<fontconfig>
+<alias> <family>serif</family> <prefer> <family>Noto Serif</family> </prefer> </alias>
+<alias> <family>sans-serif</family> <prefer> <family>Noto Sans</family> </prefer> </alias>
+<alias> <family>monospace</family> <prefer> <family>0xProto</family> <family>Noto Sans Mono</family> </prefer> </alias>
+</fontconfig>
 EOF
-    fi
-
-    ###########################################################################
-    log "Themes..."
-    download_and_check \
-        "https://raw.githubusercontent.com/catppuccin/yazi/refs/heads/main/themes/mocha/catppuccin-mocha-peach.toml" \
-        "$XDG_CONFIG_HOME/yazi/theme.toml"
-    download_and_check \
-        "https://raw.githubusercontent.com/catppuccin/bat/refs/heads/main/themes/Catppuccin%20Mocha.tmTheme" \
-        "$XDG_CONFIG_HOME/yazi/Catppuccin-mocha.tmTheme"
-    # ya pack -a yazi-rs/plugins:mount
-
-    mkdir -p ~/.config/zathura/
-    cat <<EOF >>~/.config/zathura/zathurarc
-include catppuccin-mocha
-set selection-clipboard clipboard
-EOF
-    download_and_check \
-        "https://raw.githubusercontent.com/catppuccin/zathura/refs/heads/main/src/catppuccin-mocha" \
-        "$XDG_CONFIG_HOME/zathura/catppuccin-mocha"
-
-    download_and_check \
-        "https://raw.githubusercontent.com/catppuccin/alacritty/refs/heads/main/catppuccin-mocha.toml" \
-        "$XDG_CONFIG_HOME/alacritty/catppuccin-mocha.toml"
-    download_and_check \
-        "https://raw.githubusercontent.com/catppuccin/foot/refs/heads/main/themes/catppuccin-mocha.ini" \
-        "$XDG_CONFIG_HOME/foot/catppuccin-mocha.ini"
-
-    if [[ -n $(command -v kvantummanager) ]]; then
-        if [[ -d ~/.config/Kvantum/ ]]; then
-            if fd -1 -I --changed-before 7d -q . ~/.config/Kvantum/; then
-                log "Kvantum..."
-                rm -r ~/.config/Kvantum/
-                mkdir -pv ~/.config/Kvantum/
-                [[ -d /tmp/Kvantum/ ]] && rm -rf /tmp/Kvantum/
-                (
-                    git clone https://github.com/catppuccin/Kvantum /tmp/Kvantum &&
-                        mv -v /tmp/Kvantum/themes/* ~/.config/Kvantum/ &&
-                        kvantummanager --set catppuccin-macchiato-maroon
-                ) || log "Kvantum - failed" err
-            fi
-        fi
-    fi
-
-    ###########################################################################
-    if [[ "$XORG" == true ]]; then
-        log "Xorg..."
-        if [[ ! -f ~/.xinitrc ]]; then
-            cp /etc/X11/xinit/xinitrc ~/.xinitrc
-            echo "exec bspwm" >>~/.xinitrc
-        fi
-
-        # if [[ ! -d ~/gitclones/eww/ ]]; then
-        #     git clone https://github.com/elkowar/eww ~/gitclones/eww || log "Eww - failed" err
-        # fi
-        # (
-        #     cd ~/gitclones/eww/ &&
-        #         git pull &&
-        #         RUSTFLAGS="-C target-cpu=native" cargo build --release --no-default-features --features=x11 &&
-        #         install -vsDm 744 target/release/eww ~/.local/bin/eww-x
-        # ) || log "Eww - failed" err
     fi
 
     sync_packages
@@ -314,10 +283,10 @@ EOF
 
     ###########################################################################
     # copy dots
-    install -vm 644 "$SCRIPT_DIR"/home/.alias /root/
-    install -vm 644 "$SCRIPT_DIR"/home/.zprofile /root/
-    install -vm 644 "$SCRIPT_DIR"/home/.zshrc /root/
-    install -vm 644 "$SCRIPT_DIR"/home/.vim/vimrc /root/.vimrc
+    (
+        cd "$SCRIPT_DIR"/home &&
+            install -vm 644 .alias .zprofile .zshrc .vimrc /root
+    ) || log "Copy dots to root - failed" err 1
 
     ###########################################################################
     # pacman
@@ -369,7 +338,7 @@ EOF
 dns=none
 systemd-resolved=false
 EOF
-    sed -Ei "s|^#? ?server_names .*|server_names = ['quad9-dnscrypt-ip4-filter-pri']|" /etc/dnscrypt-proxy/dnscrypt-proxy.toml
+    sed -Ei "s|^#? ?server_names .*|server_names = ['quad9-dnscrypt-ip4-filter-ecs-pri']|" /etc/dnscrypt-proxy/dnscrypt-proxy.toml
     systemctl disable systemd-resolved.service
     systemctl enable dnscrypt-proxy.service
 
@@ -377,9 +346,9 @@ EOF
     install -vm 644 "$SCRIPT_DIR"/misc/kernel-args-hardening.conf /etc/cmdline.d/hardening.conf
     install -vm 644 "$SCRIPT_DIR"/misc/kernel-module-blacklist.conf /etc/modprobe.d/blacklist.conf
 
-    if pacman -Q nvidia-utils &>/dev/null; then
-        sed -Ei "s|^#? ?MODULES=.*|MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)|" /etc/mkinitcpio.conf
-    fi
+    # if pacman -Q nvidia-utils &>/dev/null; then
+    #     sed -Ei "s|^#? ?MODULES=.*|MODULES=(nvidia nvidia_modeset nvidia_uvm nvidia_drm)|" /etc/mkinitcpio.conf
+    # fi
     if pacman -Q nvidia-dkms &>/dev/null; then
         sed -Ei "s|^module.sig_enforce=1|# module.sig_enforce=1 # nvidia-dkms: doesn't sign correct|" /etc/cmdline.d/hardening.conf
         sed -Ei "s|^lockdown=confidentiality|# lockdown=confidentiality # nvidia-dkms: hardware compatibility issues|" /etc/cmdline.d/hardening.conf

@@ -1,5 +1,5 @@
 [workspace]
-members = ["gmods"]
+members = ["wp"]
 resolver = "2"
 
 [package]

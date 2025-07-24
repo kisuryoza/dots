@@ -21,98 +21,98 @@ setopt HIST_FIND_NO_DUPS         # Do not display a previously found event.
 setopt HIST_IGNORE_SPACE         # Do not record an event starting with a space.
 setopt HIST_SAVE_NO_DUPS         # Do not write a duplicate event to the history file.
 setopt HIST_VERIFY               # Do not execute immediately upon history expansion.
-setopt INC_APPEND_HISTORY        # New history lines are added as soon as they are entered, rather than waiting until the shell exits.
+WORDCHARS=${WORDCHARS/\/}
 
-[[ -r ~/.alias ]] && source ~/.alias
+setopt AUTO_PUSHD           # Push the current directory visited on the stack.
+setopt PUSHD_IGNORE_DUPS    # Do not store duplicates in the stack.
+setopt PUSHD_SILENT         # Do not print the directory stack after pushd or popd.
+alias d='dirs -v'
+for index ({1..9}) alias "$index"="cd +${index}"; unset index
 
-###############################################################################
-# bindkey -s '^F' "yazi\n"
+eval "$(dircolors)"
+autoload -Uz colors && colors
 
-# Vi to zsh
-bindkey -v
-export KEYTIMEOUT=1
+autoload -Uz promptinit && promptinit
+PS1="%F{magenta}%~%(?.. %F{red}%B(%?%)%b)%f %# "
+function preexec() {
+    timer=$(($(date +%s%0N)/1000000))
+}
 
-# Editing command lines in vim
-autoload -Uz edit-command-line
-zle -N edit-command-line
-bindkey -M vicmd '^v' edit-command-line
+function precmd() {
+    if [ $timer ]; then
+        now=$(($(date +%s%0N)/1000000))
+        elapsed=$(($now-$timer))
+
+        if [ $elapsed -gt 60000 ]; then
+            elapsed=$(echo "$elapsed" | awk '{ printf "%dm %.1fs", $1 / 1000 / 60, $1 / 1000 % 60 }')
+            export RPS1="%F{cyan}${elapsed} %f"
+        elif [ $elapsed -gt 1000 ]; then
+            export RPS1="%F{cyan}${elapsed}ms %f"
+        else
+            export RPS1=""
+        fi
+        unset timer
+    fi
+}
 
 zmodload zsh/complist
-bindkey -M menuselect 'h' vi-backward-char
-bindkey -M menuselect 'k' vi-up-line-or-history
-bindkey -M menuselect 'l' vi-forward-char
-bindkey -M menuselect 'j' vi-down-line-or-history
+zstyle ':completion:*' menu select yes
+zstyle ':completion:*' completer _extensions _complete _approximate
+zstyle ':completion:*:*:*:*:descriptions' format '%F{green}-- %d --%f'
+zstyle ':completion:*' group-name ''
+zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
 
-bindkey '^?' backward-delete-char # backspace
-bindkey '^[[3~' delete-char # delete
+autoload -Uz compinit
+if [[ -n ${ZDOTDIR}/.zcompdump(#qN.mh+24) ]]; then
+    compinit;
+else
+    compinit -C;
+fi
+_comp_options+=(globdots)
+
+bindkey -v
+autoload -Uz edit-command-line
+zle -N edit-command-line
+bindkey '^e' edit-command-line
+bindkey -M menuselect '^h' vi-backward-char
+bindkey -M menuselect '^k' vi-up-line-or-history
+bindkey -M menuselect '^l' vi-forward-char
+bindkey -M menuselect '^j' vi-down-line-or-history
+bindkey -M menuselect '/' history-incremental-search-forward
+bindkey -M menuselect '?' history-incremental-search-backward
+# remap because enabling vim mode clears them
+bindkey '^?' backward-delete-char
+bindkey '^[[3~' delete-char
+bindkey '^w' backward-delete-word
 
 autoload -Uz up-line-or-beginning-search down-line-or-beginning-search
 zle -N up-line-or-beginning-search
 zle -N down-line-or-beginning-search
-bindkey "^[[A" up-line-or-beginning-search # arrow up
-bindkey "^[[B" down-line-or-beginning-search # arrow down
+bindkey "^k" up-line-or-beginning-search
+bindkey "^j" down-line-or-beginning-search
+bindkey "[A" up-line-or-beginning-search
+bindkey "[B" down-line-or-beginning-search
 
-bindkey "^[[1;5D" backward-word # ctrl left
-bindkey "^[[1;5C" forward-word # ctrl right
+filemanager() {
+    yazi
+    # cd $(yazi --cwd-file=/dev/stdout)
+}
+zle -N filemanager
+bindkey '^f' filemanager
+# bindkey -s '^f' "yazi\n"
 
-###############################################################################
-# Completion
-autoload -Uz compinit
-for dump in ~/.zcompdump(N.mh+24); do
-    compinit
-done
-compinit -C
+[[ -r ~/.alias ]] && source ~/.alias
 
-# setopt MENU_COMPLETE        # Automatically highlight first element of completion menu
-setopt AUTO_LIST            # Automatically list choices on ambiguous completion.
-setopt COMPLETE_IN_WORD     # Complete from both ends of a word.
-setopt ALWAYS_TO_END        # If a completion is performed with the cursor within a word, and a full completion is inserted, the cursor is moved to the end of the word.
-
-# Ztyle pattern
-# :completion:<function>:<completer>:<command>:<argument>:<tag>
-# Define completers
-zstyle ':completion:*' completer _extensions _complete _approximate
-
-# Use cache for commands using cache
-zstyle ':completion:*' use-cache on
-zstyle ':completion:*' cache-path "$XDG_CACHE_HOME/.zcompcache"
-# Complete the alias when _expand_alias is used as a function
-zstyle ':completion:*' complete true
-# Allow you to select in a menu
-zstyle ':completion:*' menu select
-# Autocomplete options for cd instead of directory stack
-zstyle ':completion:*' complete-options true
-
-zstyle ':completion:*' file-sort modification
-
-# Colorful descriptions
-zstyle ':completion:*:*:*:*:corrections' format '%F{yellow}!- %d (errors: %e) -!%f'
-zstyle ':completion:*:*:*:*:descriptions' format '%F{blue}-- %D %d --%f'
-zstyle ':completion:*:*:*:*:messages' format ' %F{purple} -- %d --%f'
-zstyle ':completion:*:*:*:*:warnings' format ' %F{red}-- no matches found --%f'
-# Colors for files and directory
-zstyle ':completion:*:*:*:*:default' list-colors ${(s.:.)LS_COLORS}
-
-# Required for completion to be in good groups (named after the tags)
-zstyle ':completion:*' group-name ''
-zstyle ':completion:*:*:-command-:*:*' group-order aliases builtins functions commands
-
-# See ZSHCOMPWID "completion matching control"
-zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
-
-zstyle ':completion:*' keep-prefix true
-
-###############################################################################
 nvimq() {
     nvim -q <(rg --color=never --vimgrep --smart-case "$1")
 }
 
-# if [[ $(id -u) -ne 0 ]]; then
-#     # Auto starting ssh-agent
-#     if ! pgrep -u "$USER" ssh-agent >/dev/null; then
-#         ssh-agent > "$HOME/.ssh/ssh-agent.env"
-#     fi
-#     if [[ ! -f "$SSH_AUTH_SOCK" ]]; then
-#         source "$HOME/.ssh/ssh-agent.env" >/dev/null
-#     fi
-# fi
+if [[ $(id -u) -ne 0 ]]; then
+    # Auto starting ssh-agent
+    if ! pgrep -u "$USER" ssh-agent >/dev/null; then
+        ssh-agent > "$HOME/.ssh/ssh-agent.env"
+    fi
+    if [[ ! -f "$SSH_AUTH_SOCK" ]]; then
+        source "$HOME/.ssh/ssh-agent.env" >/dev/null
+    fi
+fi

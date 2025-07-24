@@ -31,17 +31,22 @@ function fish_prompt
 end
 
 function fish_right_prompt
-    if test $CMD_DURATION -lt 5000
-        return
+    set -l njobs
+    set -l duration
+
+    if test $CMD_DURATION -ge 5000
+        if test $CMD_DURATION -ge 60000
+            set duration (echo "$CMD_DURATION" | awk '{ printf "%dm %.1fs", $1 / 1000 / 60, $1 / 1000 % 60 }') # minutes
+        else
+            set duration (echo "$CMD_DURATION" | awk '{ printf "%.1fs", $1 / 1000 }') # seconds
+        end
     end
 
-    set -l duration
-    if test $CMD_DURATION -ge 60000
-        set duration (echo "$CMD_DURATION" | awk '{ printf "%dm %.1fs", $1 / 1000 / 60, $1 / 1000 % 60 }') # minutes
-    else
-        set duration (echo "$CMD_DURATION" | awk '{ printf "%.1fs", $1 / 1000 }') # seconds
+    if test $CMD_DURATION -gt 0
+        set njobs (count (jobs -p))
     end
-    echo -n -s $duration
+
+    echo -n -s $duration ' ' $njobs
 end
 
 function mank
@@ -60,5 +65,3 @@ function nvimq
 end
 
 bind \cf yazi
-
-zoxide init fish | source

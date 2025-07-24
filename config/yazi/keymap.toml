@@ -1,4 +1,4 @@
-[manager]
+[mgr]
 prepend_keymap = [
     { on = [ "g", "c" ], run = "cd ~/.config",              desc = ".config" },
     { on = [ "g", "l" ], run = "cd ~/.local",               desc = ".local" },
@@ -6,8 +6,9 @@ prepend_keymap = [
     { on = [ "g", "e" ], run = "cd /run/media/$USER",       desc = "external devices" },
     { on = [ "g", "T" ], run = "cd ~/.local/share/Trash",   desc = "trash" },
 
-    { on = [ "<C-s>" ], run  = 'shell "/usr/bin/fish" --block --confirm', desc = "Open shell here" },
-    { on = [ "<C-n>" ], run = '''shell 'dragon-drop -x -T "$0"' --confirm''', desc = "Open drag-n-drop" },
+    # { on = [ "<C-s>" ], run  = 'shell --block -- $SHELL', desc = "Open shell here" },
+    { on = [ "<C-s>" ], run  = 'shell -- tmux new-window', desc = "Open shell here" },
+    { on = [ "<C-n>" ], run = 'shell -- dragon-drop -x -T "$@"', desc = "Open drag-n-drop" },
 
     { on  = "M", run = "plugin mount" },
 ]

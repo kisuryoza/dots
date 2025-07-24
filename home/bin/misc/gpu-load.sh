@@ -1,12 +1,10 @@
 #!/usr/bin/env bash
 
-GRAPHICS=$(lspci -v | grep -A1 -e VGA -e 3D)
-case ${GRAPHICS^^} in
-*NVIDIA*)
+case "$1" in
+"NVIDIA")
     nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits
     ;;
-*AMD* | *ATI*)
+"AMD")
     cat /sys/class/drm/card0/device/gpu_busy_percent
     ;;
-*INTEL*) ;;
 esac

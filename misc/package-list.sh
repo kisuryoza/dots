@@ -7,18 +7,16 @@ esac
 # essential
 PKG+=(linux linux-firmware base base-devel)
 PKG+=(efibootmgr e2fsprogs btrfs-progs)
-PKG+=(git networkmanager iwd iptables-nft wget)
+PKG+=(zsh vim neovim tmux git networkmanager iwd iptables-nft wget)
 PKG+=(man-db man-pages texinfo)
-# PKG+=(tealdeer wikiman arch-wiki-docs)
+PKG+=(tealdeer wikiman arch-wiki-docs)
 PKG+=(opendoas usbguard apparmor dnscrypt-proxy)
 PKG+=(earlyoom)
 
 # cli/tui helpers
-PKG+=(strace lsof)
+PKG+=(strace lsof skim jq stow)
 PKG+=(bind bandwhich net-tools nmap traceroute)
-PKG+=(zsh fish stow neovim vim tmux zoxide)
-PKG+=(fzf fzy jq)
-PKG+=(eza bat ripgrep sd fd dust hyperfine) # sane gnu replacments
+PKG+=(bat ripgrep sd fd dust hyperfine) # sane gnu replacments
 
 # developing
 PKG+=(nasm zig zls rustup rust-analyzer python)
@@ -33,7 +31,7 @@ PKG+=(htop btop nvtop)
 PKG+=(bubblewrap) # Unprivileged sandboxing tool
 # PKG+=(aircrack-ng)  # Key cracker for the 802.11 WEP and WPA-PSK protocols
 
-PKG+=(pkgstats pacman-contrib)
+PKG+=(pacman-contrib)
 
 if [[ "$WAYLAND" == true ]]; then
     PKG+=(foot)
@@ -84,8 +82,8 @@ if [[ "$WAYLAND" == true || "$XORG" == true ]]; then
     PKG+=(pipewire wireplumber pipewire-alsa pipewire-pulse gst-plugins-base gst-plugins-good gst-plugin-pipewire)
     PKG+=(pamixer pavucontrol qpwgraph)
 
-    PKG+=(imv)             # Image viewer for Wayland and X11
-    PKG+=(mpd mpc ncmpcpp) # Music player
+    PKG+=(imv)              # Image viewer for Wayland and X11
+    PKG+=(mpd mpc rmpc)     # Music player
     PKG+=(mpv mediainfo songrec noise-suppression-for-voice)
     # PKG+=(soundconverter)   # A simple sound converter application for GNOME
     # PKG+=(lmms)             # The Linux MultiMedia Studio
@@ -97,30 +95,26 @@ if [[ "$WAYLAND" == true || "$XORG" == true ]]; then
     PKG+=(nm-connection-editor) # NetworkManager GUI connection editor and widgets
 
     PKG+=(yazi ffmpegthumbnailer)
-    PKG+=(file-roller android-file-transfer)
-    PKG+=(udisks2)       # Daemon, tools and libraries to access and manipulate disks, storage devices and technologies
-    PKG+=(fuseiso)       # FuseISO is a FUSE module to let unprivileged users mount ISO filesystem images
-    PKG+=(gvfs gvfs-mtp) # Virtual filesystem implementation
-    PKG+=(handlr-regex)  # Powerful alternative to xdg-utils (managing mime types)
-    PKG+=(trash-cli)     # Command line trashcan (recycle bin) interface
-
-    PKG+=(hunspell hunspell-en_us hunspell-ru enchant gspell)
-
+    PKG+=(android-file-transfer)
+    PKG+=(ouch)             # Archiving and compression
+    PKG+=(udisks2)          # Daemon, tools and libraries to access and manipulate disks, storage devices and technologies
+    PKG+=(fuseiso)          # FuseISO is a FUSE module to let unprivileged users mount ISO filesystem images
+    PKG+=(gvfs gvfs-mtp)    # Virtual filesystem implementation
+    PKG+=(handlr-regex)     # Powerful alternative to xdg-utils (managing mime types)
+    PKG+=(trash-cli)        # Command line trashcan (recycle bin) interface
+    PKG+=(libnotify)
     PKG+=(mate-polkit) # graphical authentication agent
     PKG+=(dunst)       # Customizable and lightweight notification-daemon
     PKG+=(yt-dlp)
     # PKG+=(tlp) # Linux Advanced Power Management
 
+    PKG+=(hunspell hunspell-en_us hunspell-ru enchant gspell)
+
     # -- Themes, icons, fonts
 
     PKG+=(kvantum kvantum-qt5 lxappearance-gtk3)
     PKG+=(arc-gtk-theme breeze-icons)
-    PKG+=(ttf-dejavu ttf-jetbrains-mono ttf-liberation ttf-opensans)
-    # PKG+=(ttc-iosevka-ss14)     # JetBrains Mono Style
-    # PKG+=(ttc-iosevka-aile)     # Sans style
-    # PKG+=(ttc-iosevka-etoile)   # Serif style
-    # PKG+=(ttf-iosevka-nerd)
-    PKG+=(unicode-emoji noto-fonts noto-fonts-cjk noto-fonts-emoji)
+    PKG+=(ttf-liberation noto-fonts noto-fonts-cjk)
 
     # -- Apps
 
@@ -141,7 +135,4 @@ if [[ "$WAYLAND" == true || "$XORG" == true ]]; then
     PKG+=(lib32-libxcomposite ocl-icd lib32-ocl-icd libva lib32-libva gtk3 lib32-gtk3 gst-plugins-base-libs)
     PKG+=(lib32-gst-plugins-base-libs vulkan-icd-loader lib32-vulkan-icd-loader sdl2-compat lib32-sdl2-compat)
     PKG+=(lib32-pipewire libpulse lib32-libpulse alsa-plugins lib32-alsa-plugins alsa-lib lib32-alsa-lib)
-
-    # pacman -S wine-staging winetricks gamemode lib32-gamemode
-    # pacman -S --asdeps --needed $(pacman -Si wine-staging | sed -n '/^Opt/,/^Conf/p' | sed '$d' | sed 's/^Opt.*://g' | sed 's/^\s*//g' | tr '\n' ' ')
 fi

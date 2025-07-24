@@ -1,133 +1,61 @@
 @import "colors.css";
 
 * {
-    font-family: "Comic Neue";
-    font-size: 12px;
-    animation-duration: 5.0s;
-    animation-timing-function: steps(6);
+  font-family: "0xProto";
+  font-size: 12px;
+  animation-duration: 5s;
+  animation-timing-function: steps(6);
+  padding: 1px 0px 1px 0px;
 }
 
 window#waybar {
-    background-color: @base;
+  color: @foreground;
+  background-color: @background;
 }
 
 window#waybar.hidden {
-    opacity: 0.2;
+  opacity: 0.2;
 }
 
 #workspaces {
-    font-size: 18px;
+  font-size: 18px;
 }
 
 #workspaces button {
-    color: @text;
-    background-color: transparent;
+  background-color: transparent;
+  border: none;
+  padding: 0;
 }
 
 #workspaces button:hover {
-    box-shadow: inherit;
-    text-shadow: inherit;
+  border-color: transparent;
 }
 
 #workspaces button.empty {
-    color: @surface0;
+  color: @black;
 }
 
 #workspaces button.visible {
-    color: @yellow;
+  color: @yellow;
 }
 
 #workspaces button.active {
-    color: @red;
+  color: @red;
 }
 
-#mpd {
-    font-size: 15px;
-    color: @text;
-    background-color: transparent;
+#cpu, #temperature, #custom-gpu_load, #custom-gpu_temp {
+  color: @red;
 }
 
-#privacy {
-    color: @mauve;
-    background-color: transparent;
+#memory, #disk {
+  color: @yellow;
 }
 
-#cpu {
-    color: @red;
-    background-color: transparent;
-}
-
-#temperature {
-    color: @red;
-    background-color: transparent;
-}
-
-#custom-gpu_load {
-    color: @maroon;
-    background-color: transparent;
-}
-
-#custom-gpu_temp {
-    color: @maroon;
-    background-color: transparent;
-}
-
-#memory {
-    color: @peach;
-    background-color: transparent;
-}
-
-#disk {
-    color: @yellow;
-    background-color: transparent;
-}
-
-#pulseaudio {
-    color: @green;
-    background-color: transparent;
-}
-
-#backlight {
-    color: @teal;
-    background-color: transparent;
-}
-
-#network {
-    color: @sky;
-    background-color: transparent;
-}
-
-#battery {
-    color: @sapphire;
-    background-color: transparent;
-}
-
-#language {
-    color: @blue;
-    background-color: transparent;
-}
-
-#custom-weather {
-    color: @lavender;
-    background-color: transparent;
-}
-
-#clock.w {
-    color: @rosewater;
-    background-color: transparent;
-}
-
-#clock.d {
-    color: @flamingo;
-    background-color: transparent;
-}
-
-#clock {
-    color: @pink;
-    background-color: transparent;
+#pulseaudio, #backlight, #battery {
+  color: @blue;
 }
 
 #custom-power {
-    color: @mauve;
-    background-color: transparent;
+    /* margin-top: 10px; */
+  color: @blue;
 }

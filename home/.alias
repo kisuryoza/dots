@@ -13,8 +13,10 @@ alias update-all='export TMPFILE="$(mktemp)"; \
 
 alias ssc='doas systemctl'
 
-alias lsa='ls -al --group-directories-first --color=always'
-alias ezaa='eza -al --group-directories-first --color=always'
+alias rm='rm -i'
+alias info='info --vi-keys'
+alias ls='ls --group-directories-first --color=always'
+alias lsa='ls -alh --group-directories-first --color=always'
 alias ip='ip -color=always'
 alias yt-dlp-audio='yt-dlp --prefer-free-formats -x --embed-metadata --parse-metadata ":(?P<meta_synopsis>)" --convert-thumbnails=jpg --embed-thumbnail'
 alias gitc='git clone --depth 1'

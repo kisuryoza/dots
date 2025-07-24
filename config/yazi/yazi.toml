@@ -1,25 +1,39 @@
-[manager]
+[mgr]
 sort_by = "natural"
 sort_dir_first = true
-linemode = "size"
+linemode = "size_and_mtime"
 
 [preview]
 max_width = 600
 max_height = 600
 cache_dir = "~/.cache/yazi/"
+image_delay = 50
+image_filter = "nearest"
+image_quality = 60
 
 [opener]
 edit = [{ run = 'nvim "$@"', block = true }]
 open = [{ run = 'handlr open "$@"' }]
-img = [{ run = 'imv-dir "$@"', orphan = true }]
+img_imv = [{ run = 'imv-dir "$@"', orphan = true }]
+img_feh = [{ run = 'feh "$@"', orphan = true }]
 img_edit = [{ run = 'krita "$@"', orphan = true }]
 play = [{ run = 'mpv --no-pause --player-operation-mode=pseudo-gui "$@"', orphan = true }]
 reveal = [{ run = 'handlr open "$(dirname "$0")"', desc = "Reveal" }]
 
+[[opener.add-sub]]
+run  = ''' echo sub-add "'$0'" | socat - /tmp/mpv.sock '''
+desc = "Add sub to MPV"
+
+[[opener.add-audio]]
+run  = ''' echo audio-add "'$0'" | socat - /tmp/mpv.sock '''
+desc = "Add audio to MPV"
+
 [open]
 rules = [
-    { mime = "image/*", use = [ "img", "img_edit", "open", "reveal" ] },
+    { mime = "image/*", use = [ "img_imv", "img_feh", "img_edit", "open", "reveal" ] },
     { mime = "{audio,video}/*", use = [ "play", "open", "reveal" ] },
+    { mime = "audio/*", use = [ "add-audio" ] },
+    { name = "*.mka", use = [ "add-audio" ] },
     { name = "*.ivf", use = [ "play", "open", "reveal" ] },
     { name = "*.cue", use = [ "play", "edit", "open", "reveal" ] },
 
@@ -31,8 +45,14 @@ rules = [
     { name = "*", use = [ "open", "edit", "reveal" ] },
 ]
 
+[[open.prepend_rules]]
+name = "*.{ass,srt,ssa,sty,sup,vtt}"
+use  = [ "add-sub", "edit" ]
+
 [tasks]
 suppress_preload = true
+image_alloc      = 65536
+image_bound      = [ 10000, 10000 ]
 
 [plugin]
 prepend_preloaders = [

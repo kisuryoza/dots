@@ -19,17 +19,17 @@ XF86Audio{Prev,Play,Next}
     mpc {prev,toggle,next}
 
 XF86AudioMute
-    ~/bin/misc/volume-control.bash toggle-mute
+    pamixer -t
 
 XF86Audio{Lower,Raise}Volume
-    ~/bin/misc/volume-control.bash set {-10,+10}
+    pamixer {-d,-i} 10
 
 XF86MonBrightness{Down,Up}
     ~/.config/eww/scripts/brightness.bash set {-10,+10}
 
 super + backslash
-    ~/bin/misc/change-wallp.bash x
-    # bash -c 'if pkill wp; then feh --no-fehbg --bg-fill ~/wallpaper.jpg; else wp ~/Arts start -d -i 30; fi'
+    ~/bin/misc/change-wallp.sh x
+    # bash -c 'if pkill wp; then feh --no-fehbg --bg-fill ~/wallpaper.*; else wp ~/Arts start -d -i 30; fi'
 
 ############################################################
 # bspwm hotkeys

@@ -6,6 +6,7 @@ foot/*
 
 fish/*
 !fish/config.fish
+!fish/functions/up-or-search.fish
 
 mpd/*
 !mpd/mpd.conf
